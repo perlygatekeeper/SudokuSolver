@@ -19,6 +19,32 @@ has 'box'         => (isa => 'Value',    is => 'rw');
 # my_column_mates all other cells in his cell's column
 # my_box_mates    all other cells in his cell's box
 
+sub clue {
+    my($self,$value) = @_;
+    if ( $value =~ /[1-9]/ ) {
+       $self->given(1);
+       $self->value($value);
+       $self->possibilies( [ 0, 0, 0, 0, 0, 0, 0, 0, 0 ] );
+    } else {
+       $self->given(0);
+       $self->value(0);
+       $self->possibilies( [ 1, 2, 3, 4, 5, 6, 7, 8, 9 ] );
+    }
+}; 
+
+sub my_possibilies {
+    my $self = shift;
+    if ( $self->value ) {
+      print "Possible: " . join( ', ', grep { $_ !=0 } @{$self->possibilies} ) . "\n";
+    } else {
+      if ( $self->given ) {
+        print "Given:  " . $self->value . "\n";
+      } else {
+        print "Solved: " . $self->value . "\n";
+      }
+    }
+}
+
 sub my_mates        { # all other cells in any of my row, column or box
     my $self = shift;
 
