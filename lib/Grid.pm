@@ -26,9 +26,6 @@ has 'cells'       => (isa => 'ArrayRef',   is => 'rw');
 sub load_from_string {
   my($self,$string) = @_;
   my($cell) = 0;
-  my($col) = ( ( $cell - 1 )  % 9 );
-  my($row) = int( ( $cell - 1 ) / 9 );
-  my($box) = int( ( ( $cell - 1 ) % 9 ) / 3 ) + 3 * int ( int( ( $cell - 1 ) / 9 ) / 3 );
   $self->cells([]);
   $self->rows([[],[],[],[],[],[],[],[],[]]);
   $self->columns([[],[],[],[],[],[],[],[],[]]);
@@ -40,9 +37,12 @@ sub load_from_string {
 # print $self->columns->[0] . " <- column->[0]\n";
 # print $self->boxes   . " <- boxes\n";
   foreach ( split(//,$string) ) {
+    my($col) = ( $cell  % 9 );
+    my($row) = int( $cell / 9 );
+    my($box) = int( ( $cell % 9 ) / 3 ) + 3 * int ( int( $cell / 9 ) / 3 );
     my ($new_cell) =  Cell->new;
     $new_cell->clue($_);
-    $new_cell->row($row);
+    $new_cell->row($row);    # print "Debug: " . $new_cell->row . " should be $row\n";
     $new_cell->column($col);
     $new_cell->box($box);
 
@@ -51,6 +51,95 @@ sub load_from_string {
     push ( $self->columns->[$col], $new_cell );
     push ( $self->boxes->[$box],   $new_cell );
   }
+# print "We have populated the grid with the given clues, now we will removed the givens from their rows, columns and boxes.\n";
+  foreach ( grep { $_->value } @{$self->cells} ) {
+#   print "found a cell with a value: "
+#     . $_->value . " at (r,c,b): "
+#     . ( $_->row + 1 ) . ", "
+#     . ( $_->column + 1 ) . ", "
+#     . ( $_->box + 1 ) . "\n";
+    $self->remove_my_solution_from_my_mates($_);
+  }
+}
+
+sub find_and_set_singletons {  # a singleton is a cell which has only one possible value left
+  my($self) = @_;
+  my $progress = 0;
+  print "\nLooking for cells with only one possible value left:\n\n";
+  foreach $this_cell ( @{ $puzzle->cells } ) {
+    # check if this cell has only one possibility left, and if so set it and clear it's row, column and box neighboors.
+    if ( $this_cell->possibilities->[0] == 1 ) {
+      $progress++;
+      my($value,) = grep { $_ != 0 } @{$this_cell->possibilities}[1..9];
+      $this_cell->value($value);
+      print "Setting cell @ "
+        . ( $this_cell->row + 1 ) . ", "
+        . ( $this_cell->column + 1 ) . ", "
+        . ( $this_cell->box + 1 ) . " to "
+        . $this_cell->value
+        . "\n";
+      $this_cell->possibilities( [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] );
+      $puzzle->remove_my_solution_from_my_mates($this_cell);
+    }
+  }
+  return $progress;
+}
+
+sub remove_my_solution_from_my_mates  {
+  my($self,$cell) = @_;
+  my($value) = $cell->value;
+  foreach ( @{ $self->row_mates_of($cell) } ) {
+#   print 'r ';
+    $_->remove_possility($value);
+  }
+  foreach ( @{ $self->column_mates_of($cell) } ) {
+#   print 'c ';
+    $_->remove_possility($value);
+  }
+  foreach ( @{ $self->box_mates_of($cell) } ) {
+#   print 'b ';
+    $_->remove_possility($value);
+  }
+# print "\n";
+}
+
+sub row_mates_of {  # return an array ref to an array containing all the other cells on my row that aren't me 
+  my($self,$cell) = @_;
+  my $row = $cell->row;
+  my $a = [ grep { $_->column != $cell->column } @{$self->rows->[$row]} ];
+# print "row: " . ( $row + 1 ) . "; number of cells: " . scalar @$a . "\n";
+  $a;
+}
+
+sub column_mates_of {  # return an array ref to an array containing all the other cells on my column that aren't me 
+  my($self,$cell) = @_;
+  my $column = $cell->column;
+  my $a = [ grep { $_->row != $cell->row } @{$self->columns->[$column]} ];
+# print "column " . ( $column + 1 ) . "; number of cells: " . scalar @$a . "\n";
+  $a;
+}
+
+sub box_mates_of {  # return an array ref to an array containing all the other cells on my box that aren't me 
+  my($self,$cell) = @_;
+  my $box = $cell->box;
+# print "my box has " . scalar @{$self->boxes->[$box]} . " cells in it.\n";
+  my $a = [ grep { $_->column != $cell->column or $_->row != $cell->row } @{$self->boxes->[$box]} ];
+# print "box " . ( $box + 1 ) . "; number of cells: " . scalar @$a . "\n";
+  $a;
+}
+
+sub unsolved_cells {
+  my($self) = shift;
+  my $unsolved = [ ];
+  push ( @{$unsolved}, grep { not $_->value } @{$self->cells} ) ;
+  return $unsolved;
+}
+
+sub solved_cells {
+  my($self) = shift;
+  my $solved = [ ];
+  push ( @{$solved}, grep { $_->value } @{$self->cells} ) ;
+  return $solved;
 }
 
 sub out {
@@ -68,23 +157,23 @@ sub pretty_print {
   my($format);
   $format .= "     1   2   3   4   5   6   7   8   9  \n";
   $format .= "   +===+===+===+===+===+===+===+===+===+\n";
-  $format .= " 1 H %s | %s | %s H %s | %s | %s H %s | %s | %s H\n";
+  $format .= " 1 I %s | %s | %s I %s | %s | %s I %s | %s | %s I\n";
   $format .= "   + - + - + - + - + - + - + - + - + - +\n";
-  $format .= " 2 H %s | %s | %s H %s | %s | %s H %s | %s | %s H\n";
+  $format .= " 2 I %s | %s | %s I %s | %s | %s I %s | %s | %s I\n";
   $format .= "   + - + - + - + - + - + - + - + - + - +\n";
-  $format .= " 3 H %s | %s | %s H %s | %s | %s H %s | %s | %s H\n";
+  $format .= " 3 I %s | %s | %s I %s | %s | %s I %s | %s | %s I\n";
   $format .= "   +===+===+===+===+===+===+===+===+===+\n";
-  $format .= " 4 H %s | %s | %s H %s | %s | %s H %s | %s | %s H\n";
+  $format .= " 4 I %s | %s | %s I %s | %s | %s I %s | %s | %s I\n";
   $format .= "   + - + - + - + - + - + - + - + - + - +\n";
-  $format .= " 5 H %s | %s | %s H %s | %s | %s H %s | %s | %s H\n";
+  $format .= " 5 I %s | %s | %s I %s | %s | %s I %s | %s | %s I\n";
   $format .= "   + - + - + - + - + - + - + - + - + - +\n";
-  $format .= " 6 H %s | %s | %s H %s | %s | %s H %s | %s | %s H\n";
+  $format .= " 6 I %s | %s | %s I %s | %s | %s I %s | %s | %s I\n";
   $format .= "   +===+===+===+===+===+===+===+===+===+\n";
-  $format .= " 7 H %s | %s | %s H %s | %s | %s H %s | %s | %s H\n";
+  $format .= " 7 I %s | %s | %s I %s | %s | %s I %s | %s | %s I\n";
   $format .= "   + - + - + - + - + - + - + - + - + - +\n";
-  $format .= " 8 H %s | %s | %s H %s | %s | %s H %s | %s | %s H\n";
+  $format .= " 8 I %s | %s | %s I %s | %s | %s I %s | %s | %s I\n";
   $format .= "   + - + - + - + - + - + - + - + - + - +\n";
-  $format .= " 9 H %s | %s | %s H %s | %s | %s H %s | %s | %s H\n";
+  $format .= " 9 I %s | %s | %s I %s | %s | %s I %s | %s | %s I\n";
   $format .= "   +===+===+===+===+===+===+===+===+===+\n";
   printf $format, ( map { $_->value == 0 ? ' ' : $_->value } @{$self->cells} ) ;
 }
@@ -94,23 +183,23 @@ __END__
 
        1   2   3   4   5   6   7   8   9  
      +===+===+===+===+===+===+===+===+===+
-   1 H   |   |   H   |   |   H   |   |   H
+   1 I   |   |   I   |   |   I   |   |   I
      + - + - + - + - + - + - + - + - + - +
-   2 H   | 1 |   H   | 2 |   H   | 3 |   H
+   2 I   | 1 |   I   | 2 |   I   | 3 |   I
      + - + - + - + - + - + - + - + - + - +
-   3 H   |   |   H   |   |   H   |   |   H
+   3 I   |   |   I   |   |   I   |   |   I
      +===+===+===+===+===+===+===+===+===+
-   4 H   |   |   H   |   |   H   |   |   H
+   4 I   |   |   I   |   |   I   |   |   I
      + - + - + - + - + - + - + - + - + - +
-   5 H   | 4 |   H   | 5 |   H   | 6 |   H
+   5 I   | 4 |   I   | 5 |   I   | 6 |   I
      + - + - + - + - + - + - + - + - + - +
-   6 H   |   |   H   |   |   H   |   |   H
+   6 I   |   |   I   |   |   I   |   |   I
      +===+===+===+===+===+===+===+===+===+
-   7 H   |   |   H   |   |   H   |   |   H
+   7 I   |   |   I   |   |   I   |   |   I
      + - + - + - + - + - + - + - + - + - +
-   8 H   | 7 |   H   | 8 |   H   | 9 |   H
+   8 I   | 7 |   I   | 8 |   I   | 9 |   I
      + - + - + - + - + - + - + - + - + - +
-   9 H   |   |   H   |   |   H   |   |   H
+   9 I   |   |   I   |   |   I   |   |   I
      +===+===+===+===+===+===+===+===+===+
 
 
