@@ -54,14 +54,10 @@ sub load_from_string {
     push ( $self->columns->[$col], $new_cell );
     push ( $self->boxes->[$box],   $new_cell );
   }
-# print "We have populated the grid with the given clues, now we will removed the givens from their rows, columns and boxes.\n";
+# print "We have populated the grid with the given clues,
+# now we will remove the given's as possibilities from their rows, columns and boxes.\n";
   foreach ( grep { $_->value } @{$self->cells} ) {
-    $self->solved(1+$self->solved);
-#   print "found a cell with a value: "
-#     . $_->value . " at (r,c,b): "
-#     . ( $_->row + 1 ) . ", "
-#     . ( $_->column + 1 ) . ", "
-#     . ( $_->box + 1 ) . "\n";
+    $self->solved( 1 + $self->solved );
     $self->remove_my_solution_from_my_mates($_);
   }
 }
@@ -87,6 +83,88 @@ sub find_and_set_singletons {  # a singleton is a cell which has only one possib
     }
   }
   print "Found and set $progress cells this singletons search pass.\n\n";
+  return $progress;
+}
+
+sub find_and_set_lone_representatives {  # a lone_representative is only cell with a possible value in a cell cluster (row column or box)
+  my $self  = shift;
+  my $progress  = 0;
+  # Plan: foreach cluster, count the number of cells foreach unsolved value
+  # case 1) value has only one cell, this is a "lone representative" and may be assigned immediately
+  # case 2) value has two or three cells.  If these cells all reside in another cluster, this value may be removed as a possibility 
+  #         in that other cluster's other member cells
+  # case 3) naked pair    two   cells with the same two   possibilites put this one in it's own method
+  # case 4) naked triplet three cells with the same three possibilites put this one in it's own method as well
+  # Starting with case 2:
+  
+  print "Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):\n";
+  my ( $possibility_counts, $possible_value);
+  # CHECK BOXES FOR LONE REPRESENTATIVES
+  foreach my $box ( @{$self->boxes} ) {
+    foreach my $cell ( @{$box} ) {
+      if ( not $cell->value ) { # look for unsolved cells in this cluster
+        foreach $possible_value ( @{ $cell->possibilities } ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
+          push ( @{ $possibility_counts->{$possible_value} } , $cell );
+        }
+      }
+    }
+    # we now have a cell count of all possible values left in this box
+    # we search these counts for a 1, this represents a value that has only one cell in this box
+    # in which this value is still a possibility.
+    foreach $possible_value ( keys %{ $possibility_counts } ) {
+      if ( scalar ( @{ $possibility_counts->{$possible_value} } ) == 1 ) { # found a lone representative cell/value
+        my $lone_representative = $possibility_counts->{$possible_value}[0];
+        $lone_representative->value($possible_value);
+        $self->remove_my_solution_from_my_mates($lone_representative);
+        $progress++;
+      }
+    }
+  }
+
+  # CHECK ROWS FOR LONE REPRESENTATIVES
+  foreach my $row ( @{$self->rows} ) {
+    foreach my $cell ( @{$row} ) {
+      if ( not $cell->value ) { # look for unsolved cells in this cluster
+        foreach $possible_value ( @{ $cell->possibilities } ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
+          push ( @{ $possibility_counts->{$possible_value} } , $cell );
+        }
+      }
+    }
+    # we now have a cell count of all possible values left in this row
+    # we search these counts for a 1, this represents a value that has only one cell in this row
+    # in which this value is still a possibility.
+    foreach $possible_value ( keys %{ $possibility_counts } ) {
+      if ( scalar ( @{ $possibility_counts->{$possible_value} } ) == 1 ) { # found a lone representative cell/value
+        my $lone_representative = $possibility_counts->{$possible_value}[0];
+        $lone_representative->value($possible_value);
+        $self->remove_my_solution_from_my_mates($lone_representative);
+        $progress++;
+      }
+    }
+  }
+
+  # CHECK COLUMNS FOR LONE REPRESENTATIVES
+  foreach my $column ( @{$self->columns} ) {
+    foreach my $cell ( @{$column} ) {
+      if ( not $cell->value ) { # look for unsolved cells in this cluster
+        foreach $possible_value ( @{ $cell->possibilities } ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
+          push ( @{ $possibility_counts->{$possible_value} } , $cell );
+        }
+      }
+    }
+    # we now have a cell count of all possible values left in this column
+    # we search these counts for a 1, this represents a value that has only one cell in this column
+    # in which this value is still a possibility.
+    foreach $possible_value ( keys %{ $possibility_counts } ) {
+      if ( scalar ( @{ $possibility_counts->{$possible_value} } ) == 1 ) { # found a lone representative cell/value
+        my $lone_representative = $possibility_counts->{$possible_value}[0];
+        $lone_representative->value($possible_value);
+        $self->remove_my_solution_from_my_mates($lone_representative);
+        $progress++;
+      }
+    }
+  }
+  print "Found and set $progress cells this lone representatives search pass.\n\n";
   return $progress;
 }
 
