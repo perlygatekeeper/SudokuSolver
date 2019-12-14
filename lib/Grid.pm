@@ -7,6 +7,7 @@ use Cell;
 
 has 'difficulty'  => (isa => 'Difficulty', is => 'rw');
 has 'notes'       => (isa => 'String',     is => 'rw');
+has 'solved'      => (isa => 'Int',        is => 'rw');
 has 'rows'        => (isa => 'ArrayRef',   is => 'rw');
 has 'columns'     => (isa => 'ArrayRef',   is => 'rw');
 has 'boxes'       => (isa => 'ArrayRef',   is => 'rw');
@@ -26,6 +27,7 @@ has 'cells'       => (isa => 'ArrayRef',   is => 'rw');
 sub load_from_string {
   my($self,$string) = @_;
   my($cell) = 0;
+  $self->solved(0);
   $self->cells([]);
   $self->rows([[],[],[],[],[],[],[],[],[]]);
   $self->columns([[],[],[],[],[],[],[],[],[]]);
@@ -37,10 +39,12 @@ sub load_from_string {
 # print $self->columns->[0] . " <- column->[0]\n";
 # print $self->boxes   . " <- boxes\n";
   foreach ( split(//,$string) ) {
+    s/[^1-9]/0/; # Change any character not 1, 2, 3, 4, 5, 6, 7, 8 OR 9  TO A  '0'  Such as underscores, dashes, periods or spaces
     my($col) = ( $cell  % 9 );
     my($row) = int( $cell / 9 );
     my($box) = int( ( $cell % 9 ) / 3 ) + 3 * int ( int( $cell / 9 ) / 3 );
     my ($new_cell) =  Cell->new;
+    $self->solved(1+$self->solved);
     $new_cell->clue($_);
     $new_cell->row($row);    # print "Debug: " . $new_cell->row . " should be $row\n";
     $new_cell->column($col);
@@ -63,11 +67,11 @@ sub load_from_string {
 }
 
 sub find_and_set_singletons {  # a singleton is a cell which has only one possible value left
-  my($self) = @_;
+  my $self  = shift;
   my $progress = 0;
-  print "\nLooking for cells with only one possible value left:\n\n";
+  print "Looking for cells with only one possible value left:\n\n";
   foreach my $this_cell ( @{ $self->cells } ) {
-    # check if this cell has only one possibility left, and if so set it and clear it's row, column and box neighboors.
+    # check if this cell has only one possibility left, and if so set it and clear it's value from row, column and box neighboors.
     if ( $this_cell->possibilities->[0] == 1 ) {
       $progress++;
       my($value,) = grep { $_ != 0 } @{$this_cell->possibilities}[1..9];
@@ -82,6 +86,7 @@ sub find_and_set_singletons {  # a singleton is a cell which has only one possib
       $self->remove_my_solution_from_my_mates($this_cell);
     }
   }
+  print "Found and set $progress cells this singletons search pass.\n\n";
   return $progress;
 }
 

@@ -19,85 +19,39 @@ while (<DATA>) {
 my $puzzle = Grid->new;
 $puzzle->load_from_string($puzzle_string);
 
-# $puzzle = load('filename.txt');
+
 # $puzzle->out;
-$puzzle->pretty_print;
 
+my($this_cell);
+my($progress) = 1;
+# $puzzle->find_and_set_singletons;
 
-my( $this_cell, $progress );
-print "\nShowing status of all cells:\n\n";
-foreach $this_cell ( @{ $puzzle->cells } ) {
-  $this_cell->show_my_possibilities;
-}
+while ( $progress ) {
 
-print "\nLooking for cells with only one possible value left:\n\n";
-foreach $this_cell ( @{ $puzzle->cells } ) {
-  # check if this cell has only one possibility left, and if so set it and clear it's row, column and box neighboors.
-  if ( $this_cell->possibilities->[0] == 1 ) {
-    $progress++;
-    my($value,) = grep { $_ != 0 } @{$this_cell->possibilities}[1..9];
-    $this_cell->value($value);
-    print "Setting cell @ "
-      . ( $this_cell->row + 1 ) . ", "
-      . ( $this_cell->column + 1 ) . ", "
-      . ( $this_cell->box + 1 ) . " to "
-      . $this_cell->value
-      . "\n";
-    $this_cell->possibilities( [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] );
-    $puzzle->remove_my_solution_from_my_mates($this_cell);
+  # Singletons
+  while ( $progress = $puzzle->find_and_set_singletons ) {
+    print "\nSet $progress cells this pass.\n\n";
+    $puzzle->pretty_print;
+    print "\nShowing status of all cells:\n\n";
+    foreach $this_cell ( @{ $puzzle->cells } ) {
+      $this_cell->show_my_possibilities;
+    }
   }
+
+  # Lone Representatives
+  # Naked Pairs
+  # Naked Triplets
+  # XY Wings
+
 }
+
+exit; 
+
 $puzzle->pretty_print;
-print "\nSet $progress cells this pass.\n\n";
 foreach $this_cell ( @{ $puzzle->cells } ) {
   $this_cell->show_my_possibilities;
 }
 
-print "\nLooking for cells with only one possible value left:\n\n";
-foreach $this_cell ( @{ $puzzle->cells } ) {
-  # check if this cell has only one possibility left, and if so set it and clear it's row, column and box neighboors.
-  if ( $this_cell->possibilities->[0] == 1 ) {
-    $progress++;
-    my($value,) = grep { $_ != 0 } @{$this_cell->possibilities}[1..9];
-    $this_cell->value($value);
-    print "Setting cell @ "
-      . ( $this_cell->row + 1 ) . ", "
-      . ( $this_cell->column + 1 ) . ", "
-      . ( $this_cell->box + 1 ) . " to "
-      . $this_cell->value
-      . "\n";
-    $this_cell->possibilities( [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] );
-    $puzzle->remove_my_solution_from_my_mates($this_cell);
-  }
-}
-$puzzle->pretty_print;
-print "\nSet $progress cells this pass.\n\n";
-foreach $this_cell ( @{ $puzzle->cells } ) {
-  $this_cell->show_my_possibilities;
-}
-
-print "\nLooking for cells with only one possible value left:\n\n";
-foreach $this_cell ( @{ $puzzle->cells } ) {
-  # check if this cell has only one possibility left, and if so set it and clear it's row, column and box neighboors.
-  if ( $this_cell->possibilities->[0] == 1 ) {
-    $progress++;
-    my($value,) = grep { $_ != 0 } @{$this_cell->possibilities}[1..9];
-    $this_cell->value($value);
-    print "Setting cell @ "
-      . ( $this_cell->row + 1 ) . ", "
-      . ( $this_cell->column + 1 ) . ", "
-      . ( $this_cell->box + 1 ) . " to "
-      . $this_cell->value
-      . "\n";
-    $this_cell->possibilities( [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] );
-    $puzzle->remove_my_solution_from_my_mates($this_cell);
-  }
-}
-$puzzle->pretty_print;
-print "\nSet $progress cells this pass.\n\n";
-foreach $this_cell ( @{ $puzzle->cells } ) {
-  $this_cell->show_my_possibilities;
-}
 
 1;
 __END__
