@@ -55,7 +55,6 @@ sub show_my_possibilities {
   } else {
     print "Possibilities left: " . $self->possibilities->[0] . " -> ";
     print join( ', ', ( grep { $_ != 0 } @{ $self->possibilities }[1..9] ) );
-#   print join( ', ', @{$self->possibilities}[1..9] );
     print "\n";
   }
 }

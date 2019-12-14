@@ -26,17 +26,14 @@ my($this_cell);
 my($progress) = 1;
 # $puzzle->find_and_set_singletons;
 
-while ( $progress ) {
+while ( $puzzle->solved <= 80 and $progress ) {
 
   # Singletons
-  while ( $progress = $puzzle->find_and_set_singletons ) {
+  while ( $puzzle->solved <= 80 and $progress = $puzzle->find_and_set_singletons ) {
     print "So far we filled this many cells: " . $puzzle->solved . "\n";
     print "\nSet $progress cells this pass.\n\n";
     $puzzle->pretty_print;
-    print "\nShowing status of all cells:\n\n";
-    foreach $this_cell ( @{ $puzzle->cells } ) {
-      $this_cell->show_my_possibilities;
-    }
+    $puzzle->status;
   }
 
   # Lone Representatives
@@ -45,7 +42,13 @@ while ( $progress ) {
   # XY Wings
 
 }
-print "So far we filled this many cells: " . $puzzle->solved . "\n";
+if ( $puzzle->solved == 81 ) {
+  print "We have solved this puzzle.  Final solution is:\n";
+  print $_->value foreach ( @{$puzzle->cells} );
+  print "\n";
+} else {
+  printf "We were able to determine %d cells.\n", $puzzle->solved;
+}
 
 
 1;

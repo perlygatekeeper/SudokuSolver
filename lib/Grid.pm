@@ -69,7 +69,7 @@ sub load_from_string {
 sub find_and_set_singletons {  # a singleton is a cell which has only one possible value left
   my $self  = shift;
   my $progress = 0;
-  print "Looking for 'Singletons' cells with only one possible value left:\n\n";
+  print "Looking for Singletons (cells with only one possible value left):\n";
   foreach my $this_cell ( @{ $self->cells } ) {
     # check if this cell has only one possibility left, and if so set it and clear it's value from row, column and box neighboors.
     if ( $this_cell->possibilities->[0] == 1 ) {
@@ -77,18 +77,35 @@ sub find_and_set_singletons {  # a singleton is a cell which has only one possib
       $self->solved(1+$self->solved);
       my($value,) = grep { $_ != 0 } @{$this_cell->possibilities}[1..9];
       $this_cell->value($value);
-      print "Setting cell @ "
-        . ( $this_cell->row + 1 ) . ", "
-        . ( $this_cell->column + 1 ) . ", "
-        . ( $this_cell->box + 1 ) . " to "
-        . $this_cell->value
-        . "\n";
+      printf "Setting cell ( %d, %d, %d ) to %d\n"
+        , ( $this_cell->row + 1 )
+        , ( $this_cell->column + 1 )
+        , ( $this_cell->box + 1 )
+        , $this_cell->value;
       $this_cell->possibilities( [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] );
       $self->remove_my_solution_from_my_mates($this_cell);
     }
   }
   print "Found and set $progress cells this singletons search pass.\n\n";
   return $progress;
+}
+
+sub status {
+  my $self = shift;
+  print "Showing status of all cells:\n";
+  foreach my $cell ( @{$self->cells} ) {
+    printf "( %d, %d, %d ) ", ( 1 + $cell->row ), ( 1 + $cell->column ), ( 1 + $cell->box );
+    if ( $cell->value ) {
+      if ( $cell->given ) {
+        print "Given:    " . $cell->value . "\n";
+      } else {
+        print "Solved:   " . $cell->value . "\n";
+      }
+    } else {
+      printf "%d left -> " , $cell->possibilities->[0];
+      printf "%-27s\n", join( ', ', ( grep { $_ != 0 } @{ $cell->possibilities }[1..9] ) );
+    }
+  }
 }
 
 sub remove_my_solution_from_my_mates  {
