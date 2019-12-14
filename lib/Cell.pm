@@ -45,6 +45,7 @@ sub remove_possility {
 
 sub show_my_possibilities {
   my $self = shift;
+  printf "Cell at ( %d, %d, %d ) ", ( 1 + $self->row ), ( 1 + $self->column ), ( 1 + $self->box );
   if ( $self->value ) {
     if ( $self->given ) {
       print "Given:  " . $self->value . "\n";

@@ -66,7 +66,7 @@ sub find_and_set_singletons {  # a singleton is a cell which has only one possib
   my($self) = @_;
   my $progress = 0;
   print "\nLooking for cells with only one possible value left:\n\n";
-  foreach $this_cell ( @{ $puzzle->cells } ) {
+  foreach my $this_cell ( @{ $self->cells } ) {
     # check if this cell has only one possibility left, and if so set it and clear it's row, column and box neighboors.
     if ( $this_cell->possibilities->[0] == 1 ) {
       $progress++;
@@ -79,7 +79,7 @@ sub find_and_set_singletons {  # a singleton is a cell which has only one possib
         . $this_cell->value
         . "\n";
       $this_cell->possibilities( [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] );
-      $puzzle->remove_my_solution_from_my_mates($this_cell);
+      $self->remove_my_solution_from_my_mates($this_cell);
     }
   }
   return $progress;
