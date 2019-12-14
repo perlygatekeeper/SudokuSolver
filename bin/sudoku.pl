@@ -30,6 +30,7 @@ while ( $progress ) {
 
   # Singletons
   while ( $progress = $puzzle->find_and_set_singletons ) {
+    print "So far we filled this many cells: " . $puzzle->solved . "\n";
     print "\nSet $progress cells this pass.\n\n";
     $puzzle->pretty_print;
     print "\nShowing status of all cells:\n\n";
@@ -44,13 +45,7 @@ while ( $progress ) {
   # XY Wings
 
 }
-
-exit; 
-
-$puzzle->pretty_print;
-foreach $this_cell ( @{ $puzzle->cells } ) {
-  $this_cell->show_my_possibilities;
-}
+print "So far we filled this many cells: " . $puzzle->solved . "\n";
 
 
 1;

@@ -44,7 +44,6 @@ sub load_from_string {
     my($row) = int( $cell / 9 );
     my($box) = int( ( $cell % 9 ) / 3 ) + 3 * int ( int( $cell / 9 ) / 3 );
     my ($new_cell) =  Cell->new;
-    $self->solved(1+$self->solved);
     $new_cell->clue($_);
     $new_cell->row($row);    # print "Debug: " . $new_cell->row . " should be $row\n";
     $new_cell->column($col);
@@ -57,6 +56,7 @@ sub load_from_string {
   }
 # print "We have populated the grid with the given clues, now we will removed the givens from their rows, columns and boxes.\n";
   foreach ( grep { $_->value } @{$self->cells} ) {
+    $self->solved(1+$self->solved);
 #   print "found a cell with a value: "
 #     . $_->value . " at (r,c,b): "
 #     . ( $_->row + 1 ) . ", "
@@ -69,11 +69,12 @@ sub load_from_string {
 sub find_and_set_singletons {  # a singleton is a cell which has only one possible value left
   my $self  = shift;
   my $progress = 0;
-  print "Looking for cells with only one possible value left:\n\n";
+  print "Looking for 'Singletons' cells with only one possible value left:\n\n";
   foreach my $this_cell ( @{ $self->cells } ) {
     # check if this cell has only one possibility left, and if so set it and clear it's value from row, column and box neighboors.
     if ( $this_cell->possibilities->[0] == 1 ) {
       $progress++;
+      $self->solved(1+$self->solved);
       my($value,) = grep { $_ != 0 } @{$this_cell->possibilities}[1..9];
       $this_cell->value($value);
       print "Setting cell @ "
