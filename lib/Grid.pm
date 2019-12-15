@@ -70,7 +70,7 @@ sub find_and_set_singletons {  # a singleton is a cell which has only one possib
     # check if this cell has only one possibility left, and if so set it and clear it's value from row, column and box neighboors.
     if ( $this_cell->possibilities->[0] == 1 ) {
       $progress++;
-      $self->solved(1+$self->solved);
+      $self->solved( 1 + $self->solved );
       my($value,) = grep { $_ != 0 } @{$this_cell->possibilities}[1..9];
       $this_cell->value($value);
       printf "Setting cell ( %d, %d, %d ) to %d\n"
@@ -103,7 +103,13 @@ sub find_and_set_lone_representatives {  # a lone_representative is only cell wi
   foreach my $box ( @{$self->boxes} ) {
     foreach my $cell ( @{$box} ) {
       if ( not $cell->value ) { # look for unsolved cells in this cluster
-        foreach $possible_value ( @{ $cell->possibilities } ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
+#       printf " ->  counting possibilities in Box, cell ( %d, %d, %d ) found not to have a value.\n"
+#         , ( $cell->row + 1 )
+#         , ( $cell->column + 1 )
+#         , ( $cell->box + 1 );
+
+        foreach $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
+#         printf " -> -> pushing this cell onto array for $possible_value\n";
           push ( @{ $possibility_counts->{$possible_value} } , $cell );
         }
       }
@@ -113,10 +119,17 @@ sub find_and_set_lone_representatives {  # a lone_representative is only cell wi
     # in which this value is still a possibility.
     foreach $possible_value ( keys %{ $possibility_counts } ) {
       if ( scalar ( @{ $possibility_counts->{$possible_value} } ) == 1 ) { # found a lone representative cell/value
+        $progress++;
+        $self->solved( 1 + $self->solved );
         my $lone_representative = $possibility_counts->{$possible_value}[0];
         $lone_representative->value($possible_value);
+        $lone_representative->possibilities( [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] );
         $self->remove_my_solution_from_my_mates($lone_representative);
-        $progress++;
+        printf "Lone in Box    Setting cell ( %d, %d, %d ) to %d\n"
+          , ( $lone_representative->row + 1 )
+          , ( $lone_representative->column + 1 )
+          , ( $lone_representative->box + 1 )
+          , $possible_value;
       }
     }
   }
@@ -125,7 +138,7 @@ sub find_and_set_lone_representatives {  # a lone_representative is only cell wi
   foreach my $row ( @{$self->rows} ) {
     foreach my $cell ( @{$row} ) {
       if ( not $cell->value ) { # look for unsolved cells in this cluster
-        foreach $possible_value ( @{ $cell->possibilities } ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
+        foreach $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
           push ( @{ $possibility_counts->{$possible_value} } , $cell );
         }
       }
@@ -135,10 +148,17 @@ sub find_and_set_lone_representatives {  # a lone_representative is only cell wi
     # in which this value is still a possibility.
     foreach $possible_value ( keys %{ $possibility_counts } ) {
       if ( scalar ( @{ $possibility_counts->{$possible_value} } ) == 1 ) { # found a lone representative cell/value
+        $progress++;
+        $self->solved( 1 + $self->solved );
         my $lone_representative = $possibility_counts->{$possible_value}[0];
         $lone_representative->value($possible_value);
+        $lone_representative->possibilities( [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] );
         $self->remove_my_solution_from_my_mates($lone_representative);
-        $progress++;
+        printf "Lone in Row    Setting cell ( %d, %d, %d ) to %d\n"
+          , ( $lone_representative->row + 1 )
+          , ( $lone_representative->column + 1 )
+          , ( $lone_representative->box + 1 )
+          , $possible_value;
       }
     }
   }
@@ -147,7 +167,7 @@ sub find_and_set_lone_representatives {  # a lone_representative is only cell wi
   foreach my $column ( @{$self->columns} ) {
     foreach my $cell ( @{$column} ) {
       if ( not $cell->value ) { # look for unsolved cells in this cluster
-        foreach $possible_value ( @{ $cell->possibilities } ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
+        foreach $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
           push ( @{ $possibility_counts->{$possible_value} } , $cell );
         }
       }
@@ -157,14 +177,22 @@ sub find_and_set_lone_representatives {  # a lone_representative is only cell wi
     # in which this value is still a possibility.
     foreach $possible_value ( keys %{ $possibility_counts } ) {
       if ( scalar ( @{ $possibility_counts->{$possible_value} } ) == 1 ) { # found a lone representative cell/value
+        $progress++;
+        $self->solved( 1 + $self->solved );
         my $lone_representative = $possibility_counts->{$possible_value}[0];
         $lone_representative->value($possible_value);
+        $lone_representative->possibilities( [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] );
         $self->remove_my_solution_from_my_mates($lone_representative);
+        printf "Lone in Column Setting cell ( %d, %d, %d ) to %d\n"
+          , ( $lone_representative->row + 1 )
+          , ( $lone_representative->column + 1 )
+          , ( $lone_representative->box + 1 )
+          , $possible_value;
         $progress++;
       }
     }
   }
-  print "Found and set $progress cells this lone representatives search pass.\n\n";
+  print "Found and set $progress cells this lone representatives search pass.\n";
   return $progress;
 }
 
@@ -184,6 +212,31 @@ sub status {
       printf "%-27s\n", join( ', ', ( grep { $_ != 0 } @{ $cell->possibilities }[1..9] ) );
     }
   }
+}
+
+sub multi_column_status {
+  my $self = shift;
+  print "Showing status of all cells:\n";
+  my $lines = [];
+  my $line = 0;
+  foreach my $cell ( @{$self->cells} ) {
+    my $entry = '';
+    $entry .= sprintf "( %d, %d, %d ) ", ( 1 + $cell->row ), ( 1 + $cell->column ), ( 1 + $cell->box ); # 12 characters
+    if ( $cell->value ) {
+      if ( $cell->given ) {
+        $entry .= sprintf "Given:    %-27s", $cell->value; # 38 characters
+      } else {
+        $entry .= sprintf "Solved:   %-27s", $cell->value; # 38 characters
+      }
+    } else {
+      $entry .= sprintf "%d left -> " , $cell->possibilities->[0]; # 10 characters
+      $entry .= sprintf "%-27s", join( ', ', ( grep { $_ != 0 } @{ $cell->possibilities }[1..9] ) ); # 27 characters
+    }
+    # each column will be 12+10+27 = 50 characters wide
+#   print  "$line: " . ($line%27) . "\t$entry\n";
+    $lines->[($line++)%27] .= " $entry";
+  }
+  print "$_\n" foreach @$lines;
 }
 
 sub remove_my_solution_from_my_mates  {
@@ -257,6 +310,33 @@ sub pretty_print {
   my($self) = shift;
   my($format);
   $format .= "     1   2   3   4   5   6   7   8   9  \n";
+  $format .= "   +---+---+---+---+---+---+---+---+---+\n";
+  $format .= " 1 | %s ' %s ' %s | %s ' %s ' %s | %s ' %s ' %s |\n";
+  $format .= "   + - + - + - + - + - + - + - + - + - +\n";
+  $format .= " 2 | %s ' %s ' %s | %s ' %s ' %s | %s ' %s ' %s |\n";
+  $format .= "   + - + - + - + - + - + - + - + - + - +\n";
+  $format .= " 3 | %s ' %s ' %s | %s ' %s ' %s | %s ' %s ' %s |\n";
+  $format .= "   +---+---+---+---+---+---+---+---+---+\n";
+  $format .= " 4 | %s ' %s ' %s | %s ' %s ' %s | %s ' %s ' %s |\n";
+  $format .= "   + - + - + - + - + - + - + - + - + - +\n";
+  $format .= " 5 | %s ' %s ' %s | %s ' %s ' %s | %s ' %s ' %s |\n";
+  $format .= "   + - + - + - + - + - + - + - + - + - +\n";
+  $format .= " 6 | %s ' %s ' %s | %s ' %s ' %s | %s ' %s ' %s |\n";
+  $format .= "   +---+---+---+---+---+---+---+---+---+\n";
+  $format .= " 7 | %s ' %s ' %s | %s ' %s ' %s | %s ' %s ' %s |\n";
+  $format .= "   + - + - + - + - + - + - + - + - + - +\n";
+  $format .= " 8 | %s ' %s ' %s | %s ' %s ' %s | %s ' %s ' %s |\n";
+  $format .= "   + - + - + - + - + - + - + - + - + - +\n";
+  $format .= " 9 | %s ' %s ' %s | %s ' %s ' %s | %s ' %s ' %s |\n";
+  $format .= "   +---+---+---+---+---+---+---+---+---+\n";
+
+  printf $format, ( map { $_->value == 0 ? ' ' : $_->value } @{$self->cells} ) ;
+}
+
+1;
+__END__
+
+  $format .= "     1   2   3   4   5   6   7   8   9  \n";
   $format .= "   +===+===+===+===+===+===+===+===+===+\n";
   $format .= " 1 I %s | %s | %s I %s | %s | %s I %s | %s | %s I\n";
   $format .= "   + - + - + - + - + - + - + - + - + - +\n";
@@ -276,11 +356,6 @@ sub pretty_print {
   $format .= "   + - + - + - + - + - + - + - + - + - +\n";
   $format .= " 9 I %s | %s | %s I %s | %s | %s I %s | %s | %s I\n";
   $format .= "   +===+===+===+===+===+===+===+===+===+\n";
-  printf $format, ( map { $_->value == 0 ? ' ' : $_->value } @{$self->cells} ) ;
-}
-
-1;
-__END__
 
        1   2   3   4   5   6   7   8   9  
      +===+===+===+===+===+===+===+===+===+
