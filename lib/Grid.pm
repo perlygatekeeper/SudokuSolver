@@ -96,29 +96,17 @@ sub find_and_set_lone_representatives {  # a lone_representative is only cell wi
   # case 3) naked pair    two   cells with the same two   possibilites put this one in it's own method
   # case 4) naked triplet three cells with the same three possibilites put this one in it's own method as well
   # Starting with case 2:
-  
+
   print "Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):\n";
+  my $possibility_counts = $self->possibilities_hash;
   my ( $possible_value);
   # CHECK BOXES FOR LONE REPRESENTATIVES
   foreach my $box ( @{$self->boxes} ) {
     my $possibility_counts = {};
-    foreach my $cell ( @{$box} ) {
-      if ( not $cell->value ) { # look for unsolved cells in this cluster
-#       printf " ->  counting possibilities in Box, cell ( %d, %d, %d ) found not to have a value.\n"
-#         , ( $cell->row + 1 )
-#         , ( $cell->column + 1 )
-#         , ( $cell->box + 1 );
-
-        foreach $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
-#         printf " -> -> pushing this cell onto array for $possible_value\n";
-          push ( @{ $possibility_counts->{$possible_value} } , $cell );
-        }
-      }
-    }
     # we now have a cell count of all possible values left in this box
     # we search these counts for a 1, this represents a value that has only one cell in this box
     # in which this value is still a possibility.
-    foreach $possible_value ( keys %{ $possibility_counts } ) {
+    foreach $possible_value ( grep { $_ =~ /box/ } keys %{ $possibility_counts } ) {
       if ( scalar ( @{ $possibility_counts->{$possible_value} } ) == 1 ) { # found a lone representative cell/value
         $progress++;
         $self->solved( 1 + $self->solved );
@@ -136,19 +124,10 @@ sub find_and_set_lone_representatives {  # a lone_representative is only cell wi
   }
 
   # CHECK ROWS FOR LONE REPRESENTATIVES
-  foreach my $row ( @{$self->rows} ) {
-    my $possibility_counts = {};
-    foreach my $cell ( @{$row} ) {
-      if ( not $cell->value ) { # look for unsolved cells in this cluster
-        foreach $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
-          push ( @{ $possibility_counts->{$possible_value} } , $cell );
-        }
-      }
-    }
     # we now have a cell count of all possible values left in this row
     # we search these counts for a 1, this represents a value that has only one cell in this row
     # in which this value is still a possibility.
-    foreach $possible_value ( keys %{ $possibility_counts } ) {
+    foreach $possible_value ( grep { $_ =~ /row/ } keys %{ $possibility_counts } ) {
       if ( scalar ( @{ $possibility_counts->{$possible_value} } ) == 1 ) { # found a lone representative cell/value
         $progress++;
         $self->solved( 1 + $self->solved );
@@ -167,21 +146,10 @@ sub find_and_set_lone_representatives {  # a lone_representative is only cell wi
 
   # CHECK COLUMNS FOR LONE REPRESENTATIVES
   foreach my $column ( @{$self->columns} ) {
-#   my $column_id;
-    my $possibility_counts = {};
-    foreach my $cell ( @{$column} ) {
-#     $column_id = 1 + $cell->column;
-      if ( not $cell->value ) { # look for unsolved cells in this cluster
-        foreach $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
-          push ( @{ $possibility_counts->{$possible_value} } , $cell );
-        }
-      }
-    }
     # we now have a cell count of all possible values left in this column
     # we search these counts for a 1, this represents a value that has only one cell in this column
     # in which this value is still a possibility.
-    foreach $possible_value ( keys %{ $possibility_counts } ) {
-#     print "LR in column $column_id: possible_value is $possible_value, and cell count is " .  @{ $possibility_counts->{$possible_value} } . "\n";
+    foreach $possible_value ( grep { $_ =~ /col/ } keys %{ $possibility_counts } ) {
       if ( scalar ( @{ $possibility_counts->{$possible_value} } ) == 1 ) { # found a lone representative cell/value
         $progress++;
         $self->solved( 1 + $self->solved );
@@ -224,7 +192,36 @@ sub find_naked_pairs {
 sub find_imaginary_values {
   my $self  = shift;
   my $progress;
+  my $possibility_counts = $self->possibilities_hash;
+
   return $progress;
+}
+
+sub possibilities_hash {
+  my $self  = shift;
+  my $possibility_counts = {};
+  foreach my $row ( @{$self->rows} ) {
+    if ( not $cell->value ) { # look for unsolved cells in this cluster
+      foreach $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
+        push ( @{ $possibility_counts->{"row:" .$possible_value} } , $cell );
+      }
+    }
+  }
+  foreach my $column ( @{$self->column} ) {
+    if ( not $cell->value ) { # look for unsolved cells in this cluster
+      foreach $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
+        push ( @{ $possibility_counts->{"col:" .$possible_value} } , $cell );
+      }
+    }
+  }
+  foreach my $box ( @{$self->boxes } ) {
+    if ( not $cell->value ) { # look for unsolved cells in this cluster
+      foreach $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
+        push ( @{ $possibility_counts->{"box:" .$possible_value} } , $cell );
+      }
+    }
+  }
+  return $possibility_counts;
 }
 
 sub remove_my_solution_from_my_mates  {
