@@ -98,9 +98,10 @@ sub find_and_set_lone_representatives {  # a lone_representative is only cell wi
   # Starting with case 2:
   
   print "Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):\n";
-  my ( $possibility_counts, $possible_value);
+  my ( $possible_value);
   # CHECK BOXES FOR LONE REPRESENTATIVES
   foreach my $box ( @{$self->boxes} ) {
+    my $possibility_counts = {};
     foreach my $cell ( @{$box} ) {
       if ( not $cell->value ) { # look for unsolved cells in this cluster
 #       printf " ->  counting possibilities in Box, cell ( %d, %d, %d ) found not to have a value.\n"
@@ -136,6 +137,7 @@ sub find_and_set_lone_representatives {  # a lone_representative is only cell wi
 
   # CHECK ROWS FOR LONE REPRESENTATIVES
   foreach my $row ( @{$self->rows} ) {
+    my $possibility_counts = {};
     foreach my $cell ( @{$row} ) {
       if ( not $cell->value ) { # look for unsolved cells in this cluster
         foreach $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
@@ -165,7 +167,10 @@ sub find_and_set_lone_representatives {  # a lone_representative is only cell wi
 
   # CHECK COLUMNS FOR LONE REPRESENTATIVES
   foreach my $column ( @{$self->columns} ) {
+#   my $column_id;
+    my $possibility_counts = {};
     foreach my $cell ( @{$column} ) {
+#     $column_id = 1 + $cell->column;
       if ( not $cell->value ) { # look for unsolved cells in this cluster
         foreach $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
           push ( @{ $possibility_counts->{$possible_value} } , $cell );
@@ -176,6 +181,7 @@ sub find_and_set_lone_representatives {  # a lone_representative is only cell wi
     # we search these counts for a 1, this represents a value that has only one cell in this column
     # in which this value is still a possibility.
     foreach $possible_value ( keys %{ $possibility_counts } ) {
+#     print "LR in column $column_id: possible_value is $possible_value, and cell count is " .  @{ $possibility_counts->{$possible_value} } . "\n";
       if ( scalar ( @{ $possibility_counts->{$possible_value} } ) == 1 ) { # found a lone representative cell/value
         $progress++;
         $self->solved( 1 + $self->solved );
@@ -193,6 +199,23 @@ sub find_and_set_lone_representatives {  # a lone_representative is only cell wi
     }
   }
   print "Found and set $progress cells this lone representatives search pass.\n";
+  return $progress;
+}
+
+sub find_naked_pairs {
+  my $self = shift;
+  my $progress;
+  print "Looking for Naked Pairs, any two cells with the same\n";
+  print "pair of possible values that exist in the same cluster [row column or box]):\n";
+  foreach my $box ( @{$self->boxes} ) {
+    my $unsolved_cells = {};
+  }
+  foreach my $column ( @{$self->column} ) {
+  }
+  foreach my $row ( @{$self->rows} ) {
+  }
+
+  print "Found and processed $progress naked pairs.\n";
   return $progress;
 }
 
@@ -411,3 +434,44 @@ __END__
      Box             -> number from 1 - 9, to which box    does this cell belong    
      Row             -> number from 1 - 9, to which row    does this cell belong    
      Column          -> number from 1 - 9, to which column does this cell belong    
+
+
+       1       2       3       4       5       6       7       8       9       
+   +-------+-------+-------+-------+-------+-------+-------+-------+-------+   
+   |       '       '       |       '       '       |       '       '       |   
+ 1 |       '       '       |       '       '       |       '       '       |   
+   |       '       '       |       '       '       |       '       '       |   
+   + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +   
+   |       '       '       |       '       '       |       '       '       |   
+ 2 |       '       '       |       '       '       |       '       '       |   
+   |       '       '       |       '       '       |       '       '       |   
+   + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +   
+   |       '       '       |       '       '       |       '       '       |   
+ 3 |       '       '       |       '       '       |       '       '       |   
+   |       '       '       |       '       '       |       '       '       |   
+   +-------+-------+-------+-------+-------+-------+-------+-------+-------+   
+   |       '       '       |       '       '       |       '       '       |   
+ 4 |       '       '       |       '       '       |       '       '       |   
+   |       '       '       |       '       '       |       '       '       |   
+   + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +   
+   |       '       '       |       '       '       |       '       '       |   
+ 5 |       '       '       |       '       '       |       '       '       |   
+   |       '       '       |       '       '       |       '       '       |   
+   + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +   
+   |       '       '       |       '       '       |       '       '       |   
+ 6 |       '       '       |       '       '       |       '       '       |   
+   |       '       '       |       '       '       |       '       '       |   
+   +-------+-------+-------+-------+-------+-------+-------+-------+-------+   
+   |       '       '       |       '       '       |       '       '       |   
+ 7 |       '       '       |       '       '       |       '       '       |   
+   |       '       '       |       '       '       |       '       '       |   
+   + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +   
+   |       '       '       |       '       '       |       '       '       |   
+ 8 |       '       '       |       '       '       |       '       '       |   
+   |       '       '       |       '       '       |       '       '       |   
+   + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +   
+   |       '       '       |       '       '       |       '       '       |   
+ 9 |       '       '       |       '       '       |       '       '       |   
+   |       '       '       |       '       '       |       '       '       |   
+   +-------+-------+-------+-------+-------+-------+-------+-------+-------+   
+
