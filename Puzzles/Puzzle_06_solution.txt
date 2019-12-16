@@ -1,5 +1,6 @@
+puzzle_string: 100920000524010000000000070050008102000000000402700090060000000000030945000071006
 ==== Pass 1 ====
-Looking for Singletons (cells with only one possible value left):
+Looking for Singletons (cells with only one possible value left) :
 Found and set 0 cells this singletons search pass.
 
 Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):
@@ -8,8 +9,8 @@ Lone in Box    Setting cell ( 3, 9, 3 ) to 1
 Lone in Box    Setting cell ( 5, 4, 5 ) to 1
 Lone in Box    Setting cell ( 9, 2, 7 ) to 4
 Lone in Box    Setting cell ( 7, 8, 9 ) to 1
-Lone in Row    Setting cell ( 2, 9, 3 ) to 9
 Lone in Row    Setting cell ( 2, 6, 2 ) to 7
+Lone in Row    Setting cell ( 2, 9, 3 ) to 9
 Lone in Row    Setting cell ( 5, 6, 5 ) to 2
 Lone in Row    Setting cell ( 6, 2, 4 ) to 1
 Lone in Row    Setting cell ( 8, 3, 7 ) to 1
@@ -71,7 +72,7 @@ Looking for Lone representatives (possible value's present in only one cell of a
 Found and set 0 cells this lone representatives search pass.
 ==== End Pass 1 (progress is 14) ====
 ==== Pass 2 ====
-Looking for Singletons (cells with only one possible value left):
+Looking for Singletons (cells with only one possible value left) :
 Setting cell ( 8, 6, 8 ) to 6
 Found and set 1 cells this singletons search pass.
 
@@ -126,17 +127,56 @@ Showing status of all cells:
  ( 3, 9, 3 ) Solved:   1                           ( 6, 9, 6 ) 2 left -> 3, 8                        ( 9, 9, 9 ) Given:    6                          
 ---- end singletons method ----
 
-Looking for Singletons (cells with only one possible value left):
+Looking for Singletons (cells with only one possible value left) :
 Found and set 0 cells this singletons search pass.
 
 Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):
 Found and set 0 cells this lone representatives search pass.
 ==== End Pass 2 (progress is 1) ====
 ==== Pass 3 ====
-Looking for Singletons (cells with only one possible value left):
+Looking for Singletons (cells with only one possible value left) :
 Found and set 0 cells this singletons search pass.
 
 Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):
 Found and set 0 cells this lone representatives search pass.
 ==== End Pass 3 (progress is 0) ====
 We were able to determine 37 cells.
+                                                                               
+        1       2       3       4       5       6       7       8       9      
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '     3 '     3 |       '       '     3 |     3 '     3 '     3 |  
+  1 |   1   '       '     6 |   9   '   2   ' 4 5   | 4 5 6 '   5 6 ' 4     |  
+    |       ' 7 8   ' 7 8   |       '       '       |   8   '   8   '   8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |     3 '       '       |     3 '     3 '       |  
+  2 |   5   '   2   '   4   |     6 '   1   '   7   |     6 '     6 '   9   |  
+    |       '       '       |   8   '       '       |   8   '   8   '       |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |     3 '     3 '     3 |     3 '       '     3 |       '       '       |  
+  3 |     6 '       '     6 | 4 5 6 ' 4 5 6 ' 4 5   |   2   '   7   '   1   |  
+    |   8 9 '   8 9 '   8 9 |   8   '   8   '       |       '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |     3 '       '     3 |     3 '       '       |       '     3 '       |  
+  4 |     6 '   5   '     6 | 4   6 ' 4   6 '   8   |   1   '     6 '   2   |  
+    | 7   9 '       ' 7   9 |       '     9 '       |       '       '       |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |     3 '     3 '     3 |       '       '       |     3 '     3 '     3 |  
+  5 |     6 '       '     6 |   1   ' 4 5 6 '   2   | 4 5 6 '   5 6 ' 4     |  
+    | 7 8 9 ' 7 8 9 ' 7 8 9 |       '     9 '       | 7 8   '   8   ' 7 8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '     3 |     3 '       '     3 |  
+  6 |   4   '   1   '   2   |   7   '   5 6 '   5   |   5 6 '   9   '       |  
+    |       '       '       |       '       '       |   8   '       '   8   |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |   2 3 '       '     3 |   2   '       '       |     3 '       '     3 |  
+  7 |       '   6   '   5   | 4 5   ' 4 5   '   9   |       '   1   '       |  
+    | 7 8   '       ' 7 8   |   8   '   8   '       | 7 8   '       ' 7 8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |   2   '       '       |   2   '       '       |       '       '       |  
+  8 |       '       '   1   |       '   3   '   6   |   9   '   4   '   5   |  
+    | 7 8   ' 7 8   '       |   8   '       '       |       '       '       |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |     3 '       '     3 |       '       '       |     3 '       '       |  
+  9 |       '   4   '   5   |   5   '   7   '   1   |       '   2   '   6   |  
+    |   8 9 '       '   8 9 |   8   '       '       |   8   '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  

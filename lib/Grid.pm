@@ -65,7 +65,7 @@ sub load_from_string {
 sub find_and_set_singletons {  # a singleton is a cell which has only one possible value left
   my $self  = shift;
   my $progress = 0;
-  print "Looking for Singletons (cells with only one possible value left):\n";
+  print "Looking for Singletons (cells with only one possible value left) :\n";
   foreach my $this_cell ( @{ $self->cells } ) {
     # check if this cell has only one possibility left, and if so set it and clear it's value from row, column and box neighboors.
     if ( $this_cell->possibilities->[0] == 1 ) {
@@ -219,65 +219,26 @@ sub find_naked_pairs {
   return $progress;
 }
 
-sub status {
-  my $self = shift;
-  print "Showing status of all cells:\n";
-  foreach my $cell ( @{$self->cells} ) {
-    printf "( %d, %d, %d ) ", ( 1 + $cell->row ), ( 1 + $cell->column ), ( 1 + $cell->box );
-    if ( $cell->value ) {
-      if ( $cell->given ) {
-        print "Given:    " . $cell->value . "\n";
-      } else {
-        print "Solved:   " . $cell->value . "\n";
-      }
-    } else {
-      printf "%d left -> " , $cell->possibilities->[0];
-      printf "%-27s\n", join( ', ', ( grep { $_ != 0 } @{ $cell->possibilities }[1..9] ) );
-    }
-  }
-}
-
-sub multi_column_status {
-  my $self = shift;
-  print "Showing status of all cells:\n";
-  my $lines = [];
-  my $line = 0;
-  foreach my $cell ( @{$self->cells} ) {
-    my $entry = '';
-    $entry .= sprintf "( %d, %d, %d ) ", ( 1 + $cell->row ), ( 1 + $cell->column ), ( 1 + $cell->box ); # 12 characters
-    if ( $cell->value ) {
-      if ( $cell->given ) {
-        $entry .= sprintf "Given:    %-27s", $cell->value; # 38 characters
-      } else {
-        $entry .= sprintf "Solved:   %-27s", $cell->value; # 38 characters
-      }
-    } else {
-      $entry .= sprintf "%d left -> " , $cell->possibilities->[0]; # 10 characters
-      $entry .= sprintf "%-27s", join( ', ', ( grep { $_ != 0 } @{ $cell->possibilities }[1..9] ) ); # 27 characters
-    }
-    # each column will be 12+10+27 = 50 characters wide
-#   print  "$line: " . ($line%27) . "\t$entry\n";
-    $lines->[($line++)%27] .= " $entry";
-  }
-  print "$_\n" foreach @$lines;
+# An imaginary value is a value whose only possible locations in one cluster are all exclusively in a single cluster of a different kind 
+# See see the notes_imaginary_values.txt
+sub find_imaginary_values {
+  my $self  = shift;
+  my $progress;
+  return $progress;
 }
 
 sub remove_my_solution_from_my_mates  {
   my($self,$cell) = @_;
   my($value) = $cell->value;
   foreach ( @{ $self->row_mates_of($cell) } ) {
-#   print 'r ';
     $_->remove_possility($value);
   }
   foreach ( @{ $self->column_mates_of($cell) } ) {
-#   print 'c ';
     $_->remove_possility($value);
   }
   foreach ( @{ $self->box_mates_of($cell) } ) {
-#   print 'b ';
     $_->remove_possility($value);
   }
-# print "\n";
 }
 
 sub row_mates_of {  # return an array ref to an array containing all the other cells on my row that aren't me 
@@ -309,6 +270,7 @@ sub unsolved_cells {
   my($self) = shift;
   my $unsolved = [ ];
   push ( @{$unsolved}, grep { not $_->value } @{$self->cells} ) ;
+# print "Found " . scalar @{$unsolved} . " unsolved cells.\n";
   return $unsolved;
 }
 
@@ -316,9 +278,55 @@ sub solved_cells {
   my($self) = shift;
   my $solved = [ ];
   push ( @{$solved}, grep { $_->value } @{$self->cells} ) ;
+# print "Found " . scalar @{$solved} . " solved cells.\n";
   return $solved;
 }
 
+# Print status of all the cells
+sub status {
+  my $self = shift;
+  print "Showing status of all cells:\n";
+  foreach my $cell ( @{$self->cells} ) {
+    printf "( %d, %d, %d ) ", ( 1 + $cell->row ), ( 1 + $cell->column ), ( 1 + $cell->box );
+    if ( $cell->value ) {
+      if ( $cell->given ) {
+        print "Given:    " . $cell->value . "\n";
+      } else {
+        print "Solved:   " . $cell->value . "\n";
+      }
+    } else {
+      printf "%d left -> " , $cell->possibilities->[0];
+      printf "%-27s\n", join( ', ', ( grep { $_ != 0 } @{ $cell->possibilities }[1..9] ) );
+    }
+  }
+}
+
+# Print status of all the cells in a 3 column outputs
+sub multi_column_status {
+  my $self = shift;
+  print "Showing status of all cells:\n";
+  my $lines = [];
+  my $line = 0;
+  foreach my $cell ( @{$self->cells} ) {
+    my $entry = '';
+    $entry .= sprintf "( %d, %d, %d ) ", ( 1 + $cell->row ), ( 1 + $cell->column ), ( 1 + $cell->box ); # 12 characters
+    if ( $cell->value ) {
+      if ( $cell->given ) {
+        $entry .= sprintf "Given:    %-27s", $cell->value; # 38 characters
+      } else {
+        $entry .= sprintf "Solved:   %-27s", $cell->value; # 38 characters
+      }
+    } else {
+      $entry .= sprintf "%d left -> " , $cell->possibilities->[0]; # 10 characters
+      $entry .= sprintf "%-27s", join( ', ', ( grep { $_ != 0 } @{ $cell->possibilities }[1..9] ) ); # 27 characters
+    }
+    # each column will be 12+10+27 = 50 characters wide
+    $lines->[($line++)%27] .= " $entry";
+  }
+  print "$_\n" foreach @$lines;
+}
+
+# Simplest printout
 sub out {
   my($self) = shift;
   for ( my($r) = 0; $r <= 8; $r++ ) {
@@ -329,6 +337,7 @@ sub out {
   }
 }
 
+# Prettier printout
 sub pretty_print {
   my($self) = shift;
   my($format);
@@ -351,9 +360,73 @@ sub pretty_print {
   $format .= " 8 | %s ' %s ' %s | %s ' %s ' %s | %s ' %s ' %s |\n";
   $format .= "   + - + - + - + - + - + - + - + - + - +\n";
   $format .= " 9 | %s ' %s ' %s | %s ' %s ' %s | %s ' %s ' %s |\n";
-  $format .= "   +---+---+---+---+---+---+---+---+---+\n";
+    $format .= "   +---+---+---+---+---+---+---+---+---+\n";
+ 
+  printf $format, ( map { $_->value == 0 ?  ' ' : $_->value } @{$self->cells} ) ;
+}
 
-  printf $format, ( map { $_->value == 0 ? ' ' : $_->value } @{$self->cells} ) ;
+# Best and most complete printout
+sub big_print  {
+  my($self) = shift;
+  my $grid = [];
+  #        ( ( $col + 1 ) * 8 ) 
+  #                        1         2         3         4         5         6         7        
+  #              0123456789012345678901234567890123456789012345678901234567890123456789012345678
+  $grid->[ 0] = "                                                                               "; #  0   center of cell is ( $row * 4 )
+  $grid->[ 1] = "        1       2       3       4       5       6       7       8       9      "; #  1  
+  $grid->[ 2] = "    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  "; #  2      __________ row ______________ 
+  $grid->[ 3] = "    |       '       '       |       '       '       |       '       '       |  "; #  3      int ( ( $val - 1 ) / 3 )  - 1 
+  $grid->[ 4] = "  1 |       '       '       |       '       '       |       '       '       |  "; #  4   1:         0                  -1 
+  $grid->[ 5] = "    |       '       '       |       '       '       |       '       '       |  "; #  5   2:         0                  -1 
+  $grid->[ 6] = "    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  "; #  6   3:         0                  -1 
+  $grid->[ 7] = "    |       '       '       |       '       '       |       '       '       |  "; #  7   4:         1                   0 
+  $grid->[ 8] = "  2 |       '       '       |       '       '       |       '       '       |  "; #  8   5:         1                   0 
+  $grid->[ 9] = "    |       '       '       |       '       '       |       '       '       |  "; #  9   6:         1                   0 
+  $grid->[10] = "    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  "; # 10   7:         2                   1 
+  $grid->[11] = "    |       '       '       |       '       '       |       '       '       |  "; # 11   8:         2                   1 
+  $grid->[12] = "  3 |       '       '       |       '       '       |       '       '       |  "; # 12   9:         2                   1 
+  $grid->[13] = "    |       '       '       |       '       '       |       '       '       |  "; # 13 
+  $grid->[14] = "    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  "; # 14   _____________ col ______________
+  $grid->[15] = "    |       '       '       |       '       '       |       '       '       |  "; # 15   ( ( ( $val - 1 ) % 3 ) - 1 ) * 2
+  $grid->[16] = "  4 |       '       '       |       '       '       |       '       '       |  "; # 16   1:     0                -1    -2
+  $grid->[17] = "    |       '       '       |       '       '       |       '       '       |  "; # 17   2:     1                 0     0
+  $grid->[18] = "    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  "; # 18   3:     2                 1     2
+  $grid->[19] = "    |       '       '       |       '       '       |       '       '       |  "; # 19   4:     0                -1    -2
+  $grid->[20] = "  5 |       '       '       |       '       '       |       '       '       |  "; # 20   5:     1                 0     0
+  $grid->[21] = "    |       '       '       |       '       '       |       '       '       |  "; # 21   6:     2                 1     2
+  $grid->[22] = "    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  "; # 22   7:     0                -1    -2
+  $grid->[23] = "    |       '       '       |       '       '       |       '       '       |  "; # 23   8:     1                 0     0
+  $grid->[24] = "  6 |       '       '       |       '       '       |       '       '       |  "; # 24   9:     2                 1     2
+  $grid->[25] = "    |       '       '       |       '       '       |       '       '       |  "; # 25 
+  $grid->[26] = "    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  "; # 26 
+  $grid->[27] = "    |       '       '       |       '       '       |       '       '       |  "; # 27 
+  $grid->[28] = "  7 |       '       '       |       '       '       |       '       '       |  "; # 28 
+  $grid->[29] = "    |       '       '       |       '       '       |       '       '       |  "; # 29 
+  $grid->[30] = "    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  "; # 30 
+  $grid->[31] = "    |       '       '       |       '       '       |       '       '       |  "; # 31 
+  $grid->[32] = "  8 |       '       '       |       '       '       |       '       '       |  "; # 32 
+  $grid->[33] = "    |       '       '       |       '       '       |       '       '       |  "; # 33 
+  $grid->[34] = "    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  "; # 34 
+  $grid->[35] = "    |       '       '       |       '       '       |       '       '       |  "; # 35 
+  $grid->[36] = "  9 |       '       '       |       '       '       |       '       '       |  "; # 36 
+  $grid->[37] = "    |       '       '       |       '       '       |       '       '       |  "; # 37 
+  $grid->[38] = "    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  "; # 38 
+ 
+   foreach my $cell ( @{ $self->solved_cells } ) {
+    substr( $grid->[ ( $cell->row + 1 ) * 4 ],
+            ( ( $cell->column + 1 ) * 8 ),
+            1, $cell->value);
+  }
+  
+  foreach my $cell ( @{ $self->unsolved_cells } ) {
+    foreach my $value ( grep { $_ } ( @{$cell->possibilities}[1..9] ) ) {
+      substr( $grid->[ ( ( $cell->row + 1 ) * 4 )   +   int ( ( $value - 1 ) / 3 ) - 1 ],
+              ( ( $cell->column + 1 ) * 8 ) + ( ( ( $value - 1 ) % 3 ) - 1 ) * 2,
+              1, $value);
+      }
+  }
+
+  print "$_\n" foreach ( @{ $grid } );
 }
 
 1;
@@ -435,47 +508,33 @@ __END__
      Row             -> number from 1 - 9, to which row    does this cell belong    
      Column          -> number from 1 - 9, to which column does this cell belong    
 
-my $grid;
-#        ( ( $col + 1 ) * 8 ) 
-#                   1         2         3         4         5         6         7         8
-#         012345678901234567890123456789012345678901234567890123456789012345678901234567890
-$grid  = "                                                                               "; #  0   center of cell is ( $row * 4 )
-$grid .= "        1       2       3       4       5       6       7       8       9      "; #  1
-$grid .= "    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  "; #  2      _____________ row ___________   __________ col _________
-$grid .= "    |       '       '       |       '       '       |       '       '       |  "; #  3      int ( ( $col - 1 ) / 3 )  - 1   ( ( ( $col - 1 ) % 3 ) - 1 ) * 2
-$grid .= "  1 |       '       '       |       '       '       |       '       '       |  "; #  4   1:  0                         -1          0                -1    -2
-$grid .= "    |       '       '       |       '       '       |       '       '       |  "; #  5   2:  0                         -1          1                 0     0
-$grid .= "    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  "; #  6   3:  0                         -1          2                 1     2
-$grid .= "    |       '       '       |       '       '       |       '       '       |  "; #  7   4:  1                          0          0                -1    -2
-$grid .= "  2 |       '       '       |       '       '       |       '       '       |  "; #  8   5:  1                          0          1                 0     0
-$grid .= "    |       '       '       |       '       '       |       '       '       |  "; #  9   6:  1                          0          2                 1     2
-$grid .= "    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  "; # 10   7:  2                          1          0                -1    -2
-$grid .= "    |       '       '       |       '       '       |       '       '       |  "; # 11   8:  2                          1          1                 0     0
-$grid .= "  3 |       '       '       |       '       '       |       '       '       |  "; # 12   9:  2                          1          2                 1     2
-$grid .= "    |       '       '       |       '       '       |       '       '       |  "; # 13
-$grid .= "    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  "; # 14
-$grid .= "    |       '       '       |       '       '       |       '       '       |  "; # 15
-$grid .= "  4 |       '       '       |       '       '       |       '       '       |  "; # 16
-$grid .= "    |       '       '       |       '       '       |       '       '       |  "; # 17
-$grid .= "    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  "; # 18
-$grid .= "    |       '       '       |       '       '       |       '       '       |  "; # 19
-$grid .= "  5 |       '       '       |       '       '       |       '       '       |  "; # 20
-$grid .= "    |       '       '       |       '       '       |       '       '       |  "; # 21
-$grid .= "    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  "; # 22
-$grid .= "    |       '       '       |       '       '       |       '       '       |  "; # 23
-$grid .= "  6 |       '       '       |       '       '       |       '       '       |  "; # 24
-$grid .= "    |       '       '       |       '       '       |       '       '       |  "; # 25
-$grid .= "    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  "; # 26
-$grid .= "    |       '       '       |       '       '       |       '       '       |  "; # 27
-$grid .= "  7 |       '       '       |       '       '       |       '       '       |  "; # 28
-$grid .= "    |       '       '       |       '       '       |       '       '       |  "; # 29
-$grid .= "    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  "; # 30
-$grid .= "    |       '       '       |       '       '       |       '       '       |  "; # 31
-$grid .= "  8 |       '       '       |       '       '       |       '       '       |  "; # 32
-$grid .= "    |       '       '       |       '       '       |       '       '       |  "; # 33
-$grid .= "    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  "; # 34
-$grid .= "    |       '       '       |       '       '       |       '       '       |  "; # 35
-$grid .= "  9 |       '       '       |       '       '       |       '       '       |  "; # 36
-$grid .= "    |       '       '       |       '       '       |       '       '       |  "; # 37
-$grid .= "    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  "; # 38
+
+     substr EXPR,OFFSET,LENGTH,REPLACEMENT
+     substr EXPR,OFFSET,LENGTH
+     substr EXPR,OFFSET
+
+First character is at offset 0
+
+OFFSET is negative   == that far from the end of the string.
+no LENGTH            == everything to the end of the string.
+LENGTH is negative   == leaves that many characters off the end of the string.
+
+To keep the string the same length you may need to pad
+or chop your value using "sprintf".
+
+
+OFFSET and LENGTH partly outside, only part returned.
+OFFSET and LENGTH completely outside, UNDEF returned.
+
+Here's an example showing the behavior for boundary cases:
+
+  my $name = 'fred';
+  substr($name, 4) = 'dy';       # $name is now 'freddy'
+  my $null = substr $name, 6, 2; # returns '' (no warning)
+  my $oops = substr $name, 7;    # returns undef, with warning
+  substr($name, 7) = 'gap';      # fatal error
+
+  my $str="abd123hij";		     # 2 ways to replace 123 with efg
+  substr($str, 2, 3, 'efg');	 # assign 4th arg.
+  substr($str, 2, 3)='efg';	     # substr as an lvalue
 
