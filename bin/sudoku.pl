@@ -20,17 +20,16 @@ while (<DATA>) {
   }
 }
 
-# print "puzzle_string: $puzzle_string\n";
+print "puzzle_string: $puzzle_strings->{Puzzle_06}\n";
 my $puzzle = Grid->new;
 $puzzle->load_from_string($puzzle_strings->{Puzzle_06});
 
-# $puzzle->out; exit;
+# $puzzle->big_print; exit;
 
 my($this_cell);
 my($progress);
 my($pass_progress) = 1;
 my($pass) = 0;
-# $puzzle->find_and_set_singletons;
 
 while ( $puzzle->solved <= 80 and $pass_progress ) {
   print "==== Pass " . ++$pass . " ====\n"; $pass_progress = 0;
@@ -67,6 +66,7 @@ if ( $puzzle->solved == 81 ) {
   print "\n";
 } else {
   printf "We were able to determine %d cells.\n", $puzzle->solved;
+  $puzzle->big_print;
 }
 
 
