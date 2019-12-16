@@ -22,7 +22,7 @@ while (<DATA>) {
 
 # print "puzzle_string: $puzzle_string\n";
 my $puzzle = Grid->new;
-$puzzle->load_from_string($puzzle_strings->{Puzzle_02});
+$puzzle->load_from_string($puzzle_strings->{Puzzle_06});
 
 # $puzzle->out; exit;
 
