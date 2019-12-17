@@ -102,7 +102,6 @@ sub find_and_set_lone_representatives {  # a lone_representative is only cell wi
   my ( $possible_value);
   # CHECK BOXES FOR LONE REPRESENTATIVES
   foreach my $box ( @{$self->boxes} ) {
-    my $possibility_counts = {};
     # we now have a cell count of all possible values left in this box
     # we search these counts for a 1, this represents a value that has only one cell in this box
     # in which this value is still a possibility.
@@ -127,6 +126,7 @@ sub find_and_set_lone_representatives {  # a lone_representative is only cell wi
     # we now have a cell count of all possible values left in this row
     # we search these counts for a 1, this represents a value that has only one cell in this row
     # in which this value is still a possibility.
+  foreach my $row ( @{$self->rows} ) {
     foreach $possible_value ( grep { $_ =~ /row/ } keys %{ $possibility_counts } ) {
       if ( scalar ( @{ $possibility_counts->{$possible_value} } ) == 1 ) { # found a lone representative cell/value
         $progress++;
@@ -200,24 +200,37 @@ sub find_imaginary_values {
 sub possibilities_hash {
   my $self  = shift;
   my $possibility_counts = {};
-  foreach my $row ( @{$self->rows} ) {
-    if ( not $cell->value ) { # look for unsolved cells in this cluster
-      foreach $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
-        push ( @{ $possibility_counts->{"row:" .$possible_value} } , $cell );
+  my $possible_value;
+  my $cluster = 0;
+  foreach my $row ( @{ $self->rows } ) {
+    $cluster++;
+    foreach my $cell ( @{ $row } ) {
+      if ( not $cell->value ) { # look for unsolved cells in this cluster
+        foreach $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
+          push ( @{ $possibility_counts->{"row$cluster:" .$possible_value} } , $cell );
+        }
       }
     }
   }
-  foreach my $column ( @{$self->column} ) {
-    if ( not $cell->value ) { # look for unsolved cells in this cluster
-      foreach $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
-        push ( @{ $possibility_counts->{"col:" .$possible_value} } , $cell );
+  $cluster = 0;
+  foreach my $column ( @{ $self->column } ) {
+    $cluster++;
+    foreach my $cell ( @{ $column } ) {
+      if ( not $cell->value ) { # look for unsolved cells in this cluster
+        foreach $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
+          push ( @{ $possibility_counts->{"col$cluster:" .$possible_value} } , $cell );
+        }
       }
     }
   }
-  foreach my $box ( @{$self->boxes } ) {
-    if ( not $cell->value ) { # look for unsolved cells in this cluster
-      foreach $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
-        push ( @{ $possibility_counts->{"box:" .$possible_value} } , $cell );
+  $cluster = 0;
+  foreach my $box ( @{ $self->boxes } ) {
+    $cluster++;
+    foreach my $cell ( @{ $box } ) {
+      if ( not $cell->value ) { # look for unsolved cells in this cluster
+        foreach $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
+          push ( @{ $possibility_counts->{"box$cluster:" .$possible_value} } , $cell );
+        }
       }
     }
   }
