@@ -1,0 +1,1272 @@
+puzzle_string: 043080250600000000000001094900004070000608000010200003820500000000000005034090710
+==== Pass 1 ====
+Looking for Singletons (cells with only one possible value left) :
+Setting cell ( 9, 1, 7 ) to 5
+Setting cell ( 9, 4, 8 ) to 8
+Found and set 2 cells this singletons search pass.
+
+So far we filled this many cells: 28
+                                                                               
+        1       2       3       4       5       6       7       8       9      
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    | 1     '       '       |       '       '       |       '       ' 1     |  
+  1 |       '   4   '   3   |       '   8   '     6 |   2   '   5   '     6 |  
+    | 7     '       '       | 7   9 '       ' 7   9 |       '       ' 7     |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       ' 1 2   |     3 '   2 3 '   2 3 | 1   3 '     3 ' 1     |  
+  2 |   6   '   5   '   5   | 4     ' 4 5   '   5   |       '       '       |  
+    |       ' 7 8 9 ' 7 8 9 | 7   9 ' 7     ' 7   9 |   8   '   8   ' 7 8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |   2   '       '   2   |     3 '   2 3 '       |     3 '       '       |  
+  3 |       '   5   '   5   |       '   5 6 '   1   |     6 '   9   '   4   |  
+    | 7     ' 7 8   ' 7 8   | 7     ' 7     '       |   8   '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       '   2   | 1   3 ' 1   3 '       | 1     '       ' 1 2   |  
+  4 |   9   '   5 6 '   5 6 |       '   5   '   4   |   5 6 '   7   '     6 |  
+    |       '   8   '   8   |       '       '       |   8   '       '   8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |   2 3 '       '   2   |       ' 1   3 '       | 1     '   2   ' 1 2   |  
+  5 | 4     '   5   '   5   |   6   '   5   '   8   | 4 5   ' 4     '       |  
+    | 7     ' 7     ' 7     |       ' 7     '       |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '       |       '       '       |  
+  6 | 4     '   1   '   5 6 |   2   '   5   '   5   | 4 5 6 ' 4   6 '   3   |  
+    | 7     '       ' 7 8   |       ' 7     ' 7   9 |   8 9 '   8   '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       ' 1     |       ' 1   3 '     3 |     3 '     3 '       |  
+  7 |   8   '   2   '     6 |   5   ' 4   6 '     6 | 4   6 ' 4   6 '     6 |  
+    |       '       ' 7   9 |       ' 7     ' 7     |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    | 1     '       ' 1     | 1   3 ' 1 2 3 '   2 3 |     3 '   2 3 '       |  
+  8 |       '     6 '     6 | 4     ' 4   6 '     6 | 4   6 ' 4   6 '   5   |  
+    | 7     ' 7   9 ' 7   9 | 7     ' 7     ' 7     |   8 9 '   8   '       |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '   2   |       '       '   2   |  
+  9 |   5   '   3   '   4   |   8   '   9   '     6 |   7   '   1   '     6 |  
+    |       '       '       |       '       '       |       '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+---- end singletons method ----
+
+Looking for Singletons (cells with only one possible value left) :
+Found and set 0 cells this singletons search pass.
+
+Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):
+Lone in Box    Setting cell ( 5, 1, 4 ) to 3
+Lone in Box    Setting cell ( 6, 6, 5 ) to 9
+Lone in Row    Setting cell ( 1, 4, 2 ) to 9
+Lone in Column Setting cell ( 6, 1, 4 ) to 4
+Lone in Column Setting cell ( 3, 1, 1 ) to 2
+Lone in Column Setting cell ( 2, 6, 2 ) to 5
+Found and set 9 cells this lone representatives search pass.
+
+So far we filled this many cells: 34
+                                                                               
+        1       2       3       4       5       6       7       8       9      
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    | 1     '       '       |       '       '       |       '       ' 1     |  
+  1 |       '   4   '   3   |   9   '   8   '     6 |   2   '   5   '     6 |  
+    | 7     '       '       |       '       ' 7     |       '       ' 7     |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       ' 1     |     3 '   2 3 '       | 1   3 '     3 ' 1     |  
+  2 |   6   '       '       | 4     ' 4     '   5   |       '       '       |  
+    |       ' 7 8 9 ' 7 8 9 | 7     ' 7     '       |   8   '   8   ' 7 8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |     3 '     3 '       |     3 '       '       |  
+  3 |   2   '   5   '   5   |       '     6 '   1   |     6 '   9   '   4   |  
+    |       ' 7 8   ' 7 8   | 7     ' 7     '       |   8   '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       '   2   | 1   3 ' 1   3 '       | 1     '       ' 1 2   |  
+  4 |   9   '   5 6 '   5 6 |       '   5   '   4   |   5 6 '   7   '     6 |  
+    |       '   8   '   8   |       '       '       |   8   '       '   8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '   2   |       ' 1     '       | 1     '   2   ' 1 2   |  
+  5 |   3   '   5   '   5   |   6   '   5   '   8   | 4 5   ' 4     '       |  
+    |       ' 7     ' 7     |       ' 7     '       |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '       |       '       '       |  
+  6 |   4   '   1   '   5 6 |   2   '   5   '   9   |   5 6 '     6 '   3   |  
+    |       '       ' 7 8   |       ' 7     '       |   8   '   8   '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       ' 1     |       ' 1   3 '     3 |     3 '     3 '       |  
+  7 |   8   '   2   '     6 |   5   ' 4   6 '     6 | 4   6 ' 4   6 '     6 |  
+    |       '       ' 7   9 |       ' 7     ' 7     |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    | 1     '       ' 1     | 1   3 ' 1 2 3 '   2 3 |     3 '   2 3 '       |  
+  8 |       '     6 '     6 | 4     ' 4   6 '     6 | 4   6 ' 4   6 '   5   |  
+    | 7     ' 7   9 ' 7   9 | 7     ' 7     ' 7     |   8 9 '   8   '       |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '   2   |       '       '   2   |  
+  9 |   5   '   3   '   4   |   8   '   9   '     6 |   7   '   1   '     6 |  
+    |       '       '       |       '       '       |       '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+---- end lone representatives method ----
+
+Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):
+Lone in Box    Setting cell ( 2, 5, 2 ) to 2
+Lone in Row    Setting cell ( 2, 4, 2 ) to 4
+Found and set 2 cells this lone representatives search pass.
+
+So far we filled this many cells: 36
+                                                                               
+        1       2       3       4       5       6       7       8       9      
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    | 1     '       '       |       '       '       |       '       ' 1     |  
+  1 |       '   4   '   3   |   9   '   8   '     6 |   2   '   5   '     6 |  
+    | 7     '       '       |       '       ' 7     |       '       ' 7     |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       ' 1     |       '       '       | 1   3 '     3 ' 1     |  
+  2 |   6   '       '       |   4   '   2   '   5   |       '       '       |  
+    |       ' 7 8 9 ' 7 8 9 |       '       '       |   8   '   8   ' 7 8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |     3 '     3 '       |     3 '       '       |  
+  3 |   2   '   5   '   5   |       '     6 '   1   |     6 '   9   '   4   |  
+    |       ' 7 8   ' 7 8   | 7     ' 7     '       |   8   '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       '   2   | 1   3 ' 1   3 '       | 1     '       ' 1 2   |  
+  4 |   9   '   5 6 '   5 6 |       '   5   '   4   |   5 6 '   7   '     6 |  
+    |       '   8   '   8   |       '       '       |   8   '       '   8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '   2   |       ' 1     '       | 1     '   2   ' 1 2   |  
+  5 |   3   '   5   '   5   |   6   '   5   '   8   | 4 5   ' 4     '       |  
+    |       ' 7     ' 7     |       ' 7     '       |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '       |       '       '       |  
+  6 |   4   '   1   '   5 6 |   2   '   5   '   9   |   5 6 '     6 '   3   |  
+    |       '       ' 7 8   |       ' 7     '       |   8   '   8   '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       ' 1     |       ' 1   3 '     3 |     3 '     3 '       |  
+  7 |   8   '   2   '     6 |   5   ' 4   6 '     6 | 4   6 ' 4   6 '     6 |  
+    |       '       ' 7   9 |       ' 7     ' 7     |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    | 1     '       ' 1     | 1   3 ' 1   3 '   2 3 |     3 '   2 3 '       |  
+  8 |       '     6 '     6 |       ' 4   6 '     6 | 4   6 ' 4   6 '   5   |  
+    | 7     ' 7   9 ' 7   9 | 7     ' 7     ' 7     |   8 9 '   8   '       |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '   2   |       '       '   2   |  
+  9 |   5   '   3   '   4   |   8   '   9   '     6 |   7   '   1   '     6 |  
+    |       '       '       |       '       '       |       '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+---- end lone representatives method ----
+
+Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):
+Found and set 0 cells this lone representatives search pass.
+
+Looking for Imaginary Values (all 2 or 3 representatives of a given value in a cluster share all belong to another cluster):
+IV: examining cell at ( 1, 1, 1 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 3, 2, 1 ).
+IV: examining cell at ( 3, 3, 1 ).
+IV: examining cell at ( 2, 2, 1 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 3, 4, 2 ).
+IV: examining cell at ( 3, 5, 2 ).
+IV: examining cell at ( 1, 6, 2 ).
+IV: examining cell at ( 3, 5, 2 ).
+IV: examining cell at ( 1, 6, 2 ).
+IV: examining cell at ( 3, 4, 2 ).
+IV: examining cell at ( 3, 5, 2 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 2, 7, 3 ).
+IV: examining cell at ( 2, 9, 3 ).
+IV: examining cell at ( 2, 7, 3 ).
+IV: examining cell at ( 2, 8, 3 ).
+IV: examining cell at ( 3, 7, 3 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 3, 7, 3 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 2, 9, 3 ).
+IV: examining cell at ( 4, 3, 4 ).
+IV: examining cell at ( 5, 3, 4 ).
+IV: examining cell at ( 4, 2, 4 ).
+IV: examining cell at ( 4, 3, 4 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 5, 2, 4 ).
+IV: examining cell at ( 5, 3, 4 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 4, 2, 4 ).
+IV: examining cell at ( 4, 3, 4 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 4, 4, 5 ).
+IV: examining cell at ( 4, 5, 5 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 4, 4, 5 ).
+IV: examining cell at ( 4, 5, 5 ).
+IV: examining cell at ( 4, 5, 5 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 6, 5, 5 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 6, 5, 5 ).
+Imaginary value of 7 found in Box 4...   removing it from the cell ( 3, 5, 2 ).
+Imaginary value of 7 found in Box 4...   removing it from the cell ( 7, 5, 8 ).
+Imaginary value of 7 found in Box 4...   removing it from the cell ( 8, 5, 8 ).
+IV: examining cell at ( 4, 9, 6 ).
+IV: examining cell at ( 5, 8, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 5, 8, 6 ).
+IV: examining cell at ( 4, 7, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 6, 7, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 8, 1, 7 ).
+IV: examining cell at ( 8, 3, 7 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 8, 2, 7 ).
+IV: examining cell at ( 8, 3, 7 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 8, 2, 7 ).
+IV: examining cell at ( 8, 3, 7 ).
+IV: examining cell at ( 7, 5, 8 ).
+IV: examining cell at ( 8, 4, 8 ).
+IV: examining cell at ( 8, 5, 8 ).
+IV: examining cell at ( 8, 6, 8 ).
+IV: examining cell at ( 9, 6, 8 ).
+IV: examining cell at ( 7, 5, 8 ).
+IV: examining cell at ( 8, 5, 8 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 9, 9, 9 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 7, 7, 9 ).
+IV: examining cell at ( 7, 9, 9 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 1, 1, 1 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 1, 6, 2 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 1, 1, 1 ).
+IV: examining cell at ( 1, 6, 2 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 2, 7, 3 ).
+IV: examining cell at ( 2, 9, 3 ).
+IV: examining cell at ( 2, 7, 3 ).
+IV: examining cell at ( 2, 8, 3 ).
+IV: examining cell at ( 2, 2, 1 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 2, 9, 3 ).
+IV: examining cell at ( 2, 2, 1 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 3, 4, 2 ).
+IV: examining cell at ( 3, 5, 2 ).
+IV: examining cell at ( 3, 7, 3 ).
+IV: examining cell at ( 3, 2, 1 ).
+IV: examining cell at ( 3, 3, 1 ).
+IV: examining cell at ( 3, 5, 2 ).
+IV: examining cell at ( 3, 7, 3 ).
+IV: examining cell at ( 3, 2, 1 ).
+IV: examining cell at ( 3, 3, 1 ).
+IV: examining cell at ( 3, 4, 2 ).
+IV: examining cell at ( 3, 2, 1 ).
+IV: examining cell at ( 3, 3, 1 ).
+IV: examining cell at ( 3, 7, 3 ).
+IV: examining cell at ( 4, 3, 4 ).
+IV: examining cell at ( 4, 9, 6 ).
+IV: examining cell at ( 4, 4, 5 ).
+IV: examining cell at ( 4, 5, 5 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 5, 3, 4 ).
+IV: examining cell at ( 5, 8, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 5, 8, 6 ).
+IV: examining cell at ( 5, 2, 4 ).
+IV: examining cell at ( 5, 3, 4 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 6, 5, 5 ).
+IV: examining cell at ( 6, 7, 6 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 6, 7, 6 ).
+IV: examining cell at ( 6, 8, 6 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 6, 5, 5 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 6, 7, 6 ).
+IV: examining cell at ( 6, 8, 6 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 7, 5, 8 ).
+IV: examining cell at ( 7, 5, 8 ).
+IV: examining cell at ( 7, 7, 9 ).
+IV: examining cell at ( 7, 8, 9 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 7, 6, 8 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 7, 7, 9 ).
+IV: examining cell at ( 7, 9, 9 ).
+IV: examining cell at ( 8, 6, 8 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 8, 5, 8 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 8, 2, 7 ).
+IV: examining cell at ( 8, 3, 7 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 9, 6, 8 ).
+IV: examining cell at ( 9, 9, 9 ).
+IV: examining cell at ( 9, 6, 8 ).
+IV: examining cell at ( 9, 9, 9 ).
+IV: examining cell at ( 1, 1, 1 ).
+IV: examining cell at ( 8, 1, 7 ).
+IV: examining cell at ( 1, 1, 1 ).
+IV: examining cell at ( 8, 1, 7 ).
+IV: examining cell at ( 3, 2, 1 ).
+IV: examining cell at ( 4, 2, 4 ).
+IV: examining cell at ( 5, 2, 4 ).
+IV: examining cell at ( 4, 2, 4 ).
+IV: examining cell at ( 8, 2, 7 ).
+IV: examining cell at ( 2, 2, 1 ).
+IV: examining cell at ( 3, 2, 1 ).
+IV: examining cell at ( 4, 2, 4 ).
+IV: examining cell at ( 2, 2, 1 ).
+IV: examining cell at ( 8, 2, 7 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 8, 3, 7 ).
+IV: examining cell at ( 4, 3, 4 ).
+IV: examining cell at ( 5, 3, 4 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 8, 3, 7 ).
+IV: examining cell at ( 4, 4, 5 ).
+IV: examining cell at ( 8, 4, 8 ).
+IV: examining cell at ( 3, 4, 2 ).
+IV: examining cell at ( 4, 4, 5 ).
+IV: examining cell at ( 8, 4, 8 ).
+IV: examining cell at ( 3, 4, 2 ).
+IV: examining cell at ( 8, 4, 8 ).
+IV: examining cell at ( 7, 5, 8 ).
+IV: examining cell at ( 8, 5, 8 ).
+IV: examining cell at ( 4, 5, 5 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 6, 5, 5 ).
+IV: examining cell at ( 3, 5, 2 ).
+IV: examining cell at ( 7, 5, 8 ).
+IV: examining cell at ( 8, 5, 8 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 6, 5, 5 ).
+IV: examining cell at ( 8, 6, 8 ).
+IV: examining cell at ( 9, 6, 8 ).
+IV: examining cell at ( 7, 6, 8 ).
+IV: examining cell at ( 8, 6, 8 ).
+IV: examining cell at ( 1, 6, 2 ).
+IV: examining cell at ( 7, 6, 8 ).
+IV: examining cell at ( 8, 6, 8 ).
+IV: examining cell at ( 2, 7, 3 ).
+IV: examining cell at ( 4, 7, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 7, 7, 9 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 4, 7, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 6, 7, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 7, 7, 9 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 5, 8, 6 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 2, 8, 3 ).
+IV: examining cell at ( 7, 8, 9 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 5, 8, 6 ).
+IV: examining cell at ( 7, 8, 9 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 6, 8, 6 ).
+IV: examining cell at ( 7, 8, 9 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 2, 8, 3 ).
+IV: examining cell at ( 6, 8, 6 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 4, 9, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 9, 9, 9 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 2, 9, 3 ).
+IV: examining cell at ( 2, 9, 3 ).
+IV: examining cell at ( 4, 9, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 7, 9, 9 ).
+Found and removed 3 possible values from cells via imaginary numbers.
+
+So far we filled this many cells: 36
+                                                                               
+        1       2       3       4       5       6       7       8       9      
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    | 1     '       '       |       '       '       |       '       ' 1     |  
+  1 |       '   4   '   3   |   9   '   8   '     6 |   2   '   5   '     6 |  
+    | 7     '       '       |       '       ' 7     |       '       ' 7     |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       ' 1     |       '       '       | 1   3 '     3 ' 1     |  
+  2 |   6   '       '       |   4   '   2   '   5   |       '       '       |  
+    |       ' 7 8 9 ' 7 8 9 |       '       '       |   8   '   8   ' 7 8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |     3 '     3 '       |     3 '       '       |  
+  3 |   2   '   5   '   5   |       '     6 '   1   |     6 '   9   '   4   |  
+    |       ' 7 8   ' 7 8   | 7     '       '       |   8   '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       '   2   | 1   3 ' 1   3 '       | 1     '       ' 1 2   |  
+  4 |   9   '   5 6 '   5 6 |       '   5   '   4   |   5 6 '   7   '     6 |  
+    |       '   8   '   8   |       '       '       |   8   '       '   8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '   2   |       ' 1     '       | 1     '   2   ' 1 2   |  
+  5 |   3   '   5   '   5   |   6   '   5   '   8   | 4 5   ' 4     '       |  
+    |       ' 7     ' 7     |       ' 7     '       |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '       |       '       '       |  
+  6 |   4   '   1   '   5 6 |   2   '   5   '   9   |   5 6 '     6 '   3   |  
+    |       '       ' 7 8   |       ' 7     '       |   8   '   8   '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       ' 1     |       ' 1   3 '     3 |     3 '     3 '       |  
+  7 |   8   '   2   '     6 |   5   ' 4   6 '     6 | 4   6 ' 4   6 '     6 |  
+    |       '       ' 7   9 |       '       ' 7     |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    | 1     '       ' 1     | 1   3 ' 1   3 '   2 3 |     3 '   2 3 '       |  
+  8 |       '     6 '     6 |       ' 4   6 '     6 | 4   6 ' 4   6 '   5   |  
+    | 7     ' 7   9 ' 7   9 | 7     '       ' 7     |   8 9 '   8   '       |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '   2   |       '       '   2   |  
+  9 |   5   '   3   '   4   |   8   '   9   '     6 |   7   '   1   '     6 |  
+    |       '       '       |       '       '       |       '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+---- end imaginary values method ----
+
+Looking for Imaginary Values (all 2 or 3 representatives of a given value in a cluster share all belong to another cluster):
+IV: examining cell at ( 1, 1, 1 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 3, 2, 1 ).
+IV: examining cell at ( 3, 3, 1 ).
+IV: examining cell at ( 2, 2, 1 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 3, 4, 2 ).
+IV: examining cell at ( 3, 5, 2 ).
+Imaginary value of 3 found in Box 2...   removing it from the cell ( 3, 7, 3 ).
+IV: examining cell at ( 1, 6, 2 ).
+IV: examining cell at ( 3, 5, 2 ).
+IV: examining cell at ( 1, 6, 2 ).
+IV: examining cell at ( 3, 4, 2 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 2, 7, 3 ).
+IV: examining cell at ( 2, 9, 3 ).
+IV: examining cell at ( 2, 7, 3 ).
+IV: examining cell at ( 2, 8, 3 ).
+IV: examining cell at ( 3, 7, 3 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 3, 7, 3 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 2, 9, 3 ).
+IV: examining cell at ( 4, 3, 4 ).
+IV: examining cell at ( 5, 3, 4 ).
+IV: examining cell at ( 4, 2, 4 ).
+IV: examining cell at ( 4, 3, 4 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 5, 2, 4 ).
+IV: examining cell at ( 5, 3, 4 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 4, 2, 4 ).
+IV: examining cell at ( 4, 3, 4 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 4, 4, 5 ).
+IV: examining cell at ( 4, 5, 5 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 4, 4, 5 ).
+IV: examining cell at ( 4, 5, 5 ).
+IV: examining cell at ( 4, 5, 5 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 6, 5, 5 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 6, 5, 5 ).
+IV: examining cell at ( 4, 9, 6 ).
+IV: examining cell at ( 5, 8, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 5, 8, 6 ).
+IV: examining cell at ( 4, 7, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 6, 7, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 8, 1, 7 ).
+IV: examining cell at ( 8, 3, 7 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 8, 2, 7 ).
+IV: examining cell at ( 8, 3, 7 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 8, 2, 7 ).
+IV: examining cell at ( 8, 3, 7 ).
+IV: examining cell at ( 7, 5, 8 ).
+IV: examining cell at ( 8, 4, 8 ).
+IV: examining cell at ( 8, 5, 8 ).
+IV: examining cell at ( 8, 6, 8 ).
+IV: examining cell at ( 9, 6, 8 ).
+IV: examining cell at ( 7, 5, 8 ).
+IV: examining cell at ( 8, 5, 8 ).
+IV: examining cell at ( 7, 6, 8 ).
+IV: examining cell at ( 8, 4, 8 ).
+IV: examining cell at ( 8, 6, 8 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 9, 9, 9 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 7, 7, 9 ).
+IV: examining cell at ( 7, 9, 9 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 1, 1, 1 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 1, 6, 2 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 1, 1, 1 ).
+IV: examining cell at ( 1, 6, 2 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 2, 7, 3 ).
+IV: examining cell at ( 2, 9, 3 ).
+IV: examining cell at ( 2, 7, 3 ).
+IV: examining cell at ( 2, 8, 3 ).
+IV: examining cell at ( 2, 2, 1 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 2, 9, 3 ).
+IV: examining cell at ( 2, 2, 1 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 3, 4, 2 ).
+IV: examining cell at ( 3, 5, 2 ).
+IV: examining cell at ( 3, 2, 1 ).
+IV: examining cell at ( 3, 3, 1 ).
+IV: examining cell at ( 3, 5, 2 ).
+IV: examining cell at ( 3, 7, 3 ).
+IV: examining cell at ( 3, 2, 1 ).
+IV: examining cell at ( 3, 3, 1 ).
+IV: examining cell at ( 3, 4, 2 ).
+IV: examining cell at ( 3, 2, 1 ).
+IV: examining cell at ( 3, 3, 1 ).
+IV: examining cell at ( 3, 7, 3 ).
+IV: examining cell at ( 4, 3, 4 ).
+IV: examining cell at ( 4, 9, 6 ).
+IV: examining cell at ( 4, 4, 5 ).
+IV: examining cell at ( 4, 5, 5 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 5, 3, 4 ).
+IV: examining cell at ( 5, 8, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 5, 8, 6 ).
+IV: examining cell at ( 5, 2, 4 ).
+IV: examining cell at ( 5, 3, 4 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 6, 5, 5 ).
+IV: examining cell at ( 6, 7, 6 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 6, 7, 6 ).
+IV: examining cell at ( 6, 8, 6 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 6, 5, 5 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 6, 7, 6 ).
+IV: examining cell at ( 6, 8, 6 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 7, 5, 8 ).
+IV: examining cell at ( 7, 5, 8 ).
+IV: examining cell at ( 7, 7, 9 ).
+IV: examining cell at ( 7, 8, 9 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 7, 6, 8 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 7, 7, 9 ).
+IV: examining cell at ( 7, 9, 9 ).
+IV: examining cell at ( 8, 6, 8 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 8, 5, 8 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 8, 2, 7 ).
+IV: examining cell at ( 8, 3, 7 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 9, 6, 8 ).
+IV: examining cell at ( 9, 9, 9 ).
+IV: examining cell at ( 9, 6, 8 ).
+IV: examining cell at ( 9, 9, 9 ).
+IV: examining cell at ( 1, 1, 1 ).
+IV: examining cell at ( 8, 1, 7 ).
+IV: examining cell at ( 1, 1, 1 ).
+IV: examining cell at ( 8, 1, 7 ).
+IV: examining cell at ( 3, 2, 1 ).
+IV: examining cell at ( 4, 2, 4 ).
+IV: examining cell at ( 5, 2, 4 ).
+IV: examining cell at ( 4, 2, 4 ).
+IV: examining cell at ( 8, 2, 7 ).
+IV: examining cell at ( 2, 2, 1 ).
+IV: examining cell at ( 3, 2, 1 ).
+IV: examining cell at ( 4, 2, 4 ).
+IV: examining cell at ( 2, 2, 1 ).
+IV: examining cell at ( 8, 2, 7 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 8, 3, 7 ).
+IV: examining cell at ( 4, 3, 4 ).
+IV: examining cell at ( 5, 3, 4 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 8, 3, 7 ).
+IV: examining cell at ( 4, 4, 5 ).
+IV: examining cell at ( 8, 4, 8 ).
+IV: examining cell at ( 3, 4, 2 ).
+IV: examining cell at ( 4, 4, 5 ).
+IV: examining cell at ( 8, 4, 8 ).
+IV: examining cell at ( 3, 4, 2 ).
+IV: examining cell at ( 8, 4, 8 ).
+IV: examining cell at ( 7, 5, 8 ).
+IV: examining cell at ( 8, 5, 8 ).
+IV: examining cell at ( 4, 5, 5 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 6, 5, 5 ).
+IV: examining cell at ( 3, 5, 2 ).
+IV: examining cell at ( 7, 5, 8 ).
+IV: examining cell at ( 8, 5, 8 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 6, 5, 5 ).
+IV: examining cell at ( 8, 6, 8 ).
+IV: examining cell at ( 9, 6, 8 ).
+IV: examining cell at ( 7, 6, 8 ).
+IV: examining cell at ( 8, 6, 8 ).
+IV: examining cell at ( 1, 6, 2 ).
+IV: examining cell at ( 7, 6, 8 ).
+IV: examining cell at ( 8, 6, 8 ).
+IV: examining cell at ( 2, 7, 3 ).
+IV: examining cell at ( 4, 7, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 2, 7, 3 ).
+IV: examining cell at ( 7, 7, 9 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 7, 7, 9 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 4, 7, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 6, 7, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 7, 7, 9 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 5, 8, 6 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 2, 8, 3 ).
+IV: examining cell at ( 7, 8, 9 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 5, 8, 6 ).
+IV: examining cell at ( 7, 8, 9 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 6, 8, 6 ).
+IV: examining cell at ( 7, 8, 9 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 2, 8, 3 ).
+IV: examining cell at ( 6, 8, 6 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 4, 9, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 9, 9, 9 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 2, 9, 3 ).
+IV: examining cell at ( 2, 9, 3 ).
+IV: examining cell at ( 4, 9, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 7, 9, 9 ).
+Found and removed 1 possible values from cells via imaginary numbers.
+
+So far we filled this many cells: 36
+                                                                               
+        1       2       3       4       5       6       7       8       9      
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    | 1     '       '       |       '       '       |       '       ' 1     |  
+  1 |       '   4   '   3   |   9   '   8   '     6 |   2   '   5   '     6 |  
+    | 7     '       '       |       '       ' 7     |       '       ' 7     |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       ' 1     |       '       '       | 1   3 '     3 ' 1     |  
+  2 |   6   '       '       |   4   '   2   '   5   |       '       '       |  
+    |       ' 7 8 9 ' 7 8 9 |       '       '       |   8   '   8   ' 7 8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |     3 '     3 '       |       '       '       |  
+  3 |   2   '   5   '   5   |       '     6 '   1   |     6 '   9   '   4   |  
+    |       ' 7 8   ' 7 8   | 7     '       '       |   8   '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       '   2   | 1   3 ' 1   3 '       | 1     '       ' 1 2   |  
+  4 |   9   '   5 6 '   5 6 |       '   5   '   4   |   5 6 '   7   '     6 |  
+    |       '   8   '   8   |       '       '       |   8   '       '   8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '   2   |       ' 1     '       | 1     '   2   ' 1 2   |  
+  5 |   3   '   5   '   5   |   6   '   5   '   8   | 4 5   ' 4     '       |  
+    |       ' 7     ' 7     |       ' 7     '       |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '       |       '       '       |  
+  6 |   4   '   1   '   5 6 |   2   '   5   '   9   |   5 6 '     6 '   3   |  
+    |       '       ' 7 8   |       ' 7     '       |   8   '   8   '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       ' 1     |       ' 1   3 '     3 |     3 '     3 '       |  
+  7 |   8   '   2   '     6 |   5   ' 4   6 '     6 | 4   6 ' 4   6 '     6 |  
+    |       '       ' 7   9 |       '       ' 7     |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    | 1     '       ' 1     | 1   3 ' 1   3 '   2 3 |     3 '   2 3 '       |  
+  8 |       '     6 '     6 |       ' 4   6 '     6 | 4   6 ' 4   6 '   5   |  
+    | 7     ' 7   9 ' 7   9 | 7     '       ' 7     |   8 9 '   8   '       |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '   2   |       '       '   2   |  
+  9 |   5   '   3   '   4   |   8   '   9   '     6 |   7   '   1   '     6 |  
+    |       '       '       |       '       '       |       '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+---- end imaginary values method ----
+
+Looking for Imaginary Values (all 2 or 3 representatives of a given value in a cluster share all belong to another cluster):
+IV: examining cell at ( 1, 1, 1 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 3, 2, 1 ).
+IV: examining cell at ( 3, 3, 1 ).
+IV: examining cell at ( 2, 2, 1 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 3, 4, 2 ).
+IV: examining cell at ( 3, 5, 2 ).
+IV: examining cell at ( 1, 6, 2 ).
+IV: examining cell at ( 3, 5, 2 ).
+IV: examining cell at ( 1, 6, 2 ).
+IV: examining cell at ( 3, 4, 2 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 2, 7, 3 ).
+IV: examining cell at ( 2, 9, 3 ).
+IV: examining cell at ( 2, 7, 3 ).
+IV: examining cell at ( 2, 8, 3 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 3, 7, 3 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 2, 9, 3 ).
+IV: examining cell at ( 4, 3, 4 ).
+IV: examining cell at ( 5, 3, 4 ).
+IV: examining cell at ( 4, 2, 4 ).
+IV: examining cell at ( 4, 3, 4 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 5, 2, 4 ).
+IV: examining cell at ( 5, 3, 4 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 4, 2, 4 ).
+IV: examining cell at ( 4, 3, 4 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 4, 4, 5 ).
+IV: examining cell at ( 4, 5, 5 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 4, 4, 5 ).
+IV: examining cell at ( 4, 5, 5 ).
+IV: examining cell at ( 4, 5, 5 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 6, 5, 5 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 6, 5, 5 ).
+IV: examining cell at ( 4, 9, 6 ).
+IV: examining cell at ( 5, 8, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 5, 8, 6 ).
+IV: examining cell at ( 4, 7, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 6, 7, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 8, 1, 7 ).
+IV: examining cell at ( 8, 3, 7 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 8, 2, 7 ).
+IV: examining cell at ( 8, 3, 7 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 8, 2, 7 ).
+IV: examining cell at ( 8, 3, 7 ).
+IV: examining cell at ( 7, 5, 8 ).
+IV: examining cell at ( 8, 4, 8 ).
+IV: examining cell at ( 8, 5, 8 ).
+IV: examining cell at ( 8, 6, 8 ).
+IV: examining cell at ( 9, 6, 8 ).
+IV: examining cell at ( 7, 5, 8 ).
+IV: examining cell at ( 8, 5, 8 ).
+IV: examining cell at ( 7, 6, 8 ).
+IV: examining cell at ( 8, 4, 8 ).
+IV: examining cell at ( 8, 6, 8 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 9, 9, 9 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 7, 7, 9 ).
+IV: examining cell at ( 7, 9, 9 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 1, 1, 1 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 1, 6, 2 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 1, 1, 1 ).
+IV: examining cell at ( 1, 6, 2 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 2, 7, 3 ).
+IV: examining cell at ( 2, 9, 3 ).
+IV: examining cell at ( 2, 7, 3 ).
+IV: examining cell at ( 2, 8, 3 ).
+IV: examining cell at ( 2, 2, 1 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 2, 9, 3 ).
+IV: examining cell at ( 2, 2, 1 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 3, 4, 2 ).
+IV: examining cell at ( 3, 5, 2 ).
+IV: examining cell at ( 3, 2, 1 ).
+IV: examining cell at ( 3, 3, 1 ).
+IV: examining cell at ( 3, 5, 2 ).
+IV: examining cell at ( 3, 7, 3 ).
+IV: examining cell at ( 3, 2, 1 ).
+IV: examining cell at ( 3, 3, 1 ).
+IV: examining cell at ( 3, 4, 2 ).
+IV: examining cell at ( 3, 2, 1 ).
+IV: examining cell at ( 3, 3, 1 ).
+IV: examining cell at ( 3, 7, 3 ).
+IV: examining cell at ( 4, 3, 4 ).
+IV: examining cell at ( 4, 9, 6 ).
+IV: examining cell at ( 4, 4, 5 ).
+IV: examining cell at ( 4, 5, 5 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 5, 3, 4 ).
+IV: examining cell at ( 5, 8, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 5, 8, 6 ).
+IV: examining cell at ( 5, 2, 4 ).
+IV: examining cell at ( 5, 3, 4 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 6, 5, 5 ).
+IV: examining cell at ( 6, 7, 6 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 6, 7, 6 ).
+IV: examining cell at ( 6, 8, 6 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 6, 5, 5 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 6, 7, 6 ).
+IV: examining cell at ( 6, 8, 6 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 7, 5, 8 ).
+IV: examining cell at ( 7, 5, 8 ).
+IV: examining cell at ( 7, 7, 9 ).
+IV: examining cell at ( 7, 8, 9 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 7, 6, 8 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 7, 7, 9 ).
+IV: examining cell at ( 7, 9, 9 ).
+IV: examining cell at ( 8, 6, 8 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 8, 5, 8 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 8, 2, 7 ).
+IV: examining cell at ( 8, 3, 7 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 9, 6, 8 ).
+IV: examining cell at ( 9, 9, 9 ).
+IV: examining cell at ( 9, 6, 8 ).
+IV: examining cell at ( 9, 9, 9 ).
+IV: examining cell at ( 1, 1, 1 ).
+IV: examining cell at ( 8, 1, 7 ).
+IV: examining cell at ( 1, 1, 1 ).
+IV: examining cell at ( 8, 1, 7 ).
+IV: examining cell at ( 3, 2, 1 ).
+IV: examining cell at ( 4, 2, 4 ).
+IV: examining cell at ( 5, 2, 4 ).
+IV: examining cell at ( 4, 2, 4 ).
+IV: examining cell at ( 8, 2, 7 ).
+IV: examining cell at ( 2, 2, 1 ).
+IV: examining cell at ( 3, 2, 1 ).
+IV: examining cell at ( 4, 2, 4 ).
+IV: examining cell at ( 2, 2, 1 ).
+IV: examining cell at ( 8, 2, 7 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 8, 3, 7 ).
+IV: examining cell at ( 4, 3, 4 ).
+IV: examining cell at ( 5, 3, 4 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 8, 3, 7 ).
+IV: examining cell at ( 4, 4, 5 ).
+IV: examining cell at ( 8, 4, 8 ).
+IV: examining cell at ( 3, 4, 2 ).
+IV: examining cell at ( 4, 4, 5 ).
+IV: examining cell at ( 8, 4, 8 ).
+IV: examining cell at ( 3, 4, 2 ).
+IV: examining cell at ( 8, 4, 8 ).
+IV: examining cell at ( 7, 5, 8 ).
+IV: examining cell at ( 8, 5, 8 ).
+IV: examining cell at ( 4, 5, 5 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 6, 5, 5 ).
+IV: examining cell at ( 3, 5, 2 ).
+IV: examining cell at ( 7, 5, 8 ).
+IV: examining cell at ( 8, 5, 8 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 6, 5, 5 ).
+IV: examining cell at ( 8, 6, 8 ).
+IV: examining cell at ( 9, 6, 8 ).
+IV: examining cell at ( 7, 6, 8 ).
+IV: examining cell at ( 8, 6, 8 ).
+IV: examining cell at ( 1, 6, 2 ).
+IV: examining cell at ( 7, 6, 8 ).
+IV: examining cell at ( 8, 6, 8 ).
+IV: examining cell at ( 2, 7, 3 ).
+IV: examining cell at ( 4, 7, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 2, 7, 3 ).
+IV: examining cell at ( 7, 7, 9 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 7, 7, 9 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 4, 7, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 6, 7, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 7, 7, 9 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 5, 8, 6 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 2, 8, 3 ).
+IV: examining cell at ( 7, 8, 9 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 5, 8, 6 ).
+IV: examining cell at ( 7, 8, 9 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 6, 8, 6 ).
+IV: examining cell at ( 7, 8, 9 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 2, 8, 3 ).
+IV: examining cell at ( 6, 8, 6 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 4, 9, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 9, 9, 9 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 2, 9, 3 ).
+IV: examining cell at ( 2, 9, 3 ).
+IV: examining cell at ( 4, 9, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 7, 9, 9 ).
+Found and removed 0 possible values from cells via imaginary numbers.
+
+==== End Pass 1 (progress is 17) ====
+==== Pass 2 ====
+Looking for Singletons (cells with only one possible value left) :
+Found and set 0 cells this singletons search pass.
+
+Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):
+Found and set 0 cells this lone representatives search pass.
+
+Looking for Imaginary Values (all 2 or 3 representatives of a given value in a cluster share all belong to another cluster):
+IV: examining cell at ( 1, 1, 1 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 3, 2, 1 ).
+IV: examining cell at ( 3, 3, 1 ).
+IV: examining cell at ( 2, 2, 1 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 3, 4, 2 ).
+IV: examining cell at ( 3, 5, 2 ).
+IV: examining cell at ( 1, 6, 2 ).
+IV: examining cell at ( 3, 5, 2 ).
+IV: examining cell at ( 1, 6, 2 ).
+IV: examining cell at ( 3, 4, 2 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 2, 7, 3 ).
+IV: examining cell at ( 2, 9, 3 ).
+IV: examining cell at ( 2, 7, 3 ).
+IV: examining cell at ( 2, 8, 3 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 3, 7, 3 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 2, 9, 3 ).
+IV: examining cell at ( 4, 3, 4 ).
+IV: examining cell at ( 5, 3, 4 ).
+IV: examining cell at ( 4, 2, 4 ).
+IV: examining cell at ( 4, 3, 4 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 5, 2, 4 ).
+IV: examining cell at ( 5, 3, 4 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 4, 2, 4 ).
+IV: examining cell at ( 4, 3, 4 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 4, 4, 5 ).
+IV: examining cell at ( 4, 5, 5 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 4, 4, 5 ).
+IV: examining cell at ( 4, 5, 5 ).
+IV: examining cell at ( 4, 5, 5 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 6, 5, 5 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 6, 5, 5 ).
+IV: examining cell at ( 4, 9, 6 ).
+IV: examining cell at ( 5, 8, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 5, 8, 6 ).
+IV: examining cell at ( 4, 7, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 6, 7, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 8, 1, 7 ).
+IV: examining cell at ( 8, 3, 7 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 8, 2, 7 ).
+IV: examining cell at ( 8, 3, 7 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 8, 2, 7 ).
+IV: examining cell at ( 8, 3, 7 ).
+IV: examining cell at ( 7, 5, 8 ).
+IV: examining cell at ( 8, 4, 8 ).
+IV: examining cell at ( 8, 5, 8 ).
+IV: examining cell at ( 8, 6, 8 ).
+IV: examining cell at ( 9, 6, 8 ).
+IV: examining cell at ( 7, 5, 8 ).
+IV: examining cell at ( 8, 5, 8 ).
+IV: examining cell at ( 7, 6, 8 ).
+IV: examining cell at ( 8, 4, 8 ).
+IV: examining cell at ( 8, 6, 8 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 9, 9, 9 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 7, 7, 9 ).
+IV: examining cell at ( 7, 9, 9 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 1, 1, 1 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 1, 6, 2 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 1, 1, 1 ).
+IV: examining cell at ( 1, 6, 2 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 2, 7, 3 ).
+IV: examining cell at ( 2, 9, 3 ).
+IV: examining cell at ( 2, 7, 3 ).
+IV: examining cell at ( 2, 8, 3 ).
+IV: examining cell at ( 2, 2, 1 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 2, 9, 3 ).
+IV: examining cell at ( 2, 2, 1 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 3, 4, 2 ).
+IV: examining cell at ( 3, 5, 2 ).
+IV: examining cell at ( 3, 2, 1 ).
+IV: examining cell at ( 3, 3, 1 ).
+IV: examining cell at ( 3, 5, 2 ).
+IV: examining cell at ( 3, 7, 3 ).
+IV: examining cell at ( 3, 2, 1 ).
+IV: examining cell at ( 3, 3, 1 ).
+IV: examining cell at ( 3, 4, 2 ).
+IV: examining cell at ( 3, 2, 1 ).
+IV: examining cell at ( 3, 3, 1 ).
+IV: examining cell at ( 3, 7, 3 ).
+IV: examining cell at ( 4, 3, 4 ).
+IV: examining cell at ( 4, 9, 6 ).
+IV: examining cell at ( 4, 4, 5 ).
+IV: examining cell at ( 4, 5, 5 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 5, 3, 4 ).
+IV: examining cell at ( 5, 8, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 5, 8, 6 ).
+IV: examining cell at ( 5, 2, 4 ).
+IV: examining cell at ( 5, 3, 4 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 6, 5, 5 ).
+IV: examining cell at ( 6, 7, 6 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 6, 7, 6 ).
+IV: examining cell at ( 6, 8, 6 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 6, 5, 5 ).
+IV: examining cell at ( 6, 3, 4 ).
+IV: examining cell at ( 6, 7, 6 ).
+IV: examining cell at ( 6, 8, 6 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 7, 5, 8 ).
+IV: examining cell at ( 7, 5, 8 ).
+IV: examining cell at ( 7, 7, 9 ).
+IV: examining cell at ( 7, 8, 9 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 7, 6, 8 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 7, 7, 9 ).
+IV: examining cell at ( 7, 9, 9 ).
+IV: examining cell at ( 8, 6, 8 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 8, 5, 8 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 8, 2, 7 ).
+IV: examining cell at ( 8, 3, 7 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 9, 6, 8 ).
+IV: examining cell at ( 9, 9, 9 ).
+IV: examining cell at ( 9, 6, 8 ).
+IV: examining cell at ( 9, 9, 9 ).
+IV: examining cell at ( 1, 1, 1 ).
+IV: examining cell at ( 8, 1, 7 ).
+IV: examining cell at ( 1, 1, 1 ).
+IV: examining cell at ( 8, 1, 7 ).
+IV: examining cell at ( 3, 2, 1 ).
+IV: examining cell at ( 4, 2, 4 ).
+IV: examining cell at ( 5, 2, 4 ).
+IV: examining cell at ( 4, 2, 4 ).
+IV: examining cell at ( 8, 2, 7 ).
+IV: examining cell at ( 2, 2, 1 ).
+IV: examining cell at ( 3, 2, 1 ).
+IV: examining cell at ( 4, 2, 4 ).
+IV: examining cell at ( 2, 2, 1 ).
+IV: examining cell at ( 8, 2, 7 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 8, 3, 7 ).
+IV: examining cell at ( 4, 3, 4 ).
+IV: examining cell at ( 5, 3, 4 ).
+IV: examining cell at ( 2, 3, 1 ).
+IV: examining cell at ( 7, 3, 7 ).
+IV: examining cell at ( 8, 3, 7 ).
+IV: examining cell at ( 4, 4, 5 ).
+IV: examining cell at ( 8, 4, 8 ).
+IV: examining cell at ( 3, 4, 2 ).
+IV: examining cell at ( 4, 4, 5 ).
+IV: examining cell at ( 8, 4, 8 ).
+IV: examining cell at ( 3, 4, 2 ).
+IV: examining cell at ( 8, 4, 8 ).
+IV: examining cell at ( 7, 5, 8 ).
+IV: examining cell at ( 8, 5, 8 ).
+IV: examining cell at ( 4, 5, 5 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 6, 5, 5 ).
+IV: examining cell at ( 3, 5, 2 ).
+IV: examining cell at ( 7, 5, 8 ).
+IV: examining cell at ( 8, 5, 8 ).
+IV: examining cell at ( 5, 5, 5 ).
+IV: examining cell at ( 6, 5, 5 ).
+IV: examining cell at ( 8, 6, 8 ).
+IV: examining cell at ( 9, 6, 8 ).
+IV: examining cell at ( 7, 6, 8 ).
+IV: examining cell at ( 8, 6, 8 ).
+IV: examining cell at ( 1, 6, 2 ).
+IV: examining cell at ( 7, 6, 8 ).
+IV: examining cell at ( 8, 6, 8 ).
+IV: examining cell at ( 2, 7, 3 ).
+IV: examining cell at ( 4, 7, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 2, 7, 3 ).
+IV: examining cell at ( 7, 7, 9 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 7, 7, 9 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 4, 7, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 6, 7, 6 ).
+IV: examining cell at ( 5, 7, 6 ).
+IV: examining cell at ( 7, 7, 9 ).
+IV: examining cell at ( 8, 7, 9 ).
+IV: examining cell at ( 5, 8, 6 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 2, 8, 3 ).
+IV: examining cell at ( 7, 8, 9 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 5, 8, 6 ).
+IV: examining cell at ( 7, 8, 9 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 6, 8, 6 ).
+IV: examining cell at ( 7, 8, 9 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 2, 8, 3 ).
+IV: examining cell at ( 6, 8, 6 ).
+IV: examining cell at ( 8, 8, 9 ).
+IV: examining cell at ( 4, 9, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 9, 9, 9 ).
+IV: examining cell at ( 1, 9, 3 ).
+IV: examining cell at ( 2, 9, 3 ).
+IV: examining cell at ( 2, 9, 3 ).
+IV: examining cell at ( 4, 9, 6 ).
+IV: examining cell at ( 5, 9, 6 ).
+IV: examining cell at ( 7, 9, 9 ).
+Found and removed 0 possible values from cells via imaginary numbers.
+
+==== End Pass 2 (progress is 0) ====
+We were able to determine 36 cells.
+                                                                               
+        1       2       3       4       5       6       7       8       9      
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    | 1     '       '       |       '       '       |       '       ' 1     |  
+  1 |       '   4   '   3   |   9   '   8   '     6 |   2   '   5   '     6 |  
+    | 7     '       '       |       '       ' 7     |       '       ' 7     |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       ' 1     |       '       '       | 1   3 '     3 ' 1     |  
+  2 |   6   '       '       |   4   '   2   '   5   |       '       '       |  
+    |       ' 7 8 9 ' 7 8 9 |       '       '       |   8   '   8   ' 7 8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |     3 '     3 '       |       '       '       |  
+  3 |   2   '   5   '   5   |       '     6 '   1   |     6 '   9   '   4   |  
+    |       ' 7 8   ' 7 8   | 7     '       '       |   8   '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       '   2   | 1   3 ' 1   3 '       | 1     '       ' 1 2   |  
+  4 |   9   '   5 6 '   5 6 |       '   5   '   4   |   5 6 '   7   '     6 |  
+    |       '   8   '   8   |       '       '       |   8   '       '   8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '   2   |       ' 1     '       | 1     '   2   ' 1 2   |  
+  5 |   3   '   5   '   5   |   6   '   5   '   8   | 4 5   ' 4     '       |  
+    |       ' 7     ' 7     |       ' 7     '       |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '       |       '       '       |  
+  6 |   4   '   1   '   5 6 |   2   '   5   '   9   |   5 6 '     6 '   3   |  
+    |       '       ' 7 8   |       ' 7     '       |   8   '   8   '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       ' 1     |       ' 1   3 '     3 |     3 '     3 '       |  
+  7 |   8   '   2   '     6 |   5   ' 4   6 '     6 | 4   6 ' 4   6 '     6 |  
+    |       '       ' 7   9 |       '       ' 7     |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    | 1     '       ' 1     | 1   3 ' 1   3 '   2 3 |     3 '   2 3 '       |  
+  8 |       '     6 '     6 |       ' 4   6 '     6 | 4   6 ' 4   6 '   5   |  
+    | 7     ' 7   9 ' 7   9 | 7     '       ' 7     |   8 9 '   8   '       |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '   2   |       '       '   2   |  
+  9 |   5   '   3   '   4   |   8   '   9   '     6 |   7   '   1   '     6 |  
+    |       '       '       |       '       '       |       '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
