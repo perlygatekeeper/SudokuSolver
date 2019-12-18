@@ -168,7 +168,7 @@ sub find_and_set_lone_representatives {  # a lone_representative is only cell wi
     }
   }
 
-  print "Found and set $progress cells this lone representatives search pass.\n";
+  print "Found and set $progress cells this lone representatives search pass.\n\n";
   return $progress;
 }
 
@@ -185,7 +185,7 @@ sub find_naked_pairs {
   foreach my $row ( @{$self->rows} ) {
   }
 
-  print "Found and processed $progress naked pairs.\n";
+  print "Found and processed $progress naked pairs.\n\n";
   return $progress;
 }
 
@@ -193,9 +193,152 @@ sub find_naked_pairs {
 # See see the notes_imaginary_values.txt
 sub find_imaginary_values {
   my $self  = shift;
-  my $progress;
-  my $possibility_counts = $self->possibilities_hash;
+  my $progress = 0;
+  my $possibility_counts;
+  my $possible_value;
+  print "Looking for Imaginary Values (all 2 or 3 representatives of a given value in a cluster share all belong to another cluster):\n";
 
+  $possibility_counts = $self->possibilities_hash;
+  foreach my $key ( sort grep { $_ =~ /box/ } keys %{ $possibility_counts } ) {
+    if ( scalar ( @{ $possibility_counts->{$key} } ) == 2 or scalar ( @{ $possibility_counts->{$key} } ) == 3 ) {
+      # examine all cells in the possibility count and see if they are all in the row or same column
+      my ( $cell_rows, $cell_cols, $box );
+      foreach my $cell ( @{ $possibility_counts->{$key} } ) {
+        printf "IV: examining cell at ( %d, %d, %d ).\n"
+              , ( $cell->row + 1 )
+              , ( $cell->column + 1 )
+              , ( $cell->box + 1 );
+        $cell_rows->{$cell->row}++;
+        $cell_cols->{$cell->column}++;
+      }
+      # we now have a count of the unique cols and rows of these cells.
+      # if either is a count of one, then all cells share the same row or column
+      if ( ( scalar keys %{$cell_rows} ) == 1 ) {
+        # all cells in this box representing this possible value live in the same row
+        # if there are any cells in this row but outside of this box we can safely
+        # remove this possible value from these "outside" cells
+        my $row = ( keys %{$cell_rows} )[0];
+        ( $box, $possible_value ) = ( $key =~ /box(\d):(\d)/);
+        # do we have cells with this value outside this box 
+        if (   $possibility_counts->{"row" . $row . ":" . $possible_value } and 
+             ( $possibility_counts->{"row" . $row . ":" . $possible_value } > $possibility_counts->{$key} ) ) {
+          foreach my $cell ( grep { $_->box != $box } @{ $possibility_counts->{"row" . $row . ":" . $possible_value} } ) {
+            $cell->possibilities->[$possible_value] = 0;
+            $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
+            printf "Imaginary value of %d found in Box %d...   removing it from the cell ( %d, %d, %d ).\n"
+              , $possible_value
+              , $box + 1
+              , ( $cell->row + 1 )
+              , ( $cell->column + 1 )
+              , ( $cell->box + 1 );
+            $progress++;
+          }
+        }
+      }
+      if ( ( scalar keys %{$cell_cols} ) == 1 ) {
+        # all cells in this box representing this possible value live in the same column
+        # if there are any cells in this column but outside of this box we can safely
+        # remove this possible value from these "outside" cells
+        my $col = ( keys %{$cell_cols} )[0];
+        ( $box, $possible_value ) = ( $key =~ /box(\d):(\d)/);
+        # do we have cells with this value outside this box 
+        if (  $possibility_counts->{"col" . $col . ":" . $possible_value } and
+            ( $possibility_counts->{"col" . $col . ":" . $possible_value } > $possibility_counts->{$key} ) ) { 
+          foreach my $cell ( grep { $_->box != $box } @{ $possibility_counts->{"col" . $col . ":" . $possible_value} } ) {
+            $cell->possibilities->[$possible_value] = 0;
+            $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
+            printf "Imaginary value of %d found in Box %d...   removing it from the cell ( %d, %d, %d ).\n"
+              , $possible_value
+              , $box
+              , ( $cell->row + 1 )
+              , ( $cell->column + 1 )
+              , ( $cell->box + 1 );
+            $progress++;
+          }
+        }
+      }
+    }
+  }
+
+  $possibility_counts = $self->possibilities_hash;
+  foreach my $key ( sort grep { $_ =~ /row/ } keys %{ $possibility_counts } ) {
+    if ( scalar ( @{ $possibility_counts->{$key} } ) == 2 or scalar ( @{ $possibility_counts->{$key} } ) == 3 ) {
+      # examine all cells in the possibility count and see if they are all in the row or same column
+      my ( $cell_boxes, $row );
+      foreach my $cell ( @{ $possibility_counts->{$key} } ) {
+        printf "IV: examining cell at ( %d, %d, %d ).\n"
+              , ( $cell->row + 1 )
+              , ( $cell->column + 1 )
+              , ( $cell->box + 1 );
+        $cell_boxes->{$cell->box}++;
+      }
+      # we now have a count of the unique boxes
+      # if either is a count of one, then all cells share the same row or column
+      if ( ( scalar keys %{$cell_boxes} ) == 1 ) {
+        # all cells in this box representing this possible value live in the same row
+        # if there are any cells in this row but outside of this box we can safely
+        # remove this possible value from these "outside" cells
+        my $box = ( keys %{$cell_boxes} )[0];
+        ( $row, $possible_value ) = ( $key =~ /row(\d):(\d)/);
+        # do we have cells with this value outside this box 
+        if (   $possibility_counts->{"box" . $box . ":" . $possible_value } and 
+             ( $possibility_counts->{"box" . $box . ":" . $possible_value } > $possibility_counts->{$key} ) ) {
+          foreach my $cell ( grep { $_->row != $row } @{ $possibility_counts->{"row" . $row . ":" . $possible_value} } ) {
+            $cell->possibilities->[$possible_value] = 0;
+            $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
+            printf "Imaginary value of %d found in Row %d...   removing it from the cell ( %d, %d, %d ).\n"
+              , $possible_value
+              , $box + 1
+              , ( $cell->row + 1 )
+              , ( $cell->column + 1 )
+              , ( $cell->box + 1 );
+            $progress++;
+          }
+        }
+      }
+    }
+  }
+
+  $possibility_counts = $self->possibilities_hash;
+  foreach my $key ( sort grep { $_ =~ /col/ } keys %{ $possibility_counts } ) {
+    if ( scalar ( @{ $possibility_counts->{$key} } ) == 2 or scalar ( @{ $possibility_counts->{$key} } ) == 3 ) {
+      # examine all cells in the possibility count and see if they are all in the row or same column
+      my ( $cell_boxes, $col );
+      foreach my $cell ( @{ $possibility_counts->{$key} } ) {
+        printf "IV: examining cell at ( %d, %d, %d ).\n"
+              , ( $cell->row + 1 )
+              , ( $cell->column + 1 )
+              , ( $cell->box + 1 );
+        $cell_boxes->{$cell->box}++;
+      }
+      # we now have a count of the unique boxes
+      # if either is a count of one, then all cells share the same row or column
+      if ( ( scalar keys %{$cell_boxes} ) == 1 ) {
+        # all cells in this box representing this possible value live in the same row
+        # if there are any cells in this row but outside of this box we can safely
+        # remove this possible value from these "outside" cells
+        my $box = ( keys %{$cell_boxes} )[0];
+        ( $col, $possible_value ) = ( $key =~ /col(\d):(\d)/);
+        # do we have cells with this value outside this box 
+        if (   $possibility_counts->{"box" . $box . ":" . $possible_value } and 
+             ( $possibility_counts->{"box" . $box . ":" . $possible_value } > $possibility_counts->{$key} ) ) {
+          foreach my $cell ( grep { $_->column != $col } @{ $possibility_counts->{"col" . $col . ":" . $possible_value} } ) {
+            $cell->possibilities->[$possible_value] = 0;
+            $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
+            printf "Imaginary value of %d found in col %d...   removing it from the cell ( %d, %d, %d ).\n"
+              , $possible_value
+              , $box + 1
+              , ( $cell->row + 1 )
+              , ( $cell->column + 1 )
+              , ( $cell->box + 1 );
+            $progress++;
+          }
+        }
+      }
+    }
+  }
+
+  print "Found and removed $progress possible values from cells via imaginary numbers.\n\n";
   return $progress;
 }
 
@@ -205,7 +348,6 @@ sub possibilities_hash {
   my $possible_value;
   my $cluster = 0;
   foreach my $row ( @{ $self->rows } ) {
-    $cluster++;
     foreach my $cell ( @{ $row } ) {
       if ( not $cell->value ) { # look for unsolved cells in this cluster
         foreach $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
@@ -213,10 +355,10 @@ sub possibilities_hash {
         }
       }
     }
+    $cluster++;
   }
   $cluster = 0;
   foreach my $column ( @{ $self->columns } ) {
-    $cluster++;
     foreach my $cell ( @{ $column } ) {
       if ( not $cell->value ) { # look for unsolved cells in this cluster
         foreach $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
@@ -224,10 +366,10 @@ sub possibilities_hash {
         }
       }
     }
+    $cluster++;
   }
   $cluster = 0;
   foreach my $box ( @{ $self->boxes } ) {
-    $cluster++;
     foreach my $cell ( @{ $box } ) {
       if ( not $cell->value ) { # look for unsolved cells in this cluster
         foreach $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
@@ -235,6 +377,7 @@ sub possibilities_hash {
         }
       }
     }
+    $cluster++;
   }
   return $possibility_counts;
 }

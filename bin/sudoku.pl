@@ -20,9 +20,11 @@ while (<DATA>) {
   }
 }
 
-print "puzzle_string: $puzzle_strings->{Puzzle_06}\n";
+$puzzle_name = "Puzzle_07";
+
+print "puzzle_string: $puzzle_strings->{$puzzle_name}\n";
 my $puzzle = Grid->new;
-$puzzle->load_from_string($puzzle_strings->{Puzzle_06});
+$puzzle->load_from_string($puzzle_strings->{$puzzle_name});
 
 # $puzzle->big_print; exit;
 
@@ -37,8 +39,9 @@ while ( $puzzle->solved <= 80 and $pass_progress ) {
   # Singletons
   while ( $puzzle->solved <= 80 and $progress = $puzzle->find_and_set_singletons ) {
     print "So far we filled this many cells: " . $puzzle->solved . "\n";
-    $puzzle->pretty_print;
-    $puzzle->multi_column_status;
+#   $puzzle->pretty_print;
+#   $puzzle->multi_column_status;
+    $puzzle->big_print;
     $pass_progress += $progress;
     print "---- end singletons method ----\n\n";
   }
@@ -46,10 +49,19 @@ while ( $puzzle->solved <= 80 and $pass_progress ) {
   # Lone Representatives
   while ( $puzzle->solved <= 80 and $progress = $puzzle->find_and_set_lone_representatives ) {
     print "So far we filled this many cells: " . $puzzle->solved . "\n";
-    $puzzle->pretty_print;
-    $puzzle->multi_column_status;
+#   $puzzle->pretty_print;
+#   $puzzle->multi_column_status;
+    $puzzle->big_print;
     $pass_progress += $progress;
     print "---- end lone representatives method ----\n\n";
+  }
+
+  # Imaginary Values in Boxes
+  while ( $puzzle->solved <= 80 and $progress = $puzzle->find_imaginary_values ) {
+    print "So far we filled this many cells: " . $puzzle->solved . "\n";
+    $puzzle->big_print;
+    $pass_progress += $progress;
+    print "---- end imaginary values method ----\n\n";
   }
 
   # Naked Pairs
