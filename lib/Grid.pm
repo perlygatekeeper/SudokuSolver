@@ -188,9 +188,81 @@ sub find_naked_pairs {
       my ( $col1, $col2, $row, $pair1, $pair2 );
       ( $row, $pair1, $pair2 )  = ( $key =~ /(...)(\d) -> (\d)(\d)/ );
       # find the columns of the 2 cells holding the naked pair
-      $col1 = $pairs->{ $key }[0];
-      $col2 = $pairs->{ $key }[1];
+      $col1 = $pairs->{ $key }[0]->column;
+      $col2 = $pairs->{ $key }[1]->column;
       foreach my $cell ( grep { not $_->value } ( @{ $self->rows[$row] } ) ) { # find unsolved cells in this row that aren't either of the naked pair.
+        my $col = $cell->column;
+        next if ( $col == $col1 or  $col == $col2 );
+        # if $pair1 is still possible in this cell, remove it.
+        if ( $cell->possible_values[$pair1] ) {
+          if ( $cell->possible_values[$pair1] ) {
+            $cell->possibilities->[$pair1] = 0;
+            $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
+          }
+        }
+        # if $pair2 is still possible in this cell, remove it.
+        if ( $cell->possible_values[$pair2] ) {
+          if ( $cell->possible_values[$pair2] ) {
+            $cell->possibilities->[$pair2] = 0;
+            $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
+          }
+        }
+      }
+    }
+
+    if ( $key =~ /col/ ) {
+      my ( $row1, $row2, $col, $pair1, $pair2 );
+      ( $row, $pair1, $pair2 )  = ( $key =~ /(...)(\d) -> (\d)(\d)/ );
+      # find the columns of the 2 cells holding the naked pair
+      $row1 = $pairs->{ $key }[0]->row;
+      $row2 = $pairs->{ $key }[1]->row;
+      foreach my $cell ( grep { not $_->value } ( @{ $self->columns[$col] } ) ) { # find unsolved cells in this column that aren't either of the naked pair.
+        my $row = $cell->row;
+        next if ( $row == $row1 or  $row == $row2 );
+        # if $pair1 is still possible in this cell, remove it.
+        if ( $cell->possible_values[$pair1] ) {
+          if ( $cell->possible_values[$pair1] ) {
+            $cell->possibilities->[$pair1] = 0;
+            $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
+          }
+        }
+        # if $pair2 is still possible in this cell, remove it.
+        if ( $cell->possible_values[$pair2] ) {
+          if ( $cell->possible_values[$pair2] ) {
+            $cell->possibilities->[$pair2] = 0;
+            $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
+          }
+        }
+      }
+    }
+
+    if ( $key =~ /box/ ) {
+      my ( $row1, $row2, $col1, $col2, $box, $pair1, $pair2 );
+      ( $row, $pair1, $pair2 )  = ( $key =~ /(...)(\d) -> (\d)(\d)/ );
+      # find the rows and columns of the 2 cells holding the naked pair
+      $row1 = $pairs->{ $key }[0]->row;
+      $row2 = $pairs->{ $key }[1]->row;
+      $col1 = $pairs->{ $key }[0]->column;
+      $col2 = $pairs->{ $key }[1]->column;
+      foreach my $cell ( grep { not $_->value } ( @{ $self->boxes[$box] } ) ) { # find unsolved cells in this row that aren't either of the naked pair.
+        my $row = $cell->row;
+        my $col = $cell->column;
+        next if ( ( $row == $row1 and $col == $col1 )
+               or ( $row == $row2 and $col == $col2 ) );
+        # if $pair1 is still possible in this cell, remove it.
+        if ( $cell->possible_values[$pair1] ) {
+          if ( $cell->possible_values[$pair1] ) {
+            $cell->possibilities->[$pair1] = 0;
+            $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
+          }
+        }
+        # if $pair2 is still possible in this cell, remove it.
+        if ( $cell->possible_values[$pair2] ) {
+          if ( $cell->possible_values[$pair2] ) {
+            $cell->possibilities->[$pair2] = 0;
+            $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
+          }
+        }
       }
     }
   }
