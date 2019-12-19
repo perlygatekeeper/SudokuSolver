@@ -186,7 +186,7 @@ sub find_naked_pairs {
     # we have a naked pair
     if ( $key =~ /row/ ) {
       my ( $col1, $col2, $row, $pair1, $pair2 );
-      ( $row, $pair1, $pair2 )  = ( $key =~ /(...)(\d) -> (\d)(\d)/ );
+      ( $row, $pair1, $pair2 )  = ( $key =~ /row:(\d) -> (\d)(\d)/ );
       # find the columns of the 2 cells holding the naked pair
       $col1 = $pairs->{ $key }[0]->column;
       $col2 = $pairs->{ $key }[1]->column;
@@ -198,6 +198,7 @@ sub find_naked_pairs {
           if ( $cell->possibilities->[$pair1] ) {
             $cell->possibilities->[$pair1] = 0;
             $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
+            $progress++;
           }
         }
         # if $pair2 is still possible in this cell, remove it.
@@ -205,6 +206,7 @@ sub find_naked_pairs {
           if ( $cell->possibilities->[$pair2] ) {
             $cell->possibilities->[$pair2] = 0;
             $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
+            $progress++;
           }
         }
       }
@@ -212,7 +214,7 @@ sub find_naked_pairs {
 
     if ( $key =~ /col/ ) {
       my ( $row1, $row2, $col, $pair1, $pair2 );
-      ( $col, $pair1, $pair2 )  = ( $key =~ /(...)(\d) -> (\d)(\d)/ );
+      ( $col, $pair1, $pair2 )  = ( $key =~ /col:(\d) -> (\d)(\d)/ );
       # find the columns of the 2 cells holding the naked pair
       $row1 = $pairs->{ $key }[0]->row;
       $row2 = $pairs->{ $key }[1]->row;
@@ -224,6 +226,7 @@ sub find_naked_pairs {
           if ( $cell->possibilities->[$pair1] ) {
             $cell->possibilities->[$pair1] = 0;
             $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
+            $progress++;
           }
         }
         # if $pair2 is still possible in this cell, remove it.
@@ -231,6 +234,7 @@ sub find_naked_pairs {
           if ( $cell->possibilities->[$pair2] ) {
             $cell->possibilities->[$pair2] = 0;
             $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
+            $progress++;
           }
         }
       }
@@ -238,7 +242,7 @@ sub find_naked_pairs {
 
     if ( $key =~ /box/ ) {
       my ( $row1, $row2, $col1, $col2, $box, $pair1, $pair2 );
-      ( $box, $pair1, $pair2 )  = ( $key =~ /(...)(\d) -> (\d)(\d)/ );
+      ( $box, $pair1, $pair2 )  = ( $key =~ /box:(\d) -> (\d)(\d)/ );
       # find the rows and columns of the 2 cells holding the naked pair
       $row1 = $pairs->{ $key }[0]->row;
       $row2 = $pairs->{ $key }[1]->row;
@@ -254,6 +258,7 @@ sub find_naked_pairs {
           if ( $cell->possibilities->[$pair1] ) {
             $cell->possibilities->[$pair1] = 0;
             $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
+            $progress++;
           }
         }
         # if $pair2 is still possible in this cell, remove it.
@@ -261,6 +266,7 @@ sub find_naked_pairs {
           if ( $cell->possibilities->[$pair2] ) {
             $cell->possibilities->[$pair2] = 0;
             $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
+            $progress++;
           }
         }
       }
@@ -434,20 +440,30 @@ sub find_imaginary_values {
   return $progress;
 }
 
-# this method may not be used ????
 sub pairs_possible {
   my $self = shift;
   my $pairs = {};
+  print "Begin search for naked pairs.\n";
   foreach my $cell ( @{ $self->cells } ) {
-    if ( $cell->possibilites->[0] == 2 ) {
+    if ( $cell->possibilities->[0] == 2 ) {
       my $pair = "";
-      foreach my $value ( $cell->possibilites->[1..9] ) {
-        $pair .= $_ if $_;  
+      foreach my $value ( @{ $cell->possibilities }[1..9] ) {
+        $pair .= $value if $value;  
       }
+      printf "Naked pair %d found in cell ( %d, %d, %d ).\n"
+             , $pair
+             , ( $cell->row + 1 )
+             , ( $cell->column + 1 )
+             , ( $cell->box + 1 );
       push ( @{ $pairs->{ "row:" . $cell->row    . " -> " . $pair } }, $cell );
       push ( @{ $pairs->{ "col:" . $cell->column . " -> " . $pair } }, $cell );
       push ( @{ $pairs->{ "box:" . $cell->box    . " -> " . $pair } }, $cell );
     }
+  }
+  print "Naked pair search yeilds:\n";
+# print dump($pairs);
+  foreach my $key ( keys %{ $pairs } ) {
+    printf "%s: %d\n", $key, scalar ( @{ $pairs->{$key} } );
   }
   return $pairs;
 }

@@ -1,15 +1,797 @@
-syntax error at lib/Grid.pm line 193, near "->rows["
-syntax error at lib/Grid.pm line 197, near "->possible_values["
-Global symbol "$cell" requires explicit package name at lib/Grid.pm line 204.
-syntax error at lib/Grid.pm line 204, near "->possible_values["
-Global symbol "$pair2" requires explicit package name at lib/Grid.pm line 204.
-Global symbol "$cell" requires explicit package name at lib/Grid.pm line 205.
-Global symbol "$pair2" requires explicit package name at lib/Grid.pm line 205.
-Global symbol "$cell" requires explicit package name at lib/Grid.pm line 206.
-Global symbol "$pair2" requires explicit package name at lib/Grid.pm line 206.
-Global symbol "$cell" requires explicit package name at lib/Grid.pm line 207.
-Global symbol "$cell" requires explicit package name at lib/Grid.pm line 207.
-syntax error at lib/Grid.pm line 210, near "}"
-lib/Grid.pm has too many errors.
-Compilation failed in require at ./bin/sudoku.pl line 8.
-BEGIN failed--compilation aborted at ./bin/sudoku.pl line 8.
+puzzle_string: 043080250600000000000001094900004070000608000010200003820500000000000005034090710
+==== Pass 1 ====
+Looking for Singletons (cells with only one possible value left) :
+Setting cell ( 9, 1, 7 ) to 5
+Setting cell ( 9, 4, 8 ) to 8
+Found and set 2 cells this singletons search pass.
+
+So far we filled this many cells: 28
+                                                                               
+        1       2       3       4       5       6       7       8       9      
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    | 1     '       '       |       '       '       |       '       ' 1     |  
+  1 |       '   4   '   3   |       '   8   '     6 |   2   '   5   '     6 |  
+    | 7     '       '       | 7   9 '       ' 7   9 |       '       ' 7     |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       ' 1 2   |     3 '   2 3 '   2 3 | 1   3 '     3 ' 1     |  
+  2 |   6   '   5   '   5   | 4     ' 4 5   '   5   |       '       '       |  
+    |       ' 7 8 9 ' 7 8 9 | 7   9 ' 7     ' 7   9 |   8   '   8   ' 7 8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |   2   '       '   2   |     3 '   2 3 '       |     3 '       '       |  
+  3 |       '   5   '   5   |       '   5 6 '   1   |     6 '   9   '   4   |  
+    | 7     ' 7 8   ' 7 8   | 7     ' 7     '       |   8   '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       '   2   | 1   3 ' 1   3 '       | 1     '       ' 1 2   |  
+  4 |   9   '   5 6 '   5 6 |       '   5   '   4   |   5 6 '   7   '     6 |  
+    |       '   8   '   8   |       '       '       |   8   '       '   8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |   2 3 '       '   2   |       ' 1   3 '       | 1     '   2   ' 1 2   |  
+  5 | 4     '   5   '   5   |   6   '   5   '   8   | 4 5   ' 4     '       |  
+    | 7     ' 7     ' 7     |       ' 7     '       |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '       |       '       '       |  
+  6 | 4     '   1   '   5 6 |   2   '   5   '   5   | 4 5 6 ' 4   6 '   3   |  
+    | 7     '       ' 7 8   |       ' 7     ' 7   9 |   8 9 '   8   '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       ' 1     |       ' 1   3 '     3 |     3 '     3 '       |  
+  7 |   8   '   2   '     6 |   5   ' 4   6 '     6 | 4   6 ' 4   6 '     6 |  
+    |       '       ' 7   9 |       ' 7     ' 7     |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    | 1     '       ' 1     | 1   3 ' 1 2 3 '   2 3 |     3 '   2 3 '       |  
+  8 |       '     6 '     6 | 4     ' 4   6 '     6 | 4   6 ' 4   6 '   5   |  
+    | 7     ' 7   9 ' 7   9 | 7     ' 7     ' 7     |   8 9 '   8   '       |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '   2   |       '       '   2   |  
+  9 |   5   '   3   '   4   |   8   '   9   '     6 |   7   '   1   '     6 |  
+    |       '       '       |       '       '       |       '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+---- end singletons method ----
+
+Looking for Singletons (cells with only one possible value left) :
+Found and set 0 cells this singletons search pass.
+
+Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):
+Lone in Box    Setting cell ( 5, 1, 4 ) to 3
+Lone in Box    Setting cell ( 6, 6, 5 ) to 9
+Lone in Row    Setting cell ( 1, 4, 2 ) to 9
+Lone in Column Setting cell ( 2, 6, 2 ) to 5
+Lone in Column Setting cell ( 6, 1, 4 ) to 4
+Lone in Column Setting cell ( 3, 1, 1 ) to 2
+Found and set 9 cells this lone representatives search pass.
+
+So far we filled this many cells: 34
+                                                                               
+        1       2       3       4       5       6       7       8       9      
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    | 1     '       '       |       '       '       |       '       ' 1     |  
+  1 |       '   4   '   3   |   9   '   8   '     6 |   2   '   5   '     6 |  
+    | 7     '       '       |       '       ' 7     |       '       ' 7     |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       ' 1     |     3 '   2 3 '       | 1   3 '     3 ' 1     |  
+  2 |   6   '       '       | 4     ' 4     '   5   |       '       '       |  
+    |       ' 7 8 9 ' 7 8 9 | 7     ' 7     '       |   8   '   8   ' 7 8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |     3 '     3 '       |     3 '       '       |  
+  3 |   2   '   5   '   5   |       '     6 '   1   |     6 '   9   '   4   |  
+    |       ' 7 8   ' 7 8   | 7     ' 7     '       |   8   '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       '   2   | 1   3 ' 1   3 '       | 1     '       ' 1 2   |  
+  4 |   9   '   5 6 '   5 6 |       '   5   '   4   |   5 6 '   7   '     6 |  
+    |       '   8   '   8   |       '       '       |   8   '       '   8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '   2   |       ' 1     '       | 1     '   2   ' 1 2   |  
+  5 |   3   '   5   '   5   |   6   '   5   '   8   | 4 5   ' 4     '       |  
+    |       ' 7     ' 7     |       ' 7     '       |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '       |       '       '       |  
+  6 |   4   '   1   '   5 6 |   2   '   5   '   9   |   5 6 '     6 '   3   |  
+    |       '       ' 7 8   |       ' 7     '       |   8   '   8   '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       ' 1     |       ' 1   3 '     3 |     3 '     3 '       |  
+  7 |   8   '   2   '     6 |   5   ' 4   6 '     6 | 4   6 ' 4   6 '     6 |  
+    |       '       ' 7   9 |       ' 7     ' 7     |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    | 1     '       ' 1     | 1   3 ' 1 2 3 '   2 3 |     3 '   2 3 '       |  
+  8 |       '     6 '     6 | 4     ' 4   6 '     6 | 4   6 ' 4   6 '   5   |  
+    | 7     ' 7   9 ' 7   9 | 7     ' 7     ' 7     |   8 9 '   8   '       |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '   2   |       '       '   2   |  
+  9 |   5   '   3   '   4   |   8   '   9   '     6 |   7   '   1   '     6 |  
+    |       '       '       |       '       '       |       '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+---- end lone representatives method ----
+
+Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):
+Lone in Box    Setting cell ( 2, 5, 2 ) to 2
+Lone in Row    Setting cell ( 2, 4, 2 ) to 4
+Found and set 2 cells this lone representatives search pass.
+
+So far we filled this many cells: 36
+                                                                               
+        1       2       3       4       5       6       7       8       9      
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    | 1     '       '       |       '       '       |       '       ' 1     |  
+  1 |       '   4   '   3   |   9   '   8   '     6 |   2   '   5   '     6 |  
+    | 7     '       '       |       '       ' 7     |       '       ' 7     |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       ' 1     |       '       '       | 1   3 '     3 ' 1     |  
+  2 |   6   '       '       |   4   '   2   '   5   |       '       '       |  
+    |       ' 7 8 9 ' 7 8 9 |       '       '       |   8   '   8   ' 7 8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |     3 '     3 '       |     3 '       '       |  
+  3 |   2   '   5   '   5   |       '     6 '   1   |     6 '   9   '   4   |  
+    |       ' 7 8   ' 7 8   | 7     ' 7     '       |   8   '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       '   2   | 1   3 ' 1   3 '       | 1     '       ' 1 2   |  
+  4 |   9   '   5 6 '   5 6 |       '   5   '   4   |   5 6 '   7   '     6 |  
+    |       '   8   '   8   |       '       '       |   8   '       '   8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '   2   |       ' 1     '       | 1     '   2   ' 1 2   |  
+  5 |   3   '   5   '   5   |   6   '   5   '   8   | 4 5   ' 4     '       |  
+    |       ' 7     ' 7     |       ' 7     '       |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '       |       '       '       |  
+  6 |   4   '   1   '   5 6 |   2   '   5   '   9   |   5 6 '     6 '   3   |  
+    |       '       ' 7 8   |       ' 7     '       |   8   '   8   '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       ' 1     |       ' 1   3 '     3 |     3 '     3 '       |  
+  7 |   8   '   2   '     6 |   5   ' 4   6 '     6 | 4   6 ' 4   6 '     6 |  
+    |       '       ' 7   9 |       ' 7     ' 7     |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    | 1     '       ' 1     | 1   3 ' 1   3 '   2 3 |     3 '   2 3 '       |  
+  8 |       '     6 '     6 |       ' 4   6 '     6 | 4   6 ' 4   6 '   5   |  
+    | 7     ' 7   9 ' 7   9 | 7     ' 7     ' 7     |   8 9 '   8   '       |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '   2   |       '       '   2   |  
+  9 |   5   '   3   '   4   |   8   '   9   '     6 |   7   '   1   '     6 |  
+    |       '       '       |       '       '       |       '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+---- end lone representatives method ----
+
+Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):
+Found and set 0 cells this lone representatives search pass.
+
+Looking for Imaginary Values (all 2 or 3 representatives of a given value in a cluster share all belong to another cluster):
+Imaginary value of 3 found in Col 6...   removing it from the cell ( 7, 5, 8 ).
+Imaginary value of 3 found in Col 6...   removing it from the cell ( 8, 4, 8 ).
+Imaginary value of 3 found in Col 6...   removing it from the cell ( 8, 5, 8 ).
+Found and removed 7 possible values from cells via imaginary numbers.
+
+So far we filled this many cells: 36
+                                                                               
+        1       2       3       4       5       6       7       8       9      
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    | 1     '       '       |       '       '       |       '       ' 1     |  
+  1 |       '   4   '   3   |   9   '   8   '     6 |   2   '   5   '     6 |  
+    | 7     '       '       |       '       ' 7     |       '       ' 7     |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       ' 1     |       '       '       | 1   3 '     3 ' 1     |  
+  2 |   6   '       '       |   4   '   2   '   5   |       '       '       |  
+    |       ' 7 8 9 ' 7 8 9 |       '       '       |   8   '   8   ' 7 8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |     3 '     3 '       |       '       '       |  
+  3 |   2   '   5   '   5   |       '     6 '   1   |     6 '   9   '   4   |  
+    |       ' 7 8   ' 7 8   | 7     '       '       |   8   '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       '   2   | 1   3 ' 1   3 '       | 1     '       ' 1 2   |  
+  4 |   9   '   5 6 '   5 6 |       '   5   '   4   |   5 6 '   7   '     6 |  
+    |       '   8   '   8   |       '       '       |   8   '       '   8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '   2   |       ' 1     '       | 1     '   2   ' 1 2   |  
+  5 |   3   '   5   '   5   |   6   '   5   '   8   | 4 5   ' 4     '       |  
+    |       ' 7     ' 7     |       ' 7     '       |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '       |       '       '       |  
+  6 |   4   '   1   '   5 6 |   2   '   5   '   9   |   5 6 '     6 '   3   |  
+    |       '       ' 7 8   |       ' 7     '       |   8   '   8   '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       ' 1     |       ' 1     '     3 |     3 '     3 '       |  
+  7 |   8   '   2   '     6 |   5   ' 4   6 '     6 | 4   6 ' 4   6 '     6 |  
+    |       '       ' 7   9 |       '       ' 7     |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    | 1     '       ' 1     | 1     ' 1     '   2 3 |     3 '   2 3 '       |  
+  8 |       '     6 '     6 |       ' 4   6 '     6 | 4   6 ' 4   6 '   5   |  
+    | 7     ' 7   9 ' 7   9 | 7     '       ' 7     |   8 9 '   8   '       |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '   2   |       '       '   2   |  
+  9 |   5   '   3   '   4   |   8   '   9   '     6 |   7   '   1   '     6 |  
+    |       '       '       |       '       '       |       '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+---- end imaginary values method ----
+
+Looking for Imaginary Values (all 2 or 3 representatives of a given value in a cluster share all belong to another cluster):
+Found and removed 0 possible values from cells via imaginary numbers.
+
+Looking for Naked Pairs, any two cells with the same
+pair of possible values that exist in the same cluster [row column or box]):
+Begin search for naked pairs.
+Naked pair 17 found in cell ( 1, 1, 1 ).
+Naked pair 67 found in cell ( 1, 6, 2 ).
+Naked pair 38 found in cell ( 2, 8, 3 ).
+Naked pair 37 found in cell ( 3, 4, 2 ).
+Naked pair 36 found in cell ( 3, 5, 2 ).
+Naked pair 68 found in cell ( 3, 7, 3 ).
+Naked pair 13 found in cell ( 4, 4, 5 ).
+Naked pair 57 found in cell ( 5, 2, 4 ).
+Naked pair 24 found in cell ( 5, 8, 6 ).
+Naked pair 57 found in cell ( 6, 5, 5 ).
+Naked pair 68 found in cell ( 6, 8, 6 ).
+Naked pair 69 found in cell ( 7, 9, 9 ).
+Naked pair 17 found in cell ( 8, 1, 7 ).
+Naked pair 17 found in cell ( 8, 4, 8 ).
+Naked pair 26 found in cell ( 9, 6, 8 ).
+Naked pair 26 found in cell ( 9, 9, 9 ).
+Naked pair search yeilds:
+col:6 -> 68: 1
+box:5 -> 24: 1
+box:6 -> 17: 1
+box:3 -> 57: 1
+row:4 -> 24: 1
+box:1 -> 67: 1
+col:5 -> 67: 1
+box:8 -> 69: 1
+col:3 -> 17: 1
+row:2 -> 36: 1
+box:0 -> 17: 1
+row:8 -> 26: 2
+row:2 -> 68: 1
+col:7 -> 24: 1
+col:5 -> 26: 1
+col:7 -> 38: 1
+box:1 -> 37: 1
+row:0 -> 67: 1
+box:5 -> 68: 1
+row:0 -> 17: 1
+row:7 -> 17: 2
+box:2 -> 68: 1
+col:8 -> 69: 1
+col:0 -> 17: 2
+col:3 -> 13: 1
+box:4 -> 13: 1
+row:1 -> 38: 1
+box:7 -> 17: 1
+box:7 -> 26: 1
+col:4 -> 36: 1
+col:4 -> 57: 1
+box:8 -> 26: 1
+row:6 -> 69: 1
+row:2 -> 37: 1
+row:5 -> 68: 1
+box:4 -> 57: 1
+row:4 -> 57: 1
+col:8 -> 26: 1
+row:3 -> 13: 1
+box:1 -> 36: 1
+col:7 -> 68: 1
+col:3 -> 37: 1
+row:5 -> 57: 1
+box:2 -> 38: 1
+col:1 -> 57: 1
+Found and processed 5 naked pairs.
+
+So far we filled this many cells: 36
+                                                                               
+        1       2       3       4       5       6       7       8       9      
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    | 1     '       '       |       '       '       |       '       ' 1     |  
+  1 |       '   4   '   3   |   9   '   8   '     6 |   2   '   5   '     6 |  
+    | 7     '       '       |       '       ' 7     |       '       ' 7     |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       ' 1     |       '       '       | 1   3 '     3 ' 1     |  
+  2 |   6   '       '       |   4   '   2   '   5   |       '       '       |  
+    |       ' 7 8 9 ' 7 8 9 |       '       '       |   8   '   8   ' 7 8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |     3 '     3 '       |       '       '       |  
+  3 |   2   '   5   '   5   |       '     6 '   1   |     6 '   9   '   4   |  
+    |       ' 7 8   ' 7 8   | 7     '       '       |   8   '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       '   2   | 1   3 ' 1   3 '       | 1     '       ' 1 2   |  
+  4 |   9   '   5 6 '   5 6 |       '   5   '   4   |   5 6 '   7   '     6 |  
+    |       '   8   '   8   |       '       '       |   8   '       '   8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '   2   |       ' 1     '       | 1     '   2   ' 1 2   |  
+  5 |   3   '   5   '   5   |   6   '   5   '   8   | 4 5   ' 4     '       |  
+    |       ' 7     ' 7     |       ' 7     '       |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '       |       '       '       |  
+  6 |   4   '   1   '   5 6 |   2   '   5   '   9   |   5 6 '     6 '   3   |  
+    |       '       ' 7 8   |       ' 7     '       |   8   '   8   '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       ' 1     |       ' 1     '     3 |     3 '     3 '       |  
+  7 |   8   '   2   '     6 |   5   ' 4   6 '     6 | 4   6 ' 4   6 '     6 |  
+    |       '       ' 7   9 |       '       ' 7     |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    | 1     '       '       | 1     '       '   2 3 |     3 '   2 3 '       |  
+  8 |       '     6 '     6 |       ' 4   6 '     6 | 4   6 ' 4   6 '   5   |  
+    | 7     '     9 '     9 | 7     '       '       |   8 9 '   8   '       |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '   2   |       '       '   2   |  
+  9 |   5   '   3   '   4   |   8   '   9   '     6 |   7   '   1   '     6 |  
+    |       '       '       |       '       '       |       '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+---- end naked pairs method ----
+
+Looking for Naked Pairs, any two cells with the same
+pair of possible values that exist in the same cluster [row column or box]):
+Begin search for naked pairs.
+Naked pair 17 found in cell ( 1, 1, 1 ).
+Naked pair 67 found in cell ( 1, 6, 2 ).
+Naked pair 38 found in cell ( 2, 8, 3 ).
+Naked pair 37 found in cell ( 3, 4, 2 ).
+Naked pair 36 found in cell ( 3, 5, 2 ).
+Naked pair 68 found in cell ( 3, 7, 3 ).
+Naked pair 13 found in cell ( 4, 4, 5 ).
+Naked pair 57 found in cell ( 5, 2, 4 ).
+Naked pair 24 found in cell ( 5, 8, 6 ).
+Naked pair 57 found in cell ( 6, 5, 5 ).
+Naked pair 68 found in cell ( 6, 8, 6 ).
+Naked pair 69 found in cell ( 7, 9, 9 ).
+Naked pair 17 found in cell ( 8, 1, 7 ).
+Naked pair 69 found in cell ( 8, 2, 7 ).
+Naked pair 69 found in cell ( 8, 3, 7 ).
+Naked pair 17 found in cell ( 8, 4, 8 ).
+Naked pair 46 found in cell ( 8, 5, 8 ).
+Naked pair 26 found in cell ( 9, 6, 8 ).
+Naked pair 26 found in cell ( 9, 9, 9 ).
+Naked pair search yeilds:
+col:3 -> 37: 1
+row:7 -> 69: 2
+box:6 -> 69: 2
+col:1 -> 57: 1
+box:2 -> 38: 1
+row:5 -> 57: 1
+box:1 -> 36: 1
+col:8 -> 26: 1
+row:3 -> 13: 1
+col:7 -> 68: 1
+row:2 -> 37: 1
+box:8 -> 26: 1
+row:6 -> 69: 1
+row:7 -> 46: 1
+row:4 -> 57: 1
+col:2 -> 69: 1
+box:4 -> 57: 1
+row:5 -> 68: 1
+col:4 -> 57: 1
+col:4 -> 36: 1
+box:7 -> 26: 1
+box:4 -> 13: 1
+col:3 -> 13: 1
+row:1 -> 38: 1
+box:7 -> 17: 1
+box:5 -> 68: 1
+col:7 -> 38: 1
+box:1 -> 37: 1
+row:0 -> 67: 1
+col:8 -> 69: 1
+col:0 -> 17: 2
+row:0 -> 17: 1
+box:7 -> 46: 1
+row:7 -> 17: 2
+box:2 -> 68: 1
+box:1 -> 67: 1
+col:4 -> 46: 1
+col:5 -> 67: 1
+row:2 -> 68: 1
+col:7 -> 24: 1
+col:5 -> 26: 1
+box:8 -> 69: 1
+col:3 -> 17: 1
+row:2 -> 36: 1
+row:8 -> 26: 2
+box:0 -> 17: 1
+box:5 -> 24: 1
+col:6 -> 68: 1
+col:1 -> 69: 1
+box:3 -> 57: 1
+box:6 -> 17: 1
+row:4 -> 24: 1
+Found and processed 7 naked pairs.
+
+So far we filled this many cells: 36
+                                                                               
+        1       2       3       4       5       6       7       8       9      
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    | 1     '       '       |       '       '       |       '       ' 1     |  
+  1 |       '   4   '   3   |   9   '   8   '     6 |   2   '   5   '     6 |  
+    | 7     '       '       |       '       ' 7     |       '       ' 7     |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       ' 1     |       '       '       | 1   3 '     3 ' 1     |  
+  2 |   6   '       '       |   4   '   2   '   5   |       '       '       |  
+    |       ' 7 8 9 ' 7 8 9 |       '       '       |   8   '   8   ' 7 8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |     3 '     3 '       |       '       '       |  
+  3 |   2   '   5   '   5   |       '     6 '   1   |     6 '   9   '   4   |  
+    |       ' 7 8   ' 7 8   | 7     '       '       |   8   '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       '   2   | 1   3 ' 1   3 '       | 1     '       ' 1 2   |  
+  4 |   9   '   5 6 '   5 6 |       '   5   '   4   |   5 6 '   7   '     6 |  
+    |       '   8   '   8   |       '       '       |   8   '       '   8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '   2   |       ' 1     '       | 1     '   2   ' 1 2   |  
+  5 |   3   '   5   '   5   |   6   '   5   '   8   | 4 5   ' 4     '       |  
+    |       ' 7     ' 7     |       ' 7     '       |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '       |       '       '       |  
+  6 |   4   '   1   '   5 6 |   2   '   5   '   9   |   5 6 '     6 '   3   |  
+    |       '       ' 7 8   |       ' 7     '       |   8   '   8   '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       ' 1     |       ' 1     '     3 |     3 '     3 '       |  
+  7 |   8   '   2   '       |   5   ' 4   6 '     6 | 4   6 ' 4   6 '     6 |  
+    |       '       ' 7     |       '       ' 7     |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    | 1     '       '       | 1     '       '   2 3 |     3 '   2 3 '       |  
+  8 |       '     6 '     6 |       ' 4     '       | 4     ' 4     '   5   |  
+    | 7     '     9 '     9 | 7     '       '       |   8   '   8   '       |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '   2   |       '       '   2   |  
+  9 |   5   '   3   '   4   |   8   '   9   '     6 |   7   '   1   '     6 |  
+    |       '       '       |       '       '       |       '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+---- end naked pairs method ----
+
+Looking for Naked Pairs, any two cells with the same
+pair of possible values that exist in the same cluster [row column or box]):
+Begin search for naked pairs.
+Naked pair 17 found in cell ( 1, 1, 1 ).
+Naked pair 67 found in cell ( 1, 6, 2 ).
+Naked pair 38 found in cell ( 2, 8, 3 ).
+Naked pair 37 found in cell ( 3, 4, 2 ).
+Naked pair 36 found in cell ( 3, 5, 2 ).
+Naked pair 68 found in cell ( 3, 7, 3 ).
+Naked pair 13 found in cell ( 4, 4, 5 ).
+Naked pair 57 found in cell ( 5, 2, 4 ).
+Naked pair 24 found in cell ( 5, 8, 6 ).
+Naked pair 57 found in cell ( 6, 5, 5 ).
+Naked pair 68 found in cell ( 6, 8, 6 ).
+Naked pair 17 found in cell ( 7, 3, 7 ).
+Naked pair 69 found in cell ( 7, 9, 9 ).
+Naked pair 17 found in cell ( 8, 1, 7 ).
+Naked pair 69 found in cell ( 8, 2, 7 ).
+Naked pair 69 found in cell ( 8, 3, 7 ).
+Naked pair 17 found in cell ( 8, 4, 8 ).
+Naked pair 23 found in cell ( 8, 6, 8 ).
+Naked pair 26 found in cell ( 9, 6, 8 ).
+Naked pair 26 found in cell ( 9, 9, 9 ).
+Naked pair search yeilds:
+box:1 -> 67: 1
+col:5 -> 67: 1
+col:3 -> 17: 1
+box:8 -> 69: 1
+row:2 -> 36: 1
+box:0 -> 17: 1
+row:8 -> 26: 2
+row:2 -> 68: 1
+col:5 -> 26: 1
+col:7 -> 24: 1
+row:7 -> 23: 1
+col:6 -> 68: 1
+col:2 -> 17: 1
+col:1 -> 69: 1
+box:5 -> 24: 1
+box:3 -> 57: 1
+box:6 -> 17: 2
+row:4 -> 24: 1
+col:3 -> 13: 1
+box:4 -> 13: 1
+row:1 -> 38: 1
+box:7 -> 17: 1
+box:1 -> 37: 1
+col:7 -> 38: 1
+row:0 -> 67: 1
+box:5 -> 68: 1
+row:7 -> 17: 2
+row:0 -> 17: 1
+box:2 -> 68: 1
+col:8 -> 69: 1
+col:0 -> 17: 2
+col:5 -> 23: 1
+box:8 -> 26: 1
+row:6 -> 69: 1
+row:2 -> 37: 1
+row:5 -> 68: 1
+col:2 -> 69: 1
+box:4 -> 57: 1
+row:4 -> 57: 1
+box:7 -> 26: 1
+col:4 -> 36: 1
+col:4 -> 57: 1
+row:6 -> 17: 1
+col:3 -> 37: 1
+row:7 -> 69: 2
+row:5 -> 57: 1
+box:2 -> 38: 1
+box:6 -> 69: 2
+col:1 -> 57: 1
+col:8 -> 26: 1
+row:3 -> 13: 1
+box:1 -> 36: 1
+col:7 -> 68: 1
+box:7 -> 23: 1
+Found and processed 0 naked pairs.
+
+==== End Pass 1 (progress is 32) ====
+==== Pass 2 ====
+Looking for Singletons (cells with only one possible value left) :
+Setting cell ( 8, 5, 8 ) to 4
+Found and set 1 cells this singletons search pass.
+
+So far we filled this many cells: 37
+                                                                               
+        1       2       3       4       5       6       7       8       9      
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    | 1     '       '       |       '       '       |       '       ' 1     |  
+  1 |       '   4   '   3   |   9   '   8   '     6 |   2   '   5   '     6 |  
+    | 7     '       '       |       '       ' 7     |       '       ' 7     |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       ' 1     |       '       '       | 1   3 '     3 ' 1     |  
+  2 |   6   '       '       |   4   '   2   '   5   |       '       '       |  
+    |       ' 7 8 9 ' 7 8 9 |       '       '       |   8   '   8   ' 7 8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |     3 '     3 '       |       '       '       |  
+  3 |   2   '   5   '   5   |       '     6 '   1   |     6 '   9   '   4   |  
+    |       ' 7 8   ' 7 8   | 7     '       '       |   8   '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       '   2   | 1   3 ' 1   3 '       | 1     '       ' 1 2   |  
+  4 |   9   '   5 6 '   5 6 |       '   5   '   4   |   5 6 '   7   '     6 |  
+    |       '   8   '   8   |       '       '       |   8   '       '   8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '   2   |       ' 1     '       | 1     '   2   ' 1 2   |  
+  5 |   3   '   5   '   5   |   6   '   5   '   8   | 4 5   ' 4     '       |  
+    |       ' 7     ' 7     |       ' 7     '       |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '       |       '       '       |  
+  6 |   4   '   1   '   5 6 |   2   '   5   '   9   |   5 6 '     6 '   3   |  
+    |       '       ' 7 8   |       ' 7     '       |   8   '   8   '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       ' 1     |       ' 1     '     3 |     3 '     3 '       |  
+  7 |   8   '   2   '       |   5   '     6 '     6 | 4   6 ' 4   6 '     6 |  
+    |       '       ' 7     |       '       ' 7     |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    | 1     '       '       | 1     '       '   2 3 |     3 '   2 3 '       |  
+  8 |       '     6 '     6 |       '   4   '       |       '       '   5   |  
+    | 7     '     9 '     9 | 7     '       '       |   8   '   8   '       |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '   2   |       '       '   2   |  
+  9 |   5   '   3   '   4   |   8   '   9   '     6 |   7   '   1   '     6 |  
+    |       '       '       |       '       '       |       '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+---- end singletons method ----
+
+Looking for Singletons (cells with only one possible value left) :
+Found and set 0 cells this singletons search pass.
+
+Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):
+Found and set 0 cells this lone representatives search pass.
+
+Looking for Imaginary Values (all 2 or 3 representatives of a given value in a cluster share all belong to another cluster):
+Found and removed 0 possible values from cells via imaginary numbers.
+
+Looking for Naked Pairs, any two cells with the same
+pair of possible values that exist in the same cluster [row column or box]):
+Begin search for naked pairs.
+Naked pair 17 found in cell ( 1, 1, 1 ).
+Naked pair 67 found in cell ( 1, 6, 2 ).
+Naked pair 38 found in cell ( 2, 8, 3 ).
+Naked pair 37 found in cell ( 3, 4, 2 ).
+Naked pair 36 found in cell ( 3, 5, 2 ).
+Naked pair 68 found in cell ( 3, 7, 3 ).
+Naked pair 13 found in cell ( 4, 4, 5 ).
+Naked pair 57 found in cell ( 5, 2, 4 ).
+Naked pair 24 found in cell ( 5, 8, 6 ).
+Naked pair 57 found in cell ( 6, 5, 5 ).
+Naked pair 68 found in cell ( 6, 8, 6 ).
+Naked pair 17 found in cell ( 7, 3, 7 ).
+Naked pair 16 found in cell ( 7, 5, 8 ).
+Naked pair 69 found in cell ( 7, 9, 9 ).
+Naked pair 17 found in cell ( 8, 1, 7 ).
+Naked pair 69 found in cell ( 8, 2, 7 ).
+Naked pair 69 found in cell ( 8, 3, 7 ).
+Naked pair 17 found in cell ( 8, 4, 8 ).
+Naked pair 23 found in cell ( 8, 6, 8 ).
+Naked pair 38 found in cell ( 8, 7, 9 ).
+Naked pair 26 found in cell ( 9, 6, 8 ).
+Naked pair 26 found in cell ( 9, 9, 9 ).
+Naked pair search yeilds:
+row:5 -> 68: 1
+col:2 -> 69: 1
+box:4 -> 57: 1
+row:4 -> 57: 1
+box:8 -> 26: 1
+col:4 -> 16: 1
+row:6 -> 69: 1
+row:6 -> 16: 1
+row:2 -> 37: 1
+row:7 -> 38: 1
+box:7 -> 26: 1
+col:4 -> 57: 1
+col:4 -> 36: 1
+row:5 -> 57: 1
+box:2 -> 38: 1
+box:6 -> 69: 2
+col:1 -> 57: 1
+row:6 -> 17: 1
+col:3 -> 37: 1
+row:7 -> 69: 2
+col:7 -> 68: 1
+box:7 -> 23: 1
+col:8 -> 26: 1
+col:6 -> 38: 1
+row:3 -> 13: 1
+box:1 -> 36: 1
+col:3 -> 17: 1
+row:2 -> 36: 1
+box:8 -> 69: 1
+box:0 -> 17: 1
+row:8 -> 26: 2
+row:2 -> 68: 1
+col:7 -> 24: 1
+col:5 -> 26: 1
+row:7 -> 23: 1
+box:1 -> 67: 1
+col:5 -> 67: 1
+box:3 -> 57: 1
+box:6 -> 17: 2
+row:4 -> 24: 1
+col:6 -> 68: 1
+col:2 -> 17: 1
+col:1 -> 69: 1
+box:5 -> 24: 1
+row:1 -> 38: 1
+box:7 -> 16: 1
+box:7 -> 17: 1
+col:3 -> 13: 1
+box:8 -> 38: 1
+box:4 -> 13: 1
+row:7 -> 17: 2
+row:0 -> 17: 1
+box:2 -> 68: 1
+col:8 -> 69: 1
+col:5 -> 23: 1
+col:0 -> 17: 2
+col:7 -> 38: 1
+box:1 -> 37: 1
+row:0 -> 67: 1
+box:5 -> 68: 1
+Found and processed 0 naked pairs.
+
+==== End Pass 2 (progress is 1) ====
+==== Pass 3 ====
+Looking for Singletons (cells with only one possible value left) :
+Found and set 0 cells this singletons search pass.
+
+Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):
+Found and set 0 cells this lone representatives search pass.
+
+Looking for Imaginary Values (all 2 or 3 representatives of a given value in a cluster share all belong to another cluster):
+Found and removed 0 possible values from cells via imaginary numbers.
+
+Looking for Naked Pairs, any two cells with the same
+pair of possible values that exist in the same cluster [row column or box]):
+Begin search for naked pairs.
+Naked pair 17 found in cell ( 1, 1, 1 ).
+Naked pair 67 found in cell ( 1, 6, 2 ).
+Naked pair 38 found in cell ( 2, 8, 3 ).
+Naked pair 37 found in cell ( 3, 4, 2 ).
+Naked pair 36 found in cell ( 3, 5, 2 ).
+Naked pair 68 found in cell ( 3, 7, 3 ).
+Naked pair 13 found in cell ( 4, 4, 5 ).
+Naked pair 57 found in cell ( 5, 2, 4 ).
+Naked pair 24 found in cell ( 5, 8, 6 ).
+Naked pair 57 found in cell ( 6, 5, 5 ).
+Naked pair 68 found in cell ( 6, 8, 6 ).
+Naked pair 17 found in cell ( 7, 3, 7 ).
+Naked pair 16 found in cell ( 7, 5, 8 ).
+Naked pair 69 found in cell ( 7, 9, 9 ).
+Naked pair 17 found in cell ( 8, 1, 7 ).
+Naked pair 69 found in cell ( 8, 2, 7 ).
+Naked pair 69 found in cell ( 8, 3, 7 ).
+Naked pair 17 found in cell ( 8, 4, 8 ).
+Naked pair 23 found in cell ( 8, 6, 8 ).
+Naked pair 38 found in cell ( 8, 7, 9 ).
+Naked pair 26 found in cell ( 9, 6, 8 ).
+Naked pair 26 found in cell ( 9, 9, 9 ).
+Naked pair search yeilds:
+col:8 -> 69: 1
+col:5 -> 23: 1
+col:0 -> 17: 2
+row:0 -> 17: 1
+row:7 -> 17: 2
+box:2 -> 68: 1
+box:5 -> 68: 1
+box:1 -> 37: 1
+col:7 -> 38: 1
+row:0 -> 67: 1
+row:1 -> 38: 1
+box:7 -> 16: 1
+box:7 -> 17: 1
+box:4 -> 13: 1
+col:3 -> 13: 1
+box:8 -> 38: 1
+box:3 -> 57: 1
+box:6 -> 17: 2
+row:4 -> 24: 1
+box:5 -> 24: 1
+col:6 -> 68: 1
+col:2 -> 17: 1
+col:1 -> 69: 1
+row:2 -> 68: 1
+col:5 -> 26: 1
+col:7 -> 24: 1
+row:7 -> 23: 1
+row:2 -> 36: 1
+col:3 -> 17: 1
+box:8 -> 69: 1
+box:0 -> 17: 1
+row:8 -> 26: 2
+box:1 -> 67: 1
+col:5 -> 67: 1
+box:7 -> 23: 1
+col:7 -> 68: 1
+box:1 -> 36: 1
+col:8 -> 26: 1
+col:6 -> 38: 1
+row:3 -> 13: 1
+box:6 -> 69: 2
+col:1 -> 57: 1
+row:5 -> 57: 1
+box:2 -> 38: 1
+col:3 -> 37: 1
+row:7 -> 69: 2
+row:6 -> 17: 1
+row:7 -> 38: 1
+col:4 -> 36: 1
+col:4 -> 57: 1
+box:7 -> 26: 1
+col:2 -> 69: 1
+box:4 -> 57: 1
+row:4 -> 57: 1
+row:5 -> 68: 1
+row:2 -> 37: 1
+box:8 -> 26: 1
+row:6 -> 16: 1
+row:6 -> 69: 1
+col:4 -> 16: 1
+Found and processed 0 naked pairs.
+
+==== End Pass 3 (progress is 0) ====
+We were able to determine 37 cells.
+                                                                               
+        1       2       3       4       5       6       7       8       9      
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    | 1     '       '       |       '       '       |       '       ' 1     |  
+  1 |       '   4   '   3   |   9   '   8   '     6 |   2   '   5   '     6 |  
+    | 7     '       '       |       '       ' 7     |       '       ' 7     |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       ' 1     |       '       '       | 1   3 '     3 ' 1     |  
+  2 |   6   '       '       |   4   '   2   '   5   |       '       '       |  
+    |       ' 7 8 9 ' 7 8 9 |       '       '       |   8   '   8   ' 7 8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |     3 '     3 '       |       '       '       |  
+  3 |   2   '   5   '   5   |       '     6 '   1   |     6 '   9   '   4   |  
+    |       ' 7 8   ' 7 8   | 7     '       '       |   8   '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       '   2   | 1   3 ' 1   3 '       | 1     '       ' 1 2   |  
+  4 |   9   '   5 6 '   5 6 |       '   5   '   4   |   5 6 '   7   '     6 |  
+    |       '   8   '   8   |       '       '       |   8   '       '   8   |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '   2   |       ' 1     '       | 1     '   2   ' 1 2   |  
+  5 |   3   '   5   '   5   |   6   '   5   '   8   | 4 5   ' 4     '       |  
+    |       ' 7     ' 7     |       ' 7     '       |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '       |       '       '       |  
+  6 |   4   '   1   '   5 6 |   2   '   5   '   9   |   5 6 '     6 '   3   |  
+    |       '       ' 7 8   |       ' 7     '       |   8   '   8   '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       ' 1     |       ' 1     '     3 |     3 '     3 '       |  
+  7 |   8   '   2   '       |   5   '     6 '     6 | 4   6 ' 4   6 '     6 |  
+    |       '       ' 7     |       '       ' 7     |     9 '       '     9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    | 1     '       '       | 1     '       '   2 3 |     3 '   2 3 '       |  
+  8 |       '     6 '     6 |       '   4   '       |       '       '   5   |  
+    | 7     '     9 '     9 | 7     '       '       |   8   '   8   '       |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '   2   |       '       '   2   |  
+  9 |   5   '   3   '   4   |   8   '   9   '     6 |   7   '   1   '     6 |  
+    |       '       '       |       '       '       |       '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
