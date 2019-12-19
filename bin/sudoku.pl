@@ -65,6 +65,14 @@ while ( $puzzle->solved <= 80 and $pass_progress ) {
   }
 
   # Naked Pairs
+  while ( $puzzle->solved <= 80 and $progress = $puzzle->find_naked_pairs ) {
+    print "So far we filled this many cells: " . $puzzle->solved . "\n";
+    $puzzle->big_print;
+    $pass_progress += $progress;
+    print "---- end naked pairs method ----\n\n";
+  }
+
+
   # Naked Triplets
   # XY Wings
 
