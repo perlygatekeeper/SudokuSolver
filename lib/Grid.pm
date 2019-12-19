@@ -178,11 +178,11 @@ sub find_naked_pairs {
   print "Looking for Naked Pairs, any two cells with the same\n";
   print "pair of possible values that exist in the same cluster [row column or box]):\n";
 
-  $pairs = $self->pairs_possible;
+  my $pairs = $self->pairs_possible;
 
   # look for pairs that have 2 cells
 
-  foreach my $key ( grep { scalar ( @{ $pairs->{$_} } == 2 } keys %{ $pairs } ) {
+  foreach my $key ( grep { scalar ( @{ $pairs->{$_} } == 2 ) } keys %{ $pairs } ) {
     # we have a naked pair
     if ( $key =~ /row/ ) {
       my ( $col1, $col2, $row, $pair1, $pair2 );
@@ -190,19 +190,19 @@ sub find_naked_pairs {
       # find the columns of the 2 cells holding the naked pair
       $col1 = $pairs->{ $key }[0]->column;
       $col2 = $pairs->{ $key }[1]->column;
-      foreach my $cell ( grep { not $_->value } ( @{ $self->rows[$row] } ) ) { # find unsolved cells in this row that aren't either of the naked pair.
+      foreach my $cell ( grep { not $_->value } ( @{ $self->rows->[$row] } ) ) { # find unsolved cells in this row that aren't either of the naked pair.
         my $col = $cell->column;
         next if ( $col == $col1 or  $col == $col2 );
         # if $pair1 is still possible in this cell, remove it.
-        if ( $cell->possible_values[$pair1] ) {
-          if ( $cell->possible_values[$pair1] ) {
+        if ( $cell->possibilities->[$pair1] ) {
+          if ( $cell->possibilities->[$pair1] ) {
             $cell->possibilities->[$pair1] = 0;
             $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
           }
         }
         # if $pair2 is still possible in this cell, remove it.
-        if ( $cell->possible_values[$pair2] ) {
-          if ( $cell->possible_values[$pair2] ) {
+        if ( $cell->possibilities->[$pair2] ) {
+          if ( $cell->possibilities->[$pair2] ) {
             $cell->possibilities->[$pair2] = 0;
             $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
           }
@@ -212,23 +212,23 @@ sub find_naked_pairs {
 
     if ( $key =~ /col/ ) {
       my ( $row1, $row2, $col, $pair1, $pair2 );
-      ( $row, $pair1, $pair2 )  = ( $key =~ /(...)(\d) -> (\d)(\d)/ );
+      ( $col, $pair1, $pair2 )  = ( $key =~ /(...)(\d) -> (\d)(\d)/ );
       # find the columns of the 2 cells holding the naked pair
       $row1 = $pairs->{ $key }[0]->row;
       $row2 = $pairs->{ $key }[1]->row;
-      foreach my $cell ( grep { not $_->value } ( @{ $self->columns[$col] } ) ) { # find unsolved cells in this column that aren't either of the naked pair.
+      foreach my $cell ( grep { not $_->value } ( @{ $self->columns->[$col] } ) ) { # find unsolved cells in this column that aren't either of the naked pair.
         my $row = $cell->row;
         next if ( $row == $row1 or  $row == $row2 );
         # if $pair1 is still possible in this cell, remove it.
-        if ( $cell->possible_values[$pair1] ) {
-          if ( $cell->possible_values[$pair1] ) {
+        if ( $cell->possibilities->[$pair1] ) {
+          if ( $cell->possibilities->[$pair1] ) {
             $cell->possibilities->[$pair1] = 0;
             $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
           }
         }
         # if $pair2 is still possible in this cell, remove it.
-        if ( $cell->possible_values[$pair2] ) {
-          if ( $cell->possible_values[$pair2] ) {
+        if ( $cell->possibilities->[$pair2] ) {
+          if ( $cell->possibilities->[$pair2] ) {
             $cell->possibilities->[$pair2] = 0;
             $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
           }
@@ -238,27 +238,27 @@ sub find_naked_pairs {
 
     if ( $key =~ /box/ ) {
       my ( $row1, $row2, $col1, $col2, $box, $pair1, $pair2 );
-      ( $row, $pair1, $pair2 )  = ( $key =~ /(...)(\d) -> (\d)(\d)/ );
+      ( $box, $pair1, $pair2 )  = ( $key =~ /(...)(\d) -> (\d)(\d)/ );
       # find the rows and columns of the 2 cells holding the naked pair
       $row1 = $pairs->{ $key }[0]->row;
       $row2 = $pairs->{ $key }[1]->row;
       $col1 = $pairs->{ $key }[0]->column;
       $col2 = $pairs->{ $key }[1]->column;
-      foreach my $cell ( grep { not $_->value } ( @{ $self->boxes[$box] } ) ) { # find unsolved cells in this row that aren't either of the naked pair.
+      foreach my $cell ( grep { not $_->value } ( @{ $self->boxes->[$box] } ) ) { # find unsolved cells in this row that aren't either of the naked pair.
         my $row = $cell->row;
         my $col = $cell->column;
         next if ( ( $row == $row1 and $col == $col1 )
                or ( $row == $row2 and $col == $col2 ) );
         # if $pair1 is still possible in this cell, remove it.
-        if ( $cell->possible_values[$pair1] ) {
-          if ( $cell->possible_values[$pair1] ) {
+        if ( $cell->possibilities->[$pair1] ) {
+          if ( $cell->possibilities->[$pair1] ) {
             $cell->possibilities->[$pair1] = 0;
             $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
           }
         }
         # if $pair2 is still possible in this cell, remove it.
-        if ( $cell->possible_values[$pair2] ) {
-          if ( $cell->possible_values[$pair2] ) {
+        if ( $cell->possibilities->[$pair2] ) {
+          if ( $cell->possibilities->[$pair2] ) {
             $cell->possibilities->[$pair2] = 0;
             $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
           }
@@ -439,14 +439,14 @@ sub pairs_possible {
   my $self = shift;
   my $pairs = {};
   foreach my $cell ( @{ $self->cells } ) {
-    if ( $cell->possible_values[0] == 2 ) {
-      $pair = "";
-      foreach my $value ( $cell->possible_values[1..9] ) {
+    if ( $cell->possibilites->[0] == 2 ) {
+      my $pair = "";
+      foreach my $value ( $cell->possibilites->[1..9] ) {
         $pair .= $_ if $_;  
       }
-      push ( @{ $pairs->{ "row:" . $cell->row    . " -> " . $pair }, $cell );
-      push ( @{ $pairs->{ "col:" . $cell->column . " -> " . $pair }, $cell );
-      push ( @{ $pairs->{ "box:" . $cell->box    . " -> " . $pair }, $cell );
+      push ( @{ $pairs->{ "row:" . $cell->row    . " -> " . $pair } }, $cell );
+      push ( @{ $pairs->{ "col:" . $cell->column . " -> " . $pair } }, $cell );
+      push ( @{ $pairs->{ "box:" . $cell->box    . " -> " . $pair } }, $cell );
     }
   }
   return $pairs;
