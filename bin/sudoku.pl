@@ -20,13 +20,13 @@ while (<DATA>) {
   }
 }
 
-$puzzle_name = "Puzzle_07";
+$puzzle_name = $ARGV[0] || "Puzzle_42";
 
 print "puzzle_string: $puzzle_strings->{$puzzle_name}\n";
 my $puzzle = Grid->new;
 $puzzle->load_from_string($puzzle_strings->{$puzzle_name});
+# $puzzle->load_from_string("043980250600425000200001094900004070300608000410209003820500000000040005534890710");
 
-# $puzzle->big_print; exit;
 
 my($this_cell);
 my($progress);
@@ -35,6 +35,7 @@ my($pass) = 0;
 
 while ( $puzzle->solved <= 80 and $pass_progress ) {
   print "==== Pass " . ++$pass . " ====\n"; $pass_progress = 0;
+  $puzzle->big_print;
 
   # Singletons
   while ( $puzzle->solved <= 80 and $progress = $puzzle->find_and_set_singletons ) {
@@ -72,9 +73,24 @@ while ( $puzzle->solved <= 80 and $pass_progress ) {
     print "---- end naked pairs method ----\n\n";
   }
 
+  # Hidden Pairs
+  while ( $puzzle->solved <= 80 and $progress = $puzzle->find_hidden_pairs ) {
+    print "So far we filled this many cells: " . $puzzle->solved . "\n";
+    $puzzle->big_print;
+    $pass_progress += $progress;
+    print "---- end naked pairs method ----\n\n";
+  }
 
   # Naked Triplets
   # XY Wings
+
+  # Remote Pairs
+# while ( $puzzle->solved <= 80 and $progress = $puzzle->find_remote_pairs ) {
+#   print "So far we filled this many cells: " . $puzzle->solved . "\n";
+#   $puzzle->big_print;
+#   $pass_progress += $progress;
+#   print "---- end remote pairs method ----\n\n";
+# }
 
   print "==== End Pass " . $pass . " (progress is $pass_progress) ====\n";
 
