@@ -86,6 +86,13 @@ sub find_and_set_singletons {  # a singleton is a cell which has only one possib
   return $progress;
 }
 
+sub cell_from_row_column {
+  my ( $self, $row, $column ) = @_;
+  my $cell;
+  $cell = $self->rows->[$row]->[$column];
+  return $cell;
+}
+
 sub find_and_set_lone_representatives {  # a lone_representative is only cell with a possible value in a cell cluster (row column or box)
   my $self  = shift;
   my $progress  = 0;
@@ -172,13 +179,87 @@ sub find_and_set_lone_representatives {  # a lone_representative is only cell wi
   return $progress;
 }
 
+sub find_remote_pairs {
+  my $self = shift;
+  my $progress = 0;
+  print "Looking for Remote Pairs, any two cells with the same\n";
+  print "pair of possible values that exist in the different clusters [row column or box]):\n";
+  my $pairs = $self->pairs_possible;
+  foreach my $key ( grep { scalar( @{ $pairs->{$_} } ) >= 2  } ( keys %{ $pairs } ) ) {
+    printf "Remote pair candidate: %s is in %d cells.\n", $key, scalar ( @{ $pairs->{$key} } ) ;
+    # we have a pair that appears at least twice
+    # compare every two cells that have this pair and see if they
+    # share any cluster, if they do, skip them, because then they are a naked pair.
+    foreach my $first ( 0 .. ( $#{$pairs->{$key}} -1 ) ) { # from first to next-to-last
+      foreach my $second ( ( $first + 1 ) .. $#{$pairs->{$key}} ) { # from one after first to last
+#       printf "Remote pair: comparing cells numbered  %d and %d.\n", $first, $second;
+#       printf "Remote pair: rows    for the cells are %d and %d.\n", $pairs->{$key}[$first]->row,    $pairs->{$key}[$second]->row;
+#       printf "Remote pair: columns for the cells are %d and %d.\n", $pairs->{$key}[$first]->column, $pairs->{$key}[$second]->column;
+#       printf "Remote pair: boxes   for the cells are %d and %d.\n", $pairs->{$key}[$first]->box,    $pairs->{$key}[$second]->box;
+        next if ( $pairs->{$key}[$first]->row    == $pairs->{$key}[$second]->row );
+#       print "passed rows.\n";
+        next if ( $pairs->{$key}[$first]->column == $pairs->{$key}[$second]->column );
+#       print "passed columns.\n";
+        next if ( $pairs->{$key}[$first]->box    == $pairs->{$key}[$second]->box );
+#       printf "Remote pair: they are in fact 'remote'.\n";
+        my $cell;
+        # these two cells are now determined to be remote, ie having no cluster in common
+        my $row1 = $pairs->{$key}[$first]->row;
+        my $col1 = $pairs->{$key}[$first]->column;
+        my $row2 = $pairs->{$key}[$second]->row;
+        my $col2 = $pairs->{$key}[$second]->column;
+        my ( $pair1, $pair2 ) = ( $key =~ /(\d)(\d)/ );
+        # remove both possible values in the pair from both intersecting cells
+        # at ( row1, col2 ) and ( row2 , col1 )
+        foreach my $cell (
+          $self->cell_from_row_column( $row1, $col2 ),
+          $self->cell_from_row_column( $row2, $col1 )
+        ) {
+#         printf "Remote pair %d, %d will be removed from cell ( %d, %d, %d ).\n"
+#                , $pair1
+#                , $pair2
+#                , ( $cell->row + 1 )
+#                , ( $cell->column + 1 )
+#                , ( $cell->box + 1 );
+          # Is this cell also on the list of pairs.  If so, skip this one.
+          next if ( scalar ( grep { $_ == $cell } ( @{ $pairs->{$key} } ) ) );
+          # if $pair1 is still possible in this cell, remove it.
+          if ( $cell->possibilities->[$pair1] ) {
+            printf "Remote pair %d will be removed from cell ( %d, %d, %d ).\n"
+                   , $pair1
+                   , ( $cell->row + 1 )
+                   , ( $cell->column + 1 )
+                   , ( $cell->box + 1 );
+              $cell->possibilities->[$pair1] = 0;
+              $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
+              $progress++;
+          }
+          # if $pair2 is still possible in this cell, remove it.
+          if ( $cell->possibilities->[$pair2] ) {
+            printf "Remote pair %d will be removed from cell ( %d, %d, %d ).\n"
+                   , $pair2
+                   , ( $cell->row + 1 )
+                   , ( $cell->column + 1 )
+                   , ( $cell->box + 1 );
+              $cell->possibilities->[$pair2] = 0;
+              $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
+              $progress++;
+          }
+        }
+      }
+    }
+  }
+  print "Found and processed $progress cells this remote pair search pass.\n\n";
+  return $progress;
+}
+
 sub find_naked_pairs {
   my $self = shift;
   my $progress = 0;
   print "Looking for Naked Pairs, any two cells with the same\n";
   print "pair of possible values that exist in the same cluster [row column or box]):\n";
 
-  my $pairs = $self->pairs_possible;
+  my $pairs = $self->pairs_possible_by_cluster;
 
   # look for pairs that have 2 cells
 
@@ -196,6 +277,11 @@ sub find_naked_pairs {
         # if $pair1 is still possible in this cell, remove it.
         if ( $cell->possibilities->[$pair1] ) {
           if ( $cell->possibilities->[$pair1] ) {
+            printf "Naked pair in row %d, cols %d and %d leads to %d being removed from cell ( %d, %d, %d ).\n"
+                   , $row + 1 , $col1 + 1 , $col2 + 1 , $pair1
+                   , ( $cell->row + 1 )
+                   , ( $cell->column + 1 )
+                   , ( $cell->box + 1 );
             $cell->possibilities->[$pair1] = 0;
             $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
             $progress++;
@@ -204,6 +290,11 @@ sub find_naked_pairs {
         # if $pair2 is still possible in this cell, remove it.
         if ( $cell->possibilities->[$pair2] ) {
           if ( $cell->possibilities->[$pair2] ) {
+            printf "Naked pair in row %d, cols %d and %d leads to %d being removed from cell ( %d, %d, %d ).\n"
+                   , $row + 1 , $col1 + 1 , $col2 + 1 , $pair2
+                   , ( $cell->row + 1 )
+                   , ( $cell->column + 1 )
+                   , ( $cell->box + 1 );
             $cell->possibilities->[$pair2] = 0;
             $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
             $progress++;
@@ -224,6 +315,11 @@ sub find_naked_pairs {
         # if $pair1 is still possible in this cell, remove it.
         if ( $cell->possibilities->[$pair1] ) {
           if ( $cell->possibilities->[$pair1] ) {
+            printf "Naked pair in col %d, rows %d and %d leads to %d being removed from cell ( %d, %d, %d ).\n"
+                   , $col + 1 , $row1 + 1 , $row2 + 1 , $pair1
+                   , ( $cell->row + 1 )
+                   , ( $cell->column + 1 )
+                   , ( $cell->box + 1 );
             $cell->possibilities->[$pair1] = 0;
             $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
             $progress++;
@@ -232,6 +328,11 @@ sub find_naked_pairs {
         # if $pair2 is still possible in this cell, remove it.
         if ( $cell->possibilities->[$pair2] ) {
           if ( $cell->possibilities->[$pair2] ) {
+            printf "Naked pair in col %d, rows %d and %d leads to %d being removed from cell ( %d, %d, %d ).\n"
+                   , $col + 1 , $row1 + 1 , $row2 + 1 , $pair2
+                   , ( $cell->row + 1 )
+                   , ( $cell->column + 1 )
+                   , ( $cell->box + 1 );
             $cell->possibilities->[$pair2] = 0;
             $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
             $progress++;
@@ -256,6 +357,12 @@ sub find_naked_pairs {
         # if $pair1 is still possible in this cell, remove it.
         if ( $cell->possibilities->[$pair1] ) {
           if ( $cell->possibilities->[$pair1] ) {
+            printf "Naked pair in box %d, cells ( %d, %d ) and ( %d, %d ) leads to %d being removed from cell ( %d, %d, %d ).\n"
+                   , $box + 1 , $row1 + 1 , $col1 + 1 , $row2 + 1 , $col2 + 1
+                   , $pair1
+                   , ( $cell->row + 1 )
+                   , ( $cell->column + 1 )
+                   , ( $cell->box + 1 );
             $cell->possibilities->[$pair1] = 0;
             $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
             $progress++;
@@ -264,6 +371,12 @@ sub find_naked_pairs {
         # if $pair2 is still possible in this cell, remove it.
         if ( $cell->possibilities->[$pair2] ) {
           if ( $cell->possibilities->[$pair2] ) {
+            printf "Naked pair in box %d, cells ( %d, %d ) and ( %d, %d ) leads to %d being removed from cell ( %d, %d, %d ).\n"
+                   , $box + 1 , $row1 + 1 , $col1 + 1 , $row2 + 1 , $col2 + 1
+                   , $pair2
+                   , ( $cell->row + 1 )
+                   , ( $cell->column + 1 )
+                   , ( $cell->box + 1 );
             $cell->possibilities->[$pair2] = 0;
             $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
             $progress++;
@@ -277,16 +390,47 @@ sub find_naked_pairs {
   return $progress;
 }
 
+sub find_hidden_pairs {
+  my $self  = shift;
+  my $progress = 0;
+  print "Looking for Hidden Pairs, (any two candidate values which exist \n";
+  print "only in the same two cells in a given cluster):\n";
+  my $possibility_counts = $self->possibilities_hash;
+  foreach my $key ( sort grep { $_ =~ /box/ and scalar( $possibility_counts->{$_} ) == 2 } keys %{ $possibility_counts } ) {
+    # this key represents a candidate value that is represented only twice in a given box
+    foreach my $first ( 0 .. ( $#{$possibility_counts->{$key}} -1 ) ) { # from first to next-to-last
+      foreach my $second ( ( $first + 1 ) .. $#{$possibility_counts->{$key}} ) { # from one after first to last
+        printf "Hidden pair: comparing cells numbered  %d and %d.\n", $first, $second;
+        printf "Hidden pair: rows    for the cells are %d and %d.\n", $possibility_counts->{$key}[$first]->row,    $possibility_counts->{$key}[$second]->row;
+        printf "Hidden pair: columns for the cells are %d and %d.\n", $possibility_counts->{$key}[$first]->column, $possibility_counts->{$key}[$second]->column;
+        printf "Hidden pair: boxes   for the cells are %d and %d.\n", $possibility_counts->{$key}[$first]->box,    $possibility_counts->{$key}[$second]->box;
+        next if ( $possibility_counts->{$key}[$first]->row    == $possibility_counts->{$key}[$second]->row );
+        print "passed rows.\n";
+        next if ( $possibility_counts->{$key}[$first]->column == $possibility_counts->{$key}[$second]->column );
+        print "passed columns.\n";
+        next if ( $possibility_counts->{$key}[$first]->box    == $possibility_counts->{$key}[$second]->box );
+        printf "Hidden pair: they are in fact 'Hidden pair'.\n";
+      }
+    }
+  }
+  foreach my $key ( sort grep { $_ =~ /row/ and scalar( $possibility_counts->{$_} ) == 2 } keys %{ $possibility_counts } ) {
+  }
+  foreach my $key ( sort grep { $_ =~ /col/ and scalar( $possibility_counts->{$_} ) == 2 } keys %{ $possibility_counts } ) {
+  }
+
+  print "Found and processed $progress hidden pairs.\n\n";
+  return $progress;
+}
+
 # An imaginary value is a value whose only possible locations in one cluster are all exclusively in a single cluster of a different kind 
 # See see the notes_imaginary_values.txt
 sub find_imaginary_values {
   my $self  = shift;
   my $progress = 0;
-  my $possibility_counts;
   my $possible_value;
   print "Looking for Imaginary Values (all 2 or 3 representatives of a given value in a cluster share all belong to another cluster):\n";
 
-  $possibility_counts = $self->possibilities_hash;
+  my $possibility_counts = $self->possibilities_hash;
   foreach my $key ( sort grep { $_ =~ /box/ } keys %{ $possibility_counts } ) {
     if ( scalar ( @{ $possibility_counts->{$key} } ) == 2 or scalar ( @{ $possibility_counts->{$key} } ) == 3 ) {
       # examine all cells in the possibility count and see if they are all in the row or same column
@@ -314,12 +458,13 @@ sub find_imaginary_values {
           foreach my $cell ( grep { $_->box != $box } @{ $possibility_counts->{"row" . $row . ":" . $possible_value} } ) {
             $cell->possibilities->[$possible_value] = 0;
             $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
-#           printf "Imaginary value of %d found in Box %d...   removing it from the cell ( %d, %d, %d ).\n"
-#             , $possible_value
-#             , $box + 1
-#             , ( $cell->row + 1 )
-#             , ( $cell->column + 1 )
-#             , ( $cell->box + 1 );
+            printf "Imaginary value of %d found in Box %d all in row %d...   removing it from the cell ( %d, %d, %d ).\n"
+              , $possible_value
+              , $box + 1
+              , $row + 1
+              , ( $cell->row + 1 )
+              , ( $cell->column + 1 )
+              , ( $cell->box + 1 );
             $progress++;
           }
         }
@@ -337,12 +482,13 @@ sub find_imaginary_values {
           foreach my $cell ( grep { $_->box != $box } @{ $possibility_counts->{"col" . $col . ":" . $possible_value} } ) {
             $cell->possibilities->[$possible_value] = 0;
             $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
-#           printf "Imaginary value of %d found in Box %d...   removing it from the cell ( %d, %d, %d ).\n"
-#             , $possible_value
-#             , $box
-#             , ( $cell->row + 1 )
-#             , ( $cell->column + 1 )
-#             , ( $cell->box + 1 );
+            printf "Imaginary value of %d found in Box %d all in col %d...   removing it from the cell ( %d, %d, %d ).\n"
+              , $possible_value
+              , $box + 1
+              , $col + 1
+              , ( $cell->row + 1 )
+              , ( $cell->column + 1 )
+              , ( $cell->box + 1 );
             $progress++;
           }
         }
@@ -377,12 +523,12 @@ sub find_imaginary_values {
           foreach my $cell ( grep { $_->row != $row } @{ $possibility_counts->{"box" . $box . ":" . $possible_value} } ) {
             $cell->possibilities->[$possible_value] = 0;
             $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
-#           printf "Imaginary value of %d found in Row %d...   removing it from the cell ( %d, %d, %d ).\n"
-#             , $possible_value
-#             , $row + 1
-#             , ( $cell->row + 1 )
-#             , ( $cell->column + 1 )
-#             , ( $cell->box + 1 );
+            printf "Imaginary value of %d found in Row %d...   removing it from the cell ( %d, %d, %d ).\n"
+              , $possible_value
+              , $row + 1
+              , ( $cell->row + 1 )
+              , ( $cell->column + 1 )
+              , ( $cell->box + 1 );
             $progress++;
           }
         }
@@ -442,8 +588,37 @@ sub find_imaginary_values {
 
 sub pairs_possible {
   my $self = shift;
+  my $debug = 0;
   my $pairs = {};
-  print "Begin search for naked pairs.\n";
+  print "Begin search for pairs.\n" if ($debug);
+  foreach my $cell ( @{ $self->cells } ) {
+    if ( $cell->possibilities->[0] == 2 ) {
+      my $pair = "";
+      foreach my $value ( @{ $cell->possibilities }[1..9] ) {
+        $pair .= $value if $value;  
+      }
+      printf "Pair %d found in cell ( %d, %d, %d ).\n"
+             , $pair
+             , ( $cell->row + 1 )
+             , ( $cell->column + 1 )
+             , ( $cell->box + 1 ) if ($debug);
+      push ( @{ $pairs->{ $pair } }, $cell );
+    }
+  }
+  if ($debug) {
+    print "Pair search yeilds:\n";
+    foreach my $key ( keys %{ $pairs } ) {
+      printf "%s: %d\n", $key, scalar ( @{ $pairs->{$key} } );
+    }
+  }
+  return $pairs;
+}
+
+sub pairs_possible_by_cluster {
+  my $self = shift;
+  my $debug = 0;
+  my $pairs = {};
+  print "Begin search for naked pairs.\n" if ($debug);
   foreach my $cell ( @{ $self->cells } ) {
     if ( $cell->possibilities->[0] == 2 ) {
       my $pair = "";
@@ -454,16 +629,17 @@ sub pairs_possible {
              , $pair
              , ( $cell->row + 1 )
              , ( $cell->column + 1 )
-             , ( $cell->box + 1 );
+             , ( $cell->box + 1 ) if ($debug);
       push ( @{ $pairs->{ "row:" . $cell->row    . " -> " . $pair } }, $cell );
       push ( @{ $pairs->{ "col:" . $cell->column . " -> " . $pair } }, $cell );
       push ( @{ $pairs->{ "box:" . $cell->box    . " -> " . $pair } }, $cell );
     }
   }
-  print "Naked pair search yeilds:\n";
-# print dump($pairs);
-  foreach my $key ( keys %{ $pairs } ) {
-    printf "%s: %d\n", $key, scalar ( @{ $pairs->{$key} } );
+  if ($debug) {
+    print "Naked pair search yeilds:\n";
+    foreach my $key ( keys %{ $pairs } ) {
+      printf "%s: %d\n", $key, scalar ( @{ $pairs->{$key} } );
+    }
   }
   return $pairs;
 }
