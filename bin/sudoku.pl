@@ -20,7 +20,7 @@ while (<DATA>) {
   }
 }
 
-$puzzle_name = $ARGV[0] || "Puzzle_42";
+$puzzle_name = $ARGV[0] || "Puzzle_07";
 
 print "puzzle_string: $puzzle_strings->{$puzzle_name}\n";
 my $puzzle = Grid->new;

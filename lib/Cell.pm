@@ -28,11 +28,11 @@ sub clue {
     }
 }; 
 
-sub remove_possility {
+sub remove_possibility {
   my ($self,$value) = @_;
   my ($debug) = 0;
   if ( $self->value ) {
-    printf "I already have a value so I will be skipped.\n" if ($debug);
+    printf "I already have a value assigned so I will be skipped.\n" if ($debug);
   } elsif ( not $self->possibilities->[$value] ) {
     printf "$value has previously been removed from my possibilites array.\n" if ($debug);
   } else {
