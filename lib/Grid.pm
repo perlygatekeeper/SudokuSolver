@@ -393,29 +393,55 @@ sub find_naked_pairs {
 sub find_hidden_pairs {
   my $self  = shift;
   my $progress = 0;
+  my $pairs;
   print "Looking for Hidden Pairs, (any two candidate values which exist \n";
   print "only in the same two cells in a given cluster):\n";
   my $possibility_counts = $self->possibilities_hash;
-  foreach my $key ( sort grep { $_ =~ /box/ and scalar( $possibility_counts->{$_} ) == 2 } keys %{ $possibility_counts } ) {
-    # this key represents a candidate value that is represented only twice in a given box
-    foreach my $first ( 0 .. ( $#{$possibility_counts->{$key}} -1 ) ) { # from first to next-to-last
-      foreach my $second ( ( $first + 1 ) .. $#{$possibility_counts->{$key}} ) { # from one after first to last
-        printf "Hidden pair: comparing cells numbered  %d and %d.\n", $first, $second;
-        printf "Hidden pair: rows    for the cells are %d and %d.\n", $possibility_counts->{$key}[$first]->row,    $possibility_counts->{$key}[$second]->row;
-        printf "Hidden pair: columns for the cells are %d and %d.\n", $possibility_counts->{$key}[$first]->column, $possibility_counts->{$key}[$second]->column;
-        printf "Hidden pair: boxes   for the cells are %d and %d.\n", $possibility_counts->{$key}[$first]->box,    $possibility_counts->{$key}[$second]->box;
-        next if ( $possibility_counts->{$key}[$first]->row    == $possibility_counts->{$key}[$second]->row );
-        print "passed rows.\n";
-        next if ( $possibility_counts->{$key}[$first]->column == $possibility_counts->{$key}[$second]->column );
-        print "passed columns.\n";
-        next if ( $possibility_counts->{$key}[$first]->box    == $possibility_counts->{$key}[$second]->box );
-        printf "Hidden pair: they are in fact 'Hidden pair'.\n";
+  { # DEBUG
+    print "---- find_hidden_pairs: Start all possibility counts ------\n";
+    printf "%d %s\n", scalar( @{ $possibility_counts->{$_} } ), $_ foreach ( sort grep { $_=~/col6/ } keys %{ $possibility_counts } );
+    print "---- find_hidden_pairs: End   all possibility counts ------\n";
+  }
+
+  $pairs = [ sort grep { $_ =~ /col/ and scalar( @{ $possibility_counts->{$_} } ) == 2 } keys %{ $possibility_counts } ];
+  # pairs holds keys representing candidate values that are present only twice in a given column
+  foreach my $first ( 0 .. ( $#{$pairs} -1 ) ) { # from first to next-to-last
+    foreach my $second ( ( $first + 1 ) .. $#{$pairs} ) { # from one after first to last
+      my( $col1, $col2, $value1, $value2, $cell1, $cell2 );
+      ( $col1, $value1 ) = ( $pairs->[$first]  =~ /col(\d):(\d)/ );
+      ( $col2, $value2 ) = ( $pairs->[$second] =~ /col(\d):(\d)/ );
+      next if ( $col1 != $col2 );
+      printf "Hidden pair: comparing candadate values %s and %s.\n", $pairs->[$first], $pairs->[$second];
+#     printf "Hidden pair: rows    for the cells are %d and %d.\n", 1 + $possibility_counts->{$pairs->[$first] }[0]->row
+#                                                                 , 1 + $possibility_counts->{$pairs->[$second]}[0]->row;
+#     printf "Hidden pair: rows    for the cells are %d and %d.\n", 1 + $possibility_counts->{$pairs->[$first] }[1]->row
+#                                                                 , 1 + $possibility_counts->{$pairs->[$second]}[1]->row;
+      next if ( $possibility_counts->{$pairs->[$first] }[0]->row != $possibility_counts->{$pairs->[$second]}[0]->row );
+      print "Two candidate values shared first cell.\n";
+      next if ( $possibility_counts->{$pairs->[$first] }[1]->row != $possibility_counts->{$pairs->[$second]}[1]->row );
+      print "Two candidate values shared second cell!  We have a pair.\n";
+      # two cells are the same for value1 and value2
+      $cell1 = $possibility_counts->{$pairs->[$first] }[0];
+      $cell2 = $possibility_counts->{$pairs->[$first] }[1];
+      if ( $cell1->possibilities->[0] > 2 ) { # first cell of this pair of candidate values have other candidate values
+        foreach my $value ( @{ $cell1->possibilities } ) {
+          print "Hidden pair: processing fist cell: candidate value $value?\n";
+          next if ( $value == $value1 or $value == $value2 );
+          print "Hidden pair: processing fist cell: Remove it!\n";
+          # remove all others
+          $cell1->remove_possibility($value);
+        }
+        print "Removed all other candidate values from first cell.\n";
+      }
+      if ( $cell2->possibilities->[0] > 2 ) { # second cell of this pair of candidate values have other candidate values
+        foreach my $value ( @{ $cell1->possibilities } ) {
+          next if ( $value == $value1 or $value == $value2 );
+          # remove all others
+          $cell2->remove_possibility($value);
+        }
+        print "Removed all other candidate values from second cell.\n";
       }
     }
-  }
-  foreach my $key ( sort grep { $_ =~ /row/ and scalar( $possibility_counts->{$_} ) == 2 } keys %{ $possibility_counts } ) {
-  }
-  foreach my $key ( sort grep { $_ =~ /col/ and scalar( $possibility_counts->{$_} ) == 2 } keys %{ $possibility_counts } ) {
   }
 
   print "Found and processed $progress hidden pairs.\n\n";
@@ -688,13 +714,13 @@ sub remove_my_solution_from_my_mates  {
   my($self,$cell) = @_;
   my($value) = $cell->value;
   foreach ( @{ $self->row_mates_of($cell) } ) {
-    $_->remove_possility($value);
+    $_->remove_possibility($value);
   }
   foreach ( @{ $self->column_mates_of($cell) } ) {
-    $_->remove_possility($value);
+    $_->remove_possibility($value);
   }
   foreach ( @{ $self->box_mates_of($cell) } ) {
-    $_->remove_possility($value);
+    $_->remove_possibility($value);
   }
 }
 
