@@ -364,6 +364,79 @@ only in the same two cells in a given cluster):
 5 col6:8
 2 col6:9
 ---- find_hidden_pairs: End   all possibility counts ------
+Hidden pair: comparing candadate values box0:1 and box0:5.
+Hidden pair: comparing candadate values box0:1 and box0:9.
+Hidden pair: comparing candadate values box0:5 and box0:9.
+Hidden pair: comparing candadate values box1:3 and box1:6.
+Hidden pair: comparing candadate values box1:3 and box1:7.
+Hidden pair: comparing candadate values box1:6 and box1:7.
+Two candidate values shared first cell.
+Hidden pair: comparing candadate values box2:3 and box2:6.
+Hidden pair: comparing candadate values box2:3 and box2:7.
+Hidden pair: comparing candadate values box2:6 and box2:7.
+Two candidate values shared first cell.
+Hidden pair: comparing candadate values box4:3 and box4:7.
+Hidden pair: comparing candadate values box5:4 and box5:9.
+Two candidate values shared first cell.
+Hidden pair: comparing candadate values box6:1 and box6:6.
+Hidden pair: comparing candadate values box6:1 and box6:7.
+Two candidate values shared first cell.
+Two candidate values shared second cell!  We have a pair.
+Hidden pair: comparing candadate values box6:1 and box6:9.
+Hidden pair: comparing candadate values box6:6 and box6:7.
+Hidden pair: comparing candadate values box6:6 and box6:9.
+Two candidate values shared first cell.
+Two candidate values shared second cell!  We have a pair.
+Hidden pair: comparing candadate values box6:7 and box6:9.
+Hidden pair: comparing candadate values box7:1 and box7:2.
+Hidden pair: comparing candadate values box7:1 and box7:3.
+Hidden pair: comparing candadate values box7:1 and box7:4.
+Two candidate values shared first cell.
+Hidden pair: comparing candadate values box7:1 and box7:7.
+Hidden pair: comparing candadate values box7:2 and box7:3.
+Hidden pair: comparing candadate values box7:2 and box7:4.
+Hidden pair: comparing candadate values box7:2 and box7:7.
+Hidden pair: comparing candadate values box7:3 and box7:4.
+Hidden pair: comparing candadate values box7:3 and box7:7.
+Two candidate values shared first cell.
+Hidden pair: comparing candadate values box7:4 and box7:7.
+Hidden pair: comparing candadate values box8:2 and box8:8.
+Hidden pair: comparing candadate values box8:2 and box8:9.
+Hidden pair: comparing candadate values box8:8 and box8:9.
+Hidden pair: comparing candadate values row0:1 and row0:6.
+Hidden pair: comparing candadate values row1:3 and row1:9.
+Hidden pair: comparing candadate values row2:3 and row2:5.
+Hidden pair: comparing candadate values row2:3 and row2:6.
+Hidden pair: comparing candadate values row2:5 and row2:6.
+Hidden pair: comparing candadate values row3:2 and row3:3.
+Hidden pair: comparing candadate values row4:4 and row4:9.
+Two candidate values shared first cell.
+Hidden pair: comparing candadate values row6:1 and row6:7.
+Two candidate values shared first cell.
+Hidden pair: comparing candadate values row6:1 and row6:9.
+Hidden pair: comparing candadate values row6:7 and row6:9.
+Hidden pair: comparing candadate values row7:1 and row7:2.
+Hidden pair: comparing candadate values row7:1 and row7:6.
+Hidden pair: comparing candadate values row7:1 and row7:7.
+Two candidate values shared first cell.
+Two candidate values shared second cell!  We have a pair.
+Hidden pair: comparing candadate values row7:1 and row7:8.
+Hidden pair: comparing candadate values row7:1 and row7:9.
+Hidden pair: comparing candadate values row7:2 and row7:6.
+Hidden pair: comparing candadate values row7:2 and row7:7.
+Hidden pair: comparing candadate values row7:2 and row7:8.
+Hidden pair: comparing candadate values row7:2 and row7:9.
+Hidden pair: comparing candadate values row7:6 and row7:7.
+Hidden pair: comparing candadate values row7:6 and row7:8.
+Hidden pair: comparing candadate values row7:6 and row7:9.
+Two candidate values shared first cell.
+Two candidate values shared second cell!  We have a pair.
+Hidden pair: comparing candadate values row7:7 and row7:8.
+Hidden pair: comparing candadate values row7:7 and row7:9.
+Hidden pair: comparing candadate values row7:8 and row7:9.
+Hidden pair: comparing candadate values row8:2 and row8:6.
+Two candidate values shared first cell.
+Two candidate values shared second cell!  We have a pair.
 Hidden pair: comparing candadate values col0:1 and col0:7.
 Two candidate values shared first cell.
 Two candidate values shared second cell!  We have a pair.
@@ -503,6 +576,82 @@ only in the same two cells in a given cluster):
 5 col6:8
 2 col6:9
 ---- find_hidden_pairs: End   all possibility counts ------
+Hidden pair: comparing candadate values box0:1 and box0:5.
+Hidden pair: comparing candadate values box0:1 and box0:9.
+Hidden pair: comparing candadate values box0:5 and box0:9.
+Hidden pair: comparing candadate values box1:3 and box1:6.
+Hidden pair: comparing candadate values box1:3 and box1:7.
+Hidden pair: comparing candadate values box1:6 and box1:7.
+Two candidate values shared first cell.
+Hidden pair: comparing candadate values box2:3 and box2:6.
+Hidden pair: comparing candadate values box2:3 and box2:7.
+Hidden pair: comparing candadate values box2:6 and box2:7.
+Two candidate values shared first cell.
+Hidden pair: comparing candadate values box4:3 and box4:7.
+Hidden pair: comparing candadate values box5:4 and box5:9.
+Two candidate values shared first cell.
+Hidden pair: comparing candadate values box6:1 and box6:6.
+Hidden pair: comparing candadate values box6:1 and box6:7.
+Two candidate values shared first cell.
+Two candidate values shared second cell!  We have a pair.
+Hidden pair: comparing candadate values box6:1 and box6:9.
+Hidden pair: comparing candadate values box6:6 and box6:7.
+Hidden pair: comparing candadate values box6:6 and box6:9.
+Two candidate values shared first cell.
+Two candidate values shared second cell!  We have a pair.
+Hidden pair: comparing candadate values box6:7 and box6:9.
+Hidden pair: comparing candadate values box7:1 and box7:2.
+Hidden pair: comparing candadate values box7:1 and box7:3.
+Hidden pair: comparing candadate values box7:1 and box7:7.
+Hidden pair: comparing candadate values box7:2 and box7:3.
+Hidden pair: comparing candadate values box7:2 and box7:7.
+Hidden pair: comparing candadate values box7:3 and box7:7.
+Two candidate values shared first cell.
+Hidden pair: comparing candadate values box8:2 and box8:4.
+Hidden pair: comparing candadate values box8:2 and box8:8.
+Hidden pair: comparing candadate values box8:2 and box8:9.
+Hidden pair: comparing candadate values box8:4 and box8:8.
+Hidden pair: comparing candadate values box8:4 and box8:9.
+Two candidate values shared first cell.
+Hidden pair: comparing candadate values box8:8 and box8:9.
+Hidden pair: comparing candadate values row0:1 and row0:6.
+Hidden pair: comparing candadate values row1:3 and row1:9.
+Hidden pair: comparing candadate values row2:3 and row2:5.
+Hidden pair: comparing candadate values row2:3 and row2:6.
+Hidden pair: comparing candadate values row2:5 and row2:6.
+Hidden pair: comparing candadate values row3:2 and row3:3.
+Hidden pair: comparing candadate values row4:4 and row4:9.
+Two candidate values shared first cell.
+Hidden pair: comparing candadate values row6:1 and row6:4.
+Hidden pair: comparing candadate values row6:1 and row6:7.
+Two candidate values shared first cell.
+Hidden pair: comparing candadate values row6:1 and row6:9.
+Hidden pair: comparing candadate values row6:4 and row6:7.
+Hidden pair: comparing candadate values row6:4 and row6:9.
+Two candidate values shared first cell.
+Hidden pair: comparing candadate values row6:7 and row6:9.
+Hidden pair: comparing candadate values row7:1 and row7:2.
+Hidden pair: comparing candadate values row7:1 and row7:6.
+Hidden pair: comparing candadate values row7:1 and row7:7.
+Two candidate values shared first cell.
+Two candidate values shared second cell!  We have a pair.
+Hidden pair: comparing candadate values row7:1 and row7:8.
+Hidden pair: comparing candadate values row7:1 and row7:9.
+Hidden pair: comparing candadate values row7:2 and row7:6.
+Hidden pair: comparing candadate values row7:2 and row7:7.
+Hidden pair: comparing candadate values row7:2 and row7:8.
+Hidden pair: comparing candadate values row7:2 and row7:9.
+Hidden pair: comparing candadate values row7:6 and row7:7.
+Hidden pair: comparing candadate values row7:6 and row7:8.
+Hidden pair: comparing candadate values row7:6 and row7:9.
+Two candidate values shared first cell.
+Two candidate values shared second cell!  We have a pair.
+Hidden pair: comparing candadate values row7:7 and row7:8.
+Hidden pair: comparing candadate values row7:7 and row7:9.
+Hidden pair: comparing candadate values row7:8 and row7:9.
+Hidden pair: comparing candadate values row8:2 and row8:6.
+Two candidate values shared first cell.
+Two candidate values shared second cell!  We have a pair.
 Hidden pair: comparing candadate values col0:1 and col0:7.
 Two candidate values shared first cell.
 Two candidate values shared second cell!  We have a pair.
@@ -695,10 +844,10 @@ So far we filled this many cells: 42
 Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):
 Lone in Box    Setting cell ( 9, 6, 8 ) to 2
 Lone in Box    Setting cell ( 8, 7, 9 ) to 8
-Lone in Row    Setting cell ( 9, 9, 9 ) to 6
 Lone in Row    Setting cell ( 8, 6, 8 ) to 3
-Lone in Column Setting cell ( 2, 7, 3 ) to 3
+Lone in Row    Setting cell ( 9, 9, 9 ) to 6
 Lone in Column Setting cell ( 6, 8, 6 ) to 6
+Lone in Column Setting cell ( 2, 7, 3 ) to 3
 Found and set 8 cells this lone representatives search pass.
 
 So far we filled this many cells: 48
@@ -747,15 +896,15 @@ Looking for Lone representatives (possible value's present in only one cell of a
 Lone in Box    Setting cell ( 3, 7, 3 ) to 6
 Lone in Box    Setting cell ( 4, 9, 6 ) to 8
 Lone in Box    Setting cell ( 7, 8, 9 ) to 3
-Lone in Row    Setting cell ( 4, 3, 4 ) to 2
 Lone in Row    Setting cell ( 6, 3, 4 ) to 8
+Lone in Row    Setting cell ( 4, 3, 4 ) to 2
 Lone in Row    Setting cell ( 1, 6, 2 ) to 6
 Lone in Column Setting cell ( 7, 6, 8 ) to 7
-Lone in Column Setting cell ( 7, 5, 8 ) to 6
-Lone in Column Setting cell ( 2, 8, 3 ) to 8
-Lone in Column Setting cell ( 4, 7, 6 ) to 1
-Lone in Column Setting cell ( 5, 9, 6 ) to 2
 Lone in Column Setting cell ( 8, 3, 7 ) to 6
+Lone in Column Setting cell ( 5, 9, 6 ) to 2
+Lone in Column Setting cell ( 4, 7, 6 ) to 1
+Lone in Column Setting cell ( 2, 8, 3 ) to 8
+Lone in Column Setting cell ( 7, 5, 8 ) to 6
 Found and set 18 cells this lone representatives search pass.
 
 So far we filled this many cells: 60
@@ -809,18 +958,18 @@ Lone in Box    Setting cell ( 6, 7, 6 ) to 5
 Lone in Box    Setting cell ( 8, 1, 7 ) to 7
 Lone in Box    Setting cell ( 8, 2, 7 ) to 9
 Lone in Box    Setting cell ( 8, 4, 8 ) to 1
+Lone in Row    Setting cell ( 1, 9, 3 ) to 7
 Lone in Row    Setting cell ( 7, 3, 7 ) to 1
+Lone in Row    Setting cell ( 3, 5, 2 ) to 3
+Lone in Row    Setting cell ( 6, 5, 5 ) to 7
 Lone in Row    Setting cell ( 2, 3, 1 ) to 9
 Lone in Row    Setting cell ( 4, 5, 5 ) to 5
 Lone in Row    Setting cell ( 3, 3, 1 ) to 5
-Lone in Row    Setting cell ( 6, 5, 5 ) to 7
-Lone in Row    Setting cell ( 1, 9, 3 ) to 7
-Lone in Row    Setting cell ( 3, 5, 2 ) to 3
-Lone in Column Setting cell ( 4, 4, 5 ) to 3
-Lone in Column Setting cell ( 5, 2, 4 ) to 5
-Lone in Column Setting cell ( 5, 3, 4 ) to 7
 Lone in Column Setting cell ( 2, 9, 3 ) to 1
+Lone in Column Setting cell ( 5, 2, 4 ) to 5
 Lone in Column Setting cell ( 1, 1, 1 ) to 1
+Lone in Column Setting cell ( 4, 4, 5 ) to 3
+Lone in Column Setting cell ( 5, 3, 4 ) to 7
 Found and set 25 cells this lone representatives search pass.
 
 So far we filled this many cells: 80
