@@ -96,9 +96,9 @@ Lone in Box    Setting cell ( 4, 3, 4 ) to 1
 Lone in Box    Setting cell ( 7, 9, 9 ) to 8
 Lone in Row    Setting cell ( 2, 5, 2 ) to 1
 Lone in Row    Setting cell ( 8, 6, 8 ) to 8
-Lone in Column Setting cell ( 5, 7, 6 ) to 8
 Lone in Column Setting cell ( 9, 4, 8 ) to 1
 Lone in Column Setting cell ( 3, 1, 1 ) to 1
+Lone in Column Setting cell ( 5, 7, 6 ) to 8
 Found and set 10 cells this lone representatives search pass.
 
 So far we filled this many cells: 28
@@ -145,12 +145,12 @@ So far we filled this many cells: 28
 
 Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):
 Lone in Box    Setting cell ( 5, 8, 6 ) to 5
-Lone in Row    Setting cell ( 2, 2, 1 ) to 8
 Lone in Row    Setting cell ( 5, 9, 6 ) to 6
-Lone in Column Setting cell ( 9, 7, 9 ) to 5
-Lone in Column Setting cell ( 4, 8, 6 ) to 3
-Lone in Column Setting cell ( 3, 4, 2 ) to 5
+Lone in Row    Setting cell ( 2, 2, 1 ) to 8
 Lone in Column Setting cell ( 6, 1, 4 ) to 8
+Lone in Column Setting cell ( 4, 8, 6 ) to 3
+Lone in Column Setting cell ( 9, 7, 9 ) to 5
+Lone in Column Setting cell ( 3, 4, 2 ) to 5
 Found and set 11 cells this lone representatives search pass.
 
 So far we filled this many cells: 35
@@ -200,11 +200,11 @@ Lone in Box    Setting cell ( 2, 3, 1 ) to 5
 Lone in Box    Setting cell ( 4, 4, 5 ) to 8
 Lone in Box    Setting cell ( 7, 6, 8 ) to 5
 Lone in Box    Setting cell ( 9, 9, 9 ) to 4
-Lone in Row    Setting cell ( 1, 5, 2 ) to 8
 Lone in Row    Setting cell ( 6, 2, 4 ) to 5
-Lone in Column Setting cell ( 2, 8, 3 ) to 7
-Lone in Column Setting cell ( 2, 9, 3 ) to 2
+Lone in Row    Setting cell ( 1, 5, 2 ) to 8
 Lone in Column Setting cell ( 8, 1, 7 ) to 5
+Lone in Column Setting cell ( 2, 9, 3 ) to 2
+Lone in Column Setting cell ( 2, 8, 3 ) to 7
 Found and set 12 cells this lone representatives search pass.
 
 So far we filled this many cells: 44
@@ -346,8 +346,8 @@ So far we filled this many cells: 50
 ---- end lone representatives method ----
 
 Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):
-Lone in Row    Setting cell ( 7, 1, 7 ) to 9
 Lone in Row    Setting cell ( 9, 8, 9 ) to 2
+Lone in Row    Setting cell ( 7, 1, 7 ) to 9
 Lone in Column Setting cell ( 8, 8, 9 ) to 9
 Found and set 4 cells this lone representatives search pass.
 
@@ -440,7 +440,7 @@ So far we filled this many cells: 53
   9 |   7   '   6   '   8   |   1   '       '       |   5   '   2   '   4   |  
     |       '       '       |       '     9 '     9 |       '       '       |  
     +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
----- end imaginary values method ----
+---- end imaginary values processing ----
 
 Looking for Imaginary Values (all 2 or 3 representatives of a given value in a cluster share all belong to another cluster):
 Found and removed 0 possible values from cells via imaginary numbers.
@@ -451,11 +451,6 @@ Found and processed 0 naked pairs.
 
 Looking for Hidden Pairs, (any two candidate values which exist 
 only in the same two cells in a given cluster):
----- find_hidden_pairs: Start all possibility counts ------
-3 col6:4
-2 col6:6
-3 col6:9
----- find_hidden_pairs: End   all possibility counts ------
 Hidden pair (box): comparing candadate values box1:2 and box1:3.
 Hidden pair (box): comparing candadate values box4:2 and box4:3.
 Hidden pair (box): comparing candadate values box4:2 and box4:4.
@@ -493,13 +488,36 @@ Two candidate values shared first cell.
 Two candidate values shared second cell!  We have a pair.
 Found and processed 0 hidden pairs.
 
-==== End Pass 1 (progress is 50) ====
-==== Pass 2 ====
+Looking for X-Wings, any 4 cells with the same possible value
+that are only candidates in two cells of a given column or row and
+involve the same two rows or columns respectively, thus forming an X:
+X-wing (column-based): processing value 6,  which has 2 columns where it appears as a candidate only twice.
+Examining columns 7 and 3.
+We have found a column-based X-wing for 6, involving columns 7 and 3 and rows 3 and 1!
+X-wing (column-based): processing value 3,  which has 3 columns where it appears as a candidate only twice.
+Examining columns 6 and 5.
+Examining columns 6 and 4.
+Examining columns 5 and 4.
+X-wing (column-based): processing value 4,  which has 2 columns where it appears as a candidate only twice.
+Examining columns 4 and 1.
+We have found a column-based X-wing for 4, involving columns 4 and 1 and rows 1 and 5!
+X-wing: removal of 4 from cell at ( 1, 2 )
+X-wing: removal of 4 from cell at ( 1, 3 )
+X-wing: removal of 4 from cell at ( 1, 6 )
+X-wing: removal of 4 from cell at ( 1, 7 )
+X-wing: removal of 4 from cell at ( 5, 3 )
+X-wing (column-based): processing value 2,  which has 3 columns where it appears as a candidate only twice.
+Examining columns 1 and 6.
+Examining columns 1 and 5.
+Examining columns 6 and 5.
+Found and processed 2 X-Wings which resulted in 5 candidates being removed.
+
+So far we filled this many cells: 53
                                                                                
         1       2       3       4       5       6       7       8       9      
     +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
     |   2   '   2   '   2   |     3 '       '   2 3 |       '       '       |  
-  1 | 4     ' 4     ' 4   6 | 4     '   8   ' 4     | 4   6 '   1   '   5   |  
+  1 | 4     '       '     6 | 4     '   8   '       |     6 '   1   '   5   |  
     |       ' 7   9 ' 7   9 |     9 '       ' 7   9 |     9 '       '       |  
     + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
     |       '       '       |       '       '       |       '       '       |  
@@ -515,7 +533,74 @@ Found and processed 0 hidden pairs.
     |       ' 7   9 '       |       '       ' 7   9 |       '       ' 7   9 |  
     + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
     |   2   '       '   2   |       '   2   '       |       '       '       |  
-  5 | 4     '   3   ' 4     | 4     '       '   1   |   8   '   5   '   6   |  
+  5 | 4     '   3   '       | 4     '       '   1   |   8   '   5   '   6   |  
+    |       '       ' 7   9 |     9 ' 7   9 '       |       '       '       |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '   2   |     3 '   2 3 '       |       '       '       |  
+  6 |   8   '   5   '       |       '       '   6   |   1   '   4   '       |  
+    |       '       ' 7   9 |     9 ' 7   9 '       |       '       ' 7   9 |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       '       |       '       '       |       '       '       |  
+  7 |   9   '   1   '   3   |   2   '   4   '   5   |   7   '   6   '   8   |  
+    |       '       '       |       '       '       |       '       '       |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '   2   '   2   |       '       '       |       '       '       |  
+  8 |   5   ' 4     ' 4     |   7   '   6   '   8   |   3   '   9   '   1   |  
+    |       '       '       |       '       '       |       '       '       |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '     3 '     3 |       '       '       |  
+  9 |   7   '   6   '   8   |   1   '       '       |   5   '   2   '   4   |  
+    |       '       '       |       '     9 '     9 |       '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+---- end x-wing processing ----
+
+Looking for X-Wings, any 4 cells with the same possible value
+that are only candidates in two cells of a given column or row and
+involve the same two rows or columns respectively, thus forming an X:
+X-wing (column-based): processing value 2,  which has 3 columns where it appears as a candidate only twice.
+Examining columns 6 and 1.
+Examining columns 6 and 5.
+Examining columns 1 and 5.
+X-wing (column-based): processing value 4,  which has 4 columns where it appears as a candidate only twice.
+Examining columns 4 and 3.
+Examining columns 4 and 1.
+We have found a column-based X-wing for 4, involving columns 4 and 1 and rows 1 and 5!
+Examining columns 4 and 7.
+Examining columns 3 and 1.
+Examining columns 3 and 7.
+Examining columns 1 and 7.
+X-wing (column-based): processing value 3,  which has 3 columns where it appears as a candidate only twice.
+Examining columns 4 and 6.
+Examining columns 4 and 5.
+Examining columns 6 and 5.
+X-wing (column-based): processing value 6,  which has 2 columns where it appears as a candidate only twice.
+Examining columns 7 and 3.
+We have found a column-based X-wing for 6, involving columns 7 and 3 and rows 1 and 3!
+Found and processed 2 X-Wings which resulted in 0 candidates being removed.
+
+==== End Pass 1 (progress is 55) ====
+==== Pass 2 ====
+                                                                               
+        1       2       3       4       5       6       7       8       9      
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |   2   '   2   '   2   |     3 '       '   2 3 |       '       '       |  
+  1 | 4     '       '     6 | 4     '   8   '       |     6 '   1   '   5   |  
+    |       ' 7   9 ' 7   9 |     9 '       ' 7   9 |     9 '       '       |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '       |       '       '       |  
+  2 |   3   '   8   '   5   |   6   '   1   ' 4     | 4     '   7   '   2   |  
+    |       '       '       |       '       '     9 |     9 '       '       |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '   2   '   2   |       '       '   2   |       '       '       |  
+  3 |   1   ' 4     ' 4   6 |   5   '       ' 4     | 4   6 '   8   '   3   |  
+    |       ' 7   9 ' 7   9 |       ' 7   9 ' 7   9 |     9 '       '       |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       '       |       '       '       |       '       '       |  
+  4 |   6   ' 4     '   1   |   8   '   5   ' 4     |   2   '   3   '       |  
+    |       ' 7   9 '       |       '       ' 7   9 |       '       ' 7   9 |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |   2   '       '   2   |       '   2   '       |       '       '       |  
+  5 | 4     '   3   '       | 4     '       '   1   |   8   '   5   '   6   |  
     |       '       ' 7   9 |     9 ' 7   9 '       |       '       '       |  
     + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
     |       '       '   2   |     3 '   2 3 '       |       '       '       |  
@@ -549,12 +634,8 @@ Found and processed 0 naked pairs.
 
 Looking for Hidden Pairs, (any two candidate values which exist 
 only in the same two cells in a given cluster):
----- find_hidden_pairs: Start all possibility counts ------
-3 col6:4
-2 col6:6
-3 col6:9
----- find_hidden_pairs: End   all possibility counts ------
 Hidden pair (box): comparing candadate values box1:2 and box1:3.
+Hidden pair (box): comparing candadate values box2:4 and box2:6.
 Hidden pair (box): comparing candadate values box4:2 and box4:3.
 Hidden pair (box): comparing candadate values box4:2 and box4:4.
 Hidden pair (box): comparing candadate values box4:3 and box4:4.
@@ -567,10 +648,13 @@ Two candidate values shared second cell!  We have a pair.
 Hidden pair (box): comparing candadate values box7:3 and box7:9.
 Two candidate values shared first cell.
 Two candidate values shared second cell!  We have a pair.
+Hidden pair (row): comparing candadate values row0:3 and row0:4.
 Hidden pair (row): comparing candadate values row0:3 and row0:6.
+Hidden pair (row): comparing candadate values row0:4 and row0:6.
 Hidden pair (row): comparing candadate values row1:4 and row1:9.
 Two candidate values shared first cell.
 Two candidate values shared second cell!  We have a pair.
+Hidden pair (row): comparing candadate values row4:4 and row4:7.
 Hidden pair (row): comparing candadate values row5:2 and row5:3.
 Hidden pair (row): comparing candadate values row7:2 and row7:4.
 Two candidate values shared first cell.
@@ -581,15 +665,41 @@ Two candidate values shared second cell!  We have a pair.
 Hidden pair (col): comparing candadate values col0:2 and col0:4.
 Two candidate values shared first cell.
 Two candidate values shared second cell!  We have a pair.
+Hidden pair (col): comparing candadate values col2:4 and col2:6.
 Hidden pair (col): comparing candadate values col3:3 and col3:4.
 Two candidate values shared first cell.
 Hidden pair (col): comparing candadate values col4:2 and col4:3.
 Hidden pair (col): comparing candadate values col5:2 and col5:3.
 Two candidate values shared first cell.
+Hidden pair (col): comparing candadate values col6:4 and col6:6.
 Hidden pair (col): comparing candadate values col8:7 and col8:9.
 Two candidate values shared first cell.
 Two candidate values shared second cell!  We have a pair.
 Found and processed 0 hidden pairs.
+
+Looking for X-Wings, any 4 cells with the same possible value
+that are only candidates in two cells of a given column or row and
+involve the same two rows or columns respectively, thus forming an X:
+X-wing (column-based): processing value 3,  which has 3 columns where it appears as a candidate only twice.
+Examining columns 4 and 5.
+Examining columns 4 and 6.
+Examining columns 5 and 6.
+X-wing (column-based): processing value 4,  which has 4 columns where it appears as a candidate only twice.
+Examining columns 3 and 4.
+Examining columns 3 and 1.
+Examining columns 3 and 7.
+Examining columns 4 and 1.
+We have found a column-based X-wing for 4, involving columns 4 and 1 and rows 1 and 5!
+Examining columns 4 and 7.
+Examining columns 1 and 7.
+X-wing (column-based): processing value 2,  which has 3 columns where it appears as a candidate only twice.
+Examining columns 6 and 1.
+Examining columns 6 and 5.
+Examining columns 1 and 5.
+X-wing (column-based): processing value 6,  which has 2 columns where it appears as a candidate only twice.
+Examining columns 3 and 7.
+We have found a column-based X-wing for 6, involving columns 3 and 7 and rows 3 and 1!
+Found and processed 2 X-Wings which resulted in 0 candidates being removed.
 
 ==== End Pass 2 (progress is 0) ====
 We were able to determine 53 cells.
@@ -597,7 +707,7 @@ We were able to determine 53 cells.
         1       2       3       4       5       6       7       8       9      
     +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
     |   2   '   2   '   2   |     3 '       '   2 3 |       '       '       |  
-  1 | 4     ' 4     ' 4   6 | 4     '   8   ' 4     | 4   6 '   1   '   5   |  
+  1 | 4     '       '     6 | 4     '   8   '       |     6 '   1   '   5   |  
     |       ' 7   9 ' 7   9 |     9 '       ' 7   9 |     9 '       '       |  
     + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
     |       '       '       |       '       '       |       '       '       |  
@@ -613,7 +723,7 @@ We were able to determine 53 cells.
     |       ' 7   9 '       |       '       ' 7   9 |       '       ' 7   9 |  
     + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
     |   2   '       '   2   |       '   2   '       |       '       '       |  
-  5 | 4     '   3   ' 4     | 4     '       '   1   |   8   '   5   '   6   |  
+  5 | 4     '   3   '       | 4     '       '   1   |   8   '   5   '   6   |  
     |       '       ' 7   9 |     9 ' 7   9 '       |       '       '       |  
     + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
     |       '       '   2   |     3 '   2 3 '       |       '       '       |  

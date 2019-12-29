@@ -420,8 +420,17 @@ sub find_x_wings {
   # loop over all values which have 2 or more columns where this value only appears twice as a candidate
   # for each pair of such columns see if this value forms an x-wing
   foreach $value ( grep { scalar( @{$xwing_candidates->{$_}} ) >= 2 } keys $xwing_candidates ) {
-    foreach my $first_column    ( 0                      ..  ( $#{$xwing_candidates->{$value}} - 1 ) ) { # from first to next-to-last
-      foreach my $second_column ( ( $first_column + 1 )  ..  $#{$xwing_candidates->{$value}}         ) { # from one after first to last
+    printf "X-wing (column-based): processing value $value,  " if ($debug);
+    printf "which has %d columns where it appears as a candidate only twice.\n", scalar( @{ $xwing_candidates->{$value} } ) if ($debug);
+    foreach my $first    ( 0               ..  ( $#{$xwing_candidates->{$value}} - 1 ) ) { # from first to next-to-last
+      foreach my $second ( ( $first + 1 )  ..  $#{$xwing_candidates->{$value}}         ) { # from one after first to last
+        my $first_column  = $xwing_candidates->{$value}[$first];
+        my $second_column = $xwing_candidates->{$value}[$second];
+        if ($debug) {
+            printf "Examining columns %d and %d.\n"
+                   , 1 + $first_column
+                   , 1 + $second_column;
+        }
         # I have a pair of columns for which $value shows up only twice as a candidate
         # if they happen to be in the same two rows, this will form an X-Wing and this value may be removed
         # from all other cells in the two rows which aren't part of the x-wing, see notes_x_wings.txt file
@@ -437,7 +446,7 @@ sub find_x_wings {
         }
         if ( scalar ( keys( %$row_count )  )  == 2 ) { 
           if ($debug) {
-            printf "We have found a column-based X-wing for $value, involving columns %d and %d and rows %d and %d.!\n"
+            printf "We have found a column-based X-wing for $value, involving columns %d and %d and rows %d and %d!\n"
                    , 1 + $first_column
                    , 1 + $second_column
                    , map { 1 + $_ } keys %$row_count;
@@ -448,6 +457,7 @@ sub find_x_wings {
               next if ( $cell->column == $first_column or $cell->column == $second_column );
               if ($debug) {
                 printf "X-wing: removal of %d from cell at ( %d, %d )\n"
+                       , $value
                        , 1 + $row
                        , 1 + $cell->column;
               }
