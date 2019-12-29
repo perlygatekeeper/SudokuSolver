@@ -399,23 +399,62 @@ sub find_naked_pairs {
 sub find_x_wings {
   my $self  = shift;
   my $x_wings = 0;
+  my $debug = 1;
   my $progress = 0;
   my $pairs;
   my $value;
+  my $column;
   my $xwing_candidates;
+  print "Looking for X-Wings, any 4 cells with the same possible value\n";
+  print "that are only candidates in two cells of a given column or row and\n";
+  print "involve the same two rows or columns respectively, thus forming an X:\n";
 
   # COLUMNS
   my $possibility_counts = $self->possibilities_hash;
   $pairs = [ grep { $_ =~ /col/ and scalar( @{ $possibility_counts->{$_} } ) == 2 } keys %{ $possibility_counts } ];
   foreach my $key ( @$pairs ) {
-    ( $value, )  = ( $key =~ /col\d:(\d)/ );
-    push ( @{ $xwing_candidates->{$value} } , $key );
+    ( $column, $value )  = ( $key =~ /col(\d):(\d)/ );
+    push ( @{ $xwing_candidates->{$value} } , $column );
+    # $xwing_candidates->{ value is 4 } is array with all columns where it appears only twice
   }
+  # loop over all values which have 2 or more columns where this value only appears twice as a candidate
+  # for each pair of such columns see if this value forms an x-wing
   foreach $value ( grep { scalar( @{$xwing_candidates->{$_}} ) >= 2 } keys $xwing_candidates ) {
-    foreach my $first ( 0 .. ( $#{$xwing_candidates->{$value}} - 1 ) ) {         # from first to next-to-last
-      foreach my $second ( ( $first + 1 ) .. $#{$xwing_candidates->{$value}} ) { # from one after first to last
+    foreach my $first_column    ( 0                      ..  ( $#{$xwing_candidates->{$value}} - 1 ) ) { # from first to next-to-last
+      foreach my $second_column ( ( $first_column + 1 )  ..  $#{$xwing_candidates->{$value}}         ) { # from one after first to last
         # I have a pair of columns for which $value shows up only twice as a candidate
-        # if they happen to be in the same two rows, this will form an X-Wing and 
+        # if they happen to be in the same two rows, this will form an X-Wing and this value may be removed
+        # from all other cells in the two rows which aren't part of the x-wing, see notes_x_wings.txt file
+        # for more information.
+        my $row_count = {};
+        # process the 2 cells in the first column, noting the row in which they reside
+        foreach my $cell ( @{ $possibility_counts->{ 'col' . $first_column  . ':' . $value } } ) {
+          $row_count->{ $cell->row }++;
+        }
+        # process the 2 cells in the second column, noting the row in which they reside
+        foreach my $cell ( @{ $possibility_counts->{ 'col' . $second_column . ':' . $value } } ) {
+          $row_count->{ $cell->row }++;
+        }
+        if ( scalar ( keys( %$row_count )  )  == 2 ) { 
+          if ($debug) {
+            printf "We have found a column-based X-wing for $value, involving columns %d and %d and rows %d and %d.!\n"
+                   , 1 + $first_column
+                   , 1 + $second_column
+                   , map { 1 + $_ } keys %$row_count;
+          }
+          $x_wings++;
+          foreach my $row ( keys %$row_count ) {
+            foreach my $cell ( @{ $possibility_counts->{ 'row' . $row . ':' . $value } } ) {
+              next if ( $cell->column == $first_column or $cell->column == $second_column );
+              if ($debug) {
+                printf "X-wing: removal of %d from cell at ( %d, %d )\n"
+                       , 1 + $row
+                       , 1 + $cell->column;
+              }
+              $progress += $cell->remove_possibility($value);
+            }
+          }
+        }
       }
     }
   }
@@ -423,9 +462,8 @@ sub find_x_wings {
   # ROWS
   $possibility_counts = $self->possibilities_hash;
   $pairs = [ grep { $_ =~ /row/ and scalar( @{ $possibility_counts->{$_} } ) == 2 } keys %{ $possibility_counts } ];
-
   
-  print "Found and processed $progress x_wings which resulted in $progress candidates being removed.\n\n";
+  print "Found and processed $x_wings X-Wings which resulted in $progress candidates being removed.\n\n";
   return $progress;
 }
 

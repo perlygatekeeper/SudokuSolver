@@ -33,13 +33,16 @@ sub remove_possibility {
   my ($debug) = 0;
   if ( $self->value ) {
     printf "I already have a value assigned so I will be skipped.\n" if ($debug);
+    return 0;
   } elsif ( not $self->possibilities->[$value] ) {
     printf "$value has previously been removed from my possibilites array.\n" if ($debug);
+    return 0;
   } else {
     printf "removing possible value $value from cell at (%d,%d,%d)\n", 1 + $self->row, 1 + $self->column, 1 + $self->box if ($debug);
     $self->possibilities->[$value] = 0;
     $self->possibilities->[0]--;
     printf "my new possibilities array contains " . join (", " , @{$self->possibilities} ) . "\n" if ($debug);
+    return 1;
   }
 }
 
