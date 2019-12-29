@@ -1,4 +1,14 @@
 
+The term Imaginary Values (coined by my son Jamison Parker) combines two concepts
+found in the Beginner solving techniques found at Sudoku Snake web site:
+
+http://www.sudokusnake.com/techniques.php
+
+These concepts are "Pointing" and "Claiming":
+
+http://www.sudokusnake.com/claiming.php
+http://www.sudokusnake.com/pointing.php
+
         1       2       3       4       5       6       7       8       9      
     +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
     |       '     3 '     3 |       '       '     3 |     3 '     3 '     3 |  
