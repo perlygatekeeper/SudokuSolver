@@ -414,6 +414,8 @@ sub find_x_wings {
   foreach $value ( grep { scalar( @{$xwing_candidates->{$_}} ) >= 2 } keys $xwing_candidates ) {
     foreach my $first ( 0 .. ( $#{$xwing_candidates->{$value}} - 1 ) ) {         # from first to next-to-last
       foreach my $second ( ( $first + 1 ) .. $#{$xwing_candidates->{$value}} ) { # from one after first to last
+        # I have a pair of columns for which $value shows up only twice as a candidate
+        # if they happen to be in the same two rows, this will form an X-Wing and 
       }
     }
   }
