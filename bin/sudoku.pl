@@ -1,5 +1,7 @@
 #!/usr/bin/env perl 
 # A perl script to read in, solve and output a sudoku puzzle.
+my $name = $0; $name =~ s'.*/''; # remove path--like basename
+my $usage = "usage:\n$name puzzle_number";
 
 use strict;
 use warnings;
@@ -10,23 +12,31 @@ use Data::Dump;
 
 my $puzzle_strings;
 my $puzzle_name;
-while (<DATA>) {
+# while (<DATA>) {
+#   chomp;
+#   if (/^\s*$|^\s*#/) { # found a puzzle header
+#     $puzzle_name = $_;
+#     $puzzle_name =~ s/^\s*#\s*//;
+#   } else {
+#     $puzzle_strings->{$puzzle_name} .= $_;
+#   }
+# }
+# $puzzle_name = $ARGV[0] || "Puzzle_50";
+
+my $puzzle_file="Puzzles/sudoku17-first50.txt";
+open( PUZZLE_FILE, "<", $puzzle_file ) || die("$name: Cannot read from '$puzzle_file': $!\n");
+while (<PUZZLE_FILE>) {
+  next if (/^\s*$|^\s*#/); # skip white, blank and commented lines.
   chomp;
-  if (/^\s*$|^\s*#/) { # found a puzzle header
-    $puzzle_name = $_;
-    $puzzle_name =~ s/^\s*#\s*//;
-  } else {
-    $puzzle_strings->{$puzzle_name} .= $_;
-  }
+  push( @$puzzle_strings, $_);
 }
+close(PUZZLE_FILE);
 
-$puzzle_name = $ARGV[0] || "Puzzle_50";
+$puzzle_name = $ARGV[0];
+print "puzzle_string: $puzzle_strings->[$puzzle_name-1]\n";
 
-print "puzzle_string: $puzzle_strings->{$puzzle_name}\n";
 my $puzzle = Grid->new;
-$puzzle->load_from_string($puzzle_strings->{$puzzle_name});
-# $puzzle->load_from_string("043980250600425000200001094900004070300608000410209003820500000000040005534890710");
-
+$puzzle->load_from_string($puzzle_strings->[$puzzle_name-1]);
 
 my($this_cell);
 my($progress);
@@ -62,7 +72,7 @@ while ( $puzzle->solved <= 80 and $pass_progress ) {
     print "So far we filled this many cells: " . $puzzle->solved . "\n";
     $puzzle->big_print;
     $pass_progress += $progress;
-    print "---- end imaginary values method ----\n\n";
+    print "---- end imaginary values processing ----\n\n";
   }
 
   # Naked Pairs
@@ -70,7 +80,7 @@ while ( $puzzle->solved <= 80 and $pass_progress ) {
     print "So far we filled this many cells: " . $puzzle->solved . "\n";
     $puzzle->big_print;
     $pass_progress += $progress;
-    print "---- end naked pairs method ----\n\n";
+    print "---- end naked pairs processing ----\n\n";
   }
 
   # Hidden Pairs
@@ -78,7 +88,15 @@ while ( $puzzle->solved <= 80 and $pass_progress ) {
     print "So far we filled this many cells: " . $puzzle->solved . "\n";
     $puzzle->big_print;
     $pass_progress += $progress;
-    print "---- end naked pairs method ----\n\n";
+    print "---- end hidden pairs processing ----\n\n";
+  }
+
+  # X Wings
+  while ( $puzzle->solved <= 80 and $progress = $puzzle->find_x_wings ) {
+    print "So far we filled this many cells: " . $puzzle->solved . "\n";
+    $puzzle->big_print;
+    $pass_progress += $progress;
+    print "---- end x-wing processing ----\n\n";
   }
 
   # Naked Triplets
