@@ -104,9 +104,10 @@ sub find_and_set_lone_representatives {  # a lone_representative is only cell wi
   #         in that other cluster's other member cells
   # case 3) naked pair    two   cells with the same two   possibilites put this one in it's own method
   # case 4) naked triplet three cells with the same three possibilites put this one in it's own method as well
-  # Starting with case 2:
+  # Starting with case 1:
 
   print "Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):\n";
+
   $possibility_counts = $self->possibilities_hash;
   # we now have a cell count of all possible values for all cells organized by cell cluster
   # we will search these counts for a 1, this represents a value that has only one cell in this box
@@ -130,6 +131,7 @@ sub find_and_set_lone_representatives {  # a lone_representative is only cell wi
     }
   }
 
+  # refresh possibility_counts hash as the lone representatives in BOXES above may have exposed more in ROWS
   $possibility_counts = $self->possibilities_hash;
   # we now have a new cell count of all possible values for all cells organized by cell cluster
   # we will search these counts for a 1, this represents a value that has only one cell in this row
@@ -152,6 +154,7 @@ sub find_and_set_lone_representatives {  # a lone_representative is only cell wi
     }
   }
 
+  # refresh possibility_counts hash as the lone representatives in ROWS above may have exposed more in COLS
   $possibility_counts = $self->possibilities_hash;
   # CHECK COLUMNS FOR LONE REPRESENTATIVES
   # we now have a new cell count of all possible values for all cells organized by cell cluster
@@ -179,6 +182,9 @@ sub find_and_set_lone_representatives {  # a lone_representative is only cell wi
   return $progress;
 }
 
+# Logic for this method was incorrect because it was based on my incorrect understanding of what a
+# "Remote Pair" is.  I plan on coming back here and fixing this later as there are serveral puzzles
+# in sudoku17-50 that will be solved with the proper find of a single remote pair.
 sub find_remote_pairs {
   my $self = shift;
   my $progress = 0;
@@ -190,7 +196,7 @@ sub find_remote_pairs {
     # we have a pair that appears at least twice
     # compare every two cells that have this pair and see if they
     # share any cluster, if they do, skip them, because then they are a naked pair.
-    foreach my $first ( 0 .. ( $#{$pairs->{$key}} -1 ) ) { # from first to next-to-last
+    foreach my $first ( 0 .. ( $#{$pairs->{$key}} - 1 ) ) {         # from first to next-to-last
       foreach my $second ( ( $first + 1 ) .. $#{$pairs->{$key}} ) { # from one after first to last
 #       printf "Remote pair: comparing cells numbered  %d and %d.\n", $first, $second;
 #       printf "Remote pair: rows    for the cells are %d and %d.\n", $pairs->{$key}[$first]->row,    $pairs->{$key}[$second]->row;
@@ -390,6 +396,35 @@ sub find_naked_pairs {
   return $progress;
 }
 
+sub find_x_wings {
+  my $self  = shift;
+  my $x_wings = 0;
+  my $progress = 0;
+  my $pairs;
+  my $value;
+  my $xwing_candidates;
+
+  # COLUMNS
+  $pairs = [ grep { $_ =~ /col/ and scalar( @{ $possibility_counts->{$_} } ) == 2 } keys %{ $possibility_counts } ];
+  foreach my $key ( @$pairs ) {
+    ( $value, )  = ( $key =~ /col\d:(\d)/ );
+    push ( @{$xwing_candidates->{$value}} }, $key );
+  }
+  foreach $value ( { grep { scalar( @{$xwing_candidates->{$_}} ) >= 2 } keys $xwing_candidates ) {
+    foreach my $first ( 0 .. ( $#{$xwing_candidates->{$value}} - 1 ) ) {         # from first to next-to-last
+      foreach my $second ( ( $first + 1 ) .. $#{$xwing_candidates->{$value}} ) { # from one after first to last
+      }
+    }
+  }
+
+  # ROWS
+  $pairs = [ grep { $_ =~ /row/ and scalar( @{ $possibility_counts->{$_} } ) == 2 } keys %{ $possibility_counts } ];
+
+  
+  print "Found and processed $progress x_wings which resulted in $progress candidates being removed.\n\n";
+  return $progress;
+}
+
 sub find_hidden_pairs {
   my $self  = shift;
   my $progress = 0;
@@ -397,22 +432,22 @@ sub find_hidden_pairs {
   print "Looking for Hidden Pairs, (any two candidate values which exist \n";
   print "only in the same two cells in a given cluster):\n";
   my $possibility_counts = $self->possibilities_hash;
-  { # DEBUG
-    print "---- find_hidden_pairs: Start all possibility counts ------\n";
-    printf "%d %s\n", scalar( @{ $possibility_counts->{$_} } ), $_ foreach ( sort grep { $_=~/col6/ } keys %{ $possibility_counts } );
-    print "---- find_hidden_pairs: End   all possibility counts ------\n";
-  }
+# { # DEBUG
+#   print "---- find_hidden_pairs: Start all possibility counts ------\n";
+#   printf "%d %s\n", scalar( @{ $possibility_counts->{$_} } ), $_ foreach ( sort grep { $_=~/col6/ } keys %{ $possibility_counts } );
+#   print "---- find_hidden_pairs: End   all possibility counts ------\n";
+# }
 
   # Box examination
   $pairs = [ sort grep { $_ =~ /box/ and scalar( @{ $possibility_counts->{$_} } ) == 2 } keys %{ $possibility_counts } ];
   # pairs holds keys representing candidate values that are present only twice in a given box
-  foreach my $first ( 0 .. ( $#{$pairs} -1 ) ) { # from first to next-to-last
+  foreach my $first ( 0 .. ( $#{$pairs} - 1 ) ) { # from first to next-to-last
     foreach my $second ( ( $first + 1 ) .. $#{$pairs} ) { # from one after first to last
       my( $box1, $box2, $value1, $value2, $cell1, $cell2 );
       ( $box1, $value1 ) = ( $pairs->[$first]  =~ /box(\d):(\d)/ );
       ( $box2, $value2 ) = ( $pairs->[$second] =~ /box(\d):(\d)/ );
       next if ( $box1 != $box2 );
-      printf "Hidden pair: comparing candadate values %s and %s.\n", $pairs->[$first], $pairs->[$second];
+      printf "Hidden pair (box): comparing candadate values %s and %s.\n", $pairs->[$first], $pairs->[$second];
       next if ( $possibility_counts->{$pairs->[$first] }[0]->row    != $possibility_counts->{$pairs->[$second]}[0]->row );
       next if ( $possibility_counts->{$pairs->[$first] }[0]->column != $possibility_counts->{$pairs->[$second]}[0]->column );
       print "Two candidate values shared first cell.\n";
@@ -423,17 +458,17 @@ sub find_hidden_pairs {
       $cell1 = $possibility_counts->{$pairs->[$first] }[0];
       $cell2 = $possibility_counts->{$pairs->[$first] }[1];
       if ( $cell1->possibilities->[0] > 2 ) { # first cell of this pair of candidate values have other candidate values
-        foreach my $value ( @{ $cell1->possibilities } ) {
-          print "Hidden pair: processing fist cell: candidate value $value?\n";
+        foreach my $value ( grep { $_ } @{ $cell1->possibilities }[1..9] ) {
+          print "Hidden pair (box): processing fist cell: candidate value $value?\n";
           next if ( $value == $value1 or $value == $value2 );
-          print "Hidden pair: processing fist cell: Remove it!\n";
+          print "Hidden pair (box): processing fist cell: Remove it!\n";
           # remove all others
           $cell1->remove_possibility($value);
         }
         print "Removed all other candidate values from first cell.\n";
       }
       if ( $cell2->possibilities->[0] > 2 ) { # second cell of this pair of candidate values have other candidate values
-        foreach my $value ( @{ $cell1->possibilities } ) {
+        foreach my $value ( grep { $_ } @{ $cell1->possibilities }[1..9] ) {
           next if ( $value == $value1 or $value == $value2 );
           # remove all others
           $cell2->remove_possibility($value);
@@ -446,13 +481,13 @@ sub find_hidden_pairs {
   # Row examination
   $pairs = [ sort grep { $_ =~ /row/ and scalar( @{ $possibility_counts->{$_} } ) == 2 } keys %{ $possibility_counts } ];
   # pairs holds keys representing candidate values that are present only twice in a given row
-  foreach my $first ( 0 .. ( $#{$pairs} -1 ) ) { # from first to next-to-last
+  foreach my $first ( 0 .. ( $#{$pairs} - 1 ) ) {         # from first to next-to-last
     foreach my $second ( ( $first + 1 ) .. $#{$pairs} ) { # from one after first to last
       my( $row1, $row2, $value1, $value2, $cell1, $cell2 );
       ( $row1, $value1 ) = ( $pairs->[$first]  =~ /row(\d):(\d)/ );
       ( $row2, $value2 ) = ( $pairs->[$second] =~ /row(\d):(\d)/ );
       next if ( $row1 != $row2 );
-      printf "Hidden pair: comparing candadate values %s and %s.\n", $pairs->[$first], $pairs->[$second];
+      printf "Hidden pair (row): comparing candadate values %s and %s.\n", $pairs->[$first], $pairs->[$second];
       next if ( $possibility_counts->{$pairs->[$first] }[0]->column != $possibility_counts->{$pairs->[$second]}[0]->column );
       print "Two candidate values shared first cell.\n";
       next if ( $possibility_counts->{$pairs->[$first] }[1]->column != $possibility_counts->{$pairs->[$second]}[1]->column );
@@ -461,17 +496,17 @@ sub find_hidden_pairs {
       $cell1 = $possibility_counts->{$pairs->[$first] }[0];
       $cell2 = $possibility_counts->{$pairs->[$first] }[1];
       if ( $cell1->possibilities->[0] > 2 ) { # first cell of this pair of candidate values have other candidate values
-        foreach my $value ( @{ $cell1->possibilities } ) {
-          print "Hidden pair: processing fist cell: candidate value $value?\n";
+        foreach my $value ( grep { $_ } @{ $cell1->possibilities }[1..9] ) {
+          print "Hidden pair (row): processing fist cell: candidate value $value?\n";
           next if ( $value == $value1 or $value == $value2 );
-          print "Hidden pair: processing fist cell: Remove it!\n";
+          print "Hidden pair (row): processing fist cell: Remove it!\n";
           # remove all others
           $cell1->remove_possibility($value);
         }
         print "Removed all other candidate values from first cell.\n";
       }
       if ( $cell2->possibilities->[0] > 2 ) { # second cell of this pair of candidate values have other candidate values
-        foreach my $value ( @{ $cell1->possibilities } ) {
+        foreach my $value ( grep { $_ } @{ $cell1->possibilities }[1..9] ) {
           next if ( $value == $value1 or $value == $value2 );
           # remove all others
           $cell2->remove_possibility($value);
@@ -484,13 +519,13 @@ sub find_hidden_pairs {
   # Column examination
   $pairs = [ sort grep { $_ =~ /col/ and scalar( @{ $possibility_counts->{$_} } ) == 2 } keys %{ $possibility_counts } ];
   # pairs holds keys representing candidate values that are present only twice in a given column
-  foreach my $first ( 0 .. ( $#{$pairs} -1 ) ) { # from first to next-to-last
+  foreach my $first ( 0 .. ( $#{$pairs} - 1 ) ) {         # from first to next-to-last
     foreach my $second ( ( $first + 1 ) .. $#{$pairs} ) { # from one after first to last
       my( $col1, $col2, $value1, $value2, $cell1, $cell2 );
       ( $col1, $value1 ) = ( $pairs->[$first]  =~ /col(\d):(\d)/ );
       ( $col2, $value2 ) = ( $pairs->[$second] =~ /col(\d):(\d)/ );
       next if ( $col1 != $col2 );
-      printf "Hidden pair: comparing candadate values %s and %s.\n", $pairs->[$first], $pairs->[$second];
+      printf "Hidden pair (col): comparing candadate values %s and %s.\n", $pairs->[$first], $pairs->[$second];
       next if ( $possibility_counts->{$pairs->[$first] }[0]->row != $possibility_counts->{$pairs->[$second]}[0]->row );
       print "Two candidate values shared first cell.\n";
       next if ( $possibility_counts->{$pairs->[$first] }[1]->row != $possibility_counts->{$pairs->[$second]}[1]->row );
@@ -499,17 +534,17 @@ sub find_hidden_pairs {
       $cell1 = $possibility_counts->{$pairs->[$first] }[0];
       $cell2 = $possibility_counts->{$pairs->[$first] }[1];
       if ( $cell1->possibilities->[0] > 2 ) { # first cell of this pair of candidate values have other candidate values
-        foreach my $value ( @{ $cell1->possibilities } ) {
-          print "Hidden pair: processing fist cell: candidate value $value?\n";
+        foreach my $value ( grep { $_ } @{ $cell1->possibilities }[1..9] ) {
+          print "Hidden pair (col): processing fist cell: candidate value $value?\n";
           next if ( $value == $value1 or $value == $value2 );
-          print "Hidden pair: processing fist cell: Remove it!\n";
+          print "Hidden pair (col): processing fist cell: Remove it!\n";
           # remove all others
           $cell1->remove_possibility($value);
         }
         print "Removed all other candidate values from first cell.\n";
       }
       if ( $cell2->possibilities->[0] > 2 ) { # second cell of this pair of candidate values have other candidate values
-        foreach my $value ( @{ $cell1->possibilities } ) {
+        foreach my $value ( grep { $_ } @{ $cell1->possibilities }[1..9] ) {
           next if ( $value == $value1 or $value == $value2 );
           # remove all others
           $cell2->remove_possibility($value);

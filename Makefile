@@ -17,3 +17,9 @@ all:
  	  ./bin/sudoku.pl $$puzzle > Puzzles/$${puzzle}_solution.txt || exit 1; \
 	done
 
+17-50:
+	for puzzle in `countdown -f '%02d  ' 1 50`; do \
+	  echo $$puzzle; \
+	  ./bin/sudoku.pl "$$puzzle" > Puzzles/sudoku17_$${puzzle}_solution.txt || exit 1; \
+	done
+
