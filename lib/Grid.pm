@@ -405,12 +405,13 @@ sub find_x_wings {
   my $xwing_candidates;
 
   # COLUMNS
+  my $possibility_counts = $self->possibilities_hash;
   $pairs = [ grep { $_ =~ /col/ and scalar( @{ $possibility_counts->{$_} } ) == 2 } keys %{ $possibility_counts } ];
   foreach my $key ( @$pairs ) {
     ( $value, )  = ( $key =~ /col\d:(\d)/ );
-    push ( @{$xwing_candidates->{$value}} }, $key );
+    push ( @{ $xwing_candidates->{$value} } , $key );
   }
-  foreach $value ( { grep { scalar( @{$xwing_candidates->{$_}} ) >= 2 } keys $xwing_candidates ) {
+  foreach $value ( grep { scalar( @{$xwing_candidates->{$_}} ) >= 2 } keys $xwing_candidates ) {
     foreach my $first ( 0 .. ( $#{$xwing_candidates->{$value}} - 1 ) ) {         # from first to next-to-last
       foreach my $second ( ( $first + 1 ) .. $#{$xwing_candidates->{$value}} ) { # from one after first to last
       }
@@ -418,6 +419,7 @@ sub find_x_wings {
   }
 
   # ROWS
+  $possibility_counts = $self->possibilities_hash;
   $pairs = [ grep { $_ =~ /row/ and scalar( @{ $possibility_counts->{$_} } ) == 2 } keys %{ $possibility_counts } ];
 
   
