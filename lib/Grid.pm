@@ -722,6 +722,7 @@ sub find_imaginary_values {
   return $progress;
 }
 
+# This method was meant to be a helper to the find_remote_pairs method which is presently abandonded.
 sub pairs_possible {
   my $self = shift;
   my $debug = 0;
@@ -750,6 +751,11 @@ sub pairs_possible {
   return $pairs;
 }
 
+# Find all cells with only two possible candidate values
+# return them in in a hash pairs
+# eg. $pairs->{ "row:7 -> 57" } would be an array containing all cells with only 5 and 7 candidate values in row 7.
+# This method is used only in the find_naked_pairs method, but will likely be useful in the find_remote_pairs method
+# as well.
 sub pairs_possible_by_cluster {
   my $self = shift;
   my $debug = 0;
