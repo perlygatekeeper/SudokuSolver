@@ -972,6 +972,39 @@ sub box_mates_of {  # return an array ref to an array containing all the other c
   $a;
 }
 
+sub intersections {
+  my( $self, $cell_1, $cell_2 ) = @_;
+  my $intersections = [];
+  if ( $cell_1 == $cell_2 ) {                            # SAME ROW, SAME COLUMN, SAME BOX 1,1,1
+    # 1 1 1 ( Same cell is NOT ALLOWED!)
+    print "Cell::intersections called with self as the 'other cell'... cut it out!\n";
+    exit 1;
+  } else {                                               # DIFF SOMETHING                  X,Y,Z  one+ is 0
+    if ( $cell_1->row == $cell_2->row ) {                # SAME ROW, DIFF COLUMN           
+      if ( $cell_1->box == $cell_2->box ) {              # SAME ROW, DIFF COLUMN, SAME BOX 1,0,1
+        # members of the shared box and shared row
+      } else {                                           # SAME ROW, DIFF COLUMN, DIFF BOX 1,0,0
+        # just members of the shared row
+      }
+    } else {                                             # DIFF ROW
+      if ( $cell_1->column == $cell_2->column ) {        # DIFF ROW, SAME COLUMN
+        if ( $cell_1->box == $cell_2->box ) {            # DIFF ROW, SAME COLUMN, SAME BOX 0,1,1
+          # members of the shared box and shared column
+        } else {                                         # DIFF ROW, SAME COLUMN, DIFF BOX 0,1,0
+          # just members of the shared column
+        }
+      } else {                                           # DIFF ROW, DIFF COLUMN
+        if ( $cell_1->box == $cell_2->box ) {            # DIFF ROW, DIFF COLUMN, SAME BOX 0,0,1
+          # just members of the shared box
+        } else {                                         # DIFF ROW, DIFF COLUMN, DIFF BOX 0,0,0
+          # just two intersecting cells
+          # (row1, col2) and (row2, col1)
+        }
+      }
+    }
+  }
+}
+
 sub unsolved_cells {
   my($self) = shift;
   my $unsolved = [ ];

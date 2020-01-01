@@ -13,19 +13,17 @@ has 'box'           => (isa => 'Value',    is => 'rw');
 
 # Methods
 
-# All of these will be prameter to include only unsolved cells
-
 sub clue {
-    my($self,$value) = @_;
-    if ( $value =~ /[1-9]/ ) {
-       $self->given(1);
-       $self->value($value);
-       $self->possibilities( [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] );
-    } else {
-       $self->given(0);
-       $self->value(0);
-       $self->possibilities( [ 9, 1, 2, 3, 4, 5, 6, 7, 8, 9 ] );
-    }
+  my($self,$value) = @_;
+  if ( $value =~ /[1-9]/ ) {
+     $self->given(1);
+     $self->value($value);
+     $self->possibilities( [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] );
+  } else {
+     $self->given(0);
+     $self->value(0);
+     $self->possibilities( [ 9, 1, 2, 3, 4, 5, 6, 7, 8, 9 ] );
+  }
 }; 
 
 sub remove_possibility {
@@ -84,10 +82,6 @@ sub my_box_mates    { # all other cells in his cell's box
 
 }; 
 
-# clear_my_value
-# clear_my_value_from_my_row
-# clear_my_value_from_my_column
-# clear_my_value_from_my_box
-
 
 1;
+__END__
