@@ -1,3 +1,7 @@
+Sudoku snake rates this method as Intermediate.
+
+http://www.sudokusnake.com/xwings.php
+
 From partial solution of sudoku17-50.txt, puzzle 49.
 
 We were able to determine 53 cells.
