@@ -983,22 +983,31 @@ sub intersections {
     if ( $cell_1->row == $cell_2->row ) {                # SAME ROW, DIFF COLUMN           
       if ( $cell_1->box == $cell_2->box ) {              # SAME ROW, DIFF COLUMN, SAME BOX 1,0,1
         # members of the shared box and shared row
+        push ( @$intersections, grep { $_->column != $cell_2->column }                             @{ $self->row_mates_of($cell_1) } );
+        push ( @$intersections, grep { $_->row != $cell_2->row and $_->column != $cell_2->column } @{ $self->box_mates_of($cell_1) } );
       } else {                                           # SAME ROW, DIFF COLUMN, DIFF BOX 1,0,0
         # just members of the shared row
+        push ( @$intersections, grep { $_->column != $cell_2->column } @{ $self->row_mates_of($cell_1) } );
       }
     } else {                                             # DIFF ROW
       if ( $cell_1->column == $cell_2->column ) {        # DIFF ROW, SAME COLUMN
         if ( $cell_1->box == $cell_2->box ) {            # DIFF ROW, SAME COLUMN, SAME BOX 0,1,1
           # members of the shared box and shared column
+          push ( @$intersections, grep { $_->row != $cell_2->row } @{ $self->column_mates_of($cell_1) } );
+          push ( @$intersections, grep { $_->row != $cell_2->row and $_->column != $cell_2->column } @{ $self->box_mates_of($cell_1) } );
         } else {                                         # DIFF ROW, SAME COLUMN, DIFF BOX 0,1,0
           # just members of the shared column
+          push ( @$intersections, grep { $_->row != $cell_2->row } @{ $self->column_mates_of($cell_1) } );
         }
       } else {                                           # DIFF ROW, DIFF COLUMN
         if ( $cell_1->box == $cell_2->box ) {            # DIFF ROW, DIFF COLUMN, SAME BOX 0,0,1
           # just members of the shared box
+          push ( @$intersections, grep { $_->row != $cell_2->row and $_->column != $cell_2->column } @{ $self->box_mates_of($cell_1) } );
         } else {                                         # DIFF ROW, DIFF COLUMN, DIFF BOX 0,0,0
           # just two intersecting cells
           # (row1, col2) and (row2, col1)
+          push ( @$intersections, $self->cell_from_row_column( $cell_1->row, $cell_2->column) );
+          push ( @$intersections, $self->cell_from_row_column( $cell_2->row, $cell_1->column) );
         }
       }
     }
