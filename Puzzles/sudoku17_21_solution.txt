@@ -90,8 +90,8 @@ Found and set 0 cells this singletons search pass.
 
 Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):
 Lone in Row    Setting cell ( 4, 8, 6 ) to 3
-Lone in Column Setting cell ( 9, 4, 8 ) to 6
 Lone in Column Setting cell ( 9, 7, 9 ) to 3
+Lone in Column Setting cell ( 9, 4, 8 ) to 6
 Found and set 5 cells this lone representatives search pass.
 
 So far we filled this many cells: 21
@@ -142,10 +142,10 @@ Lone in Box    Setting cell ( 8, 6, 8 ) to 3
 Lone in Box    Setting cell ( 9, 9, 9 ) to 1
 Lone in Row    Setting cell ( 2, 7, 3 ) to 6
 Lone in Row    Setting cell ( 3, 3, 1 ) to 3
-Lone in Column Setting cell ( 6, 7, 6 ) to 8
 Lone in Column Setting cell ( 1, 2, 1 ) to 6
-Lone in Column Setting cell ( 2, 5, 2 ) to 3
 Lone in Column Setting cell ( 5, 1, 4 ) to 3
+Lone in Column Setting cell ( 2, 5, 2 ) to 3
+Lone in Column Setting cell ( 6, 7, 6 ) to 8
 Found and set 13 cells this lone representatives search pass.
 
 So far we filled this many cells: 30
@@ -245,8 +245,8 @@ So far we filled this many cells: 37
 Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):
 Lone in Box    Setting cell ( 2, 6, 2 ) to 1
 Lone in Row    Setting cell ( 3, 2, 1 ) to 1
-Lone in Row    Setting cell ( 2, 4, 2 ) to 2
 Lone in Row    Setting cell ( 4, 5, 5 ) to 1
+Lone in Row    Setting cell ( 2, 4, 2 ) to 2
 Lone in Column Setting cell ( 1, 4, 2 ) to 4
 Found and set 6 cells this lone representatives search pass.
 
@@ -530,7 +530,7 @@ So far we filled this many cells: 52
   9 |   7   '   9   '   2   |   6   '   8   '   5   |   3   '   4   '   1   |  
     |       '       '       |       '       '       |       '       '       |  
     +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
----- end imaginary values method ----
+---- end imaginary values processing ----
 
 Looking for Imaginary Values (all 2 or 3 representatives of a given value in a cluster share all belong to another cluster):
 Found and removed 0 possible values from cells via imaginary numbers.
@@ -584,7 +584,7 @@ So far we filled this many cells: 52
   9 |   7   '   9   '   2   |   6   '   8   '   5   |   3   '   4   '   1   |  
     |       '       '       |       '       '       |       '       '       |  
     +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
----- end naked pairs method ----
+---- end naked pairs processing ----
 
 Looking for Naked Pairs, any two cells with the same
 pair of possible values that exist in the same cluster [row column or box]):
@@ -592,8 +592,6 @@ Found and processed 0 naked pairs.
 
 Looking for Hidden Pairs, (any two candidate values which exist 
 only in the same two cells in a given cluster):
----- find_hidden_pairs: Start all possibility counts ------
----- find_hidden_pairs: End   all possibility counts ------
 Hidden pair (box): comparing candadate values box0:7 and box0:8.
 Hidden pair (box): comparing candadate values box1:5 and box1:7.
 Two candidate values shared first cell.
@@ -798,8 +796,6 @@ Found and processed 0 naked pairs.
 
 Looking for Hidden Pairs, (any two candidate values which exist 
 only in the same two cells in a given cluster):
----- find_hidden_pairs: Start all possibility counts ------
----- find_hidden_pairs: End   all possibility counts ------
 Hidden pair (box): comparing candadate values box0:7 and box0:8.
 Hidden pair (box): comparing candadate values box1:5 and box1:7.
 Two candidate values shared first cell.
@@ -935,8 +931,6 @@ Found and processed 0 naked pairs.
 
 Looking for Hidden Pairs, (any two candidate values which exist 
 only in the same two cells in a given cluster):
----- find_hidden_pairs: Start all possibility counts ------
----- find_hidden_pairs: End   all possibility counts ------
 Hidden pair (box): comparing candadate values box0:7 and box0:8.
 Hidden pair (box): comparing candadate values box1:5 and box1:7.
 Two candidate values shared first cell.
@@ -1024,18 +1018,18 @@ We were able to determine 54 cells.
     |       '       '       |       '       '       |       '       '       |  
   1 |   5   '   6   '   5   |   4   '   5   '   9   |   2   '   1   '   3   |  
     |   8   '       ' 7 8   |       ' 7     '       |       '       '       |  
-    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- 4 ----- +  
-    |       '       '       |       '       '       |       '       'o      |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '       |       '       '       |  
   2 |   9   '   4   '   5   |   2   '   3   '   1   |   6   '   8   '   5   |  
     |       '       ' 7     |       '       '       |       '       ' 7     |  
-    + ----- + ----- + ----- 2 ----- + ----- + ----- + ----- 3 ----- + ----- +  
-    |       '       '       |o      '       '       |       'o      '       |  
+    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
+    |       '       '       |       '       '       |       '       '       |  
   3 |   2   '   1   '   3   |   5   '   6   '   8   |   9   '   5   '   4   |  
     |       '       '       | 7     '       '       |       ' 7     '       |  
-    +-------+-------+-------1-------+-------+-------+-------+-------X-------+  
-    |       '       '       |o      '       '   2   |       '       'o  2 o |  
-  4 |   6   '   8   '   9   |   5   '   1   '       |   4   '   3   '   5   | <- cell 4,9 is at intersection 
-    |       '       '       | 7     '       ' 7     |       '       ' 7   o |  
+    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
+    |       '       '       |       '       '   2   |       '       '   2   |  
+  4 |   6   '   8   '   9   |   5   '   1   '       |   4   '   3   '   5   |  
+    |       '       '       | 7     '       ' 7     |       '       ' 7     |  
     + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  
     |       '   2   '       |       '   2   '       |       '       '   2   |  
   5 |   3   '       ' 4 5   |   8   '   5   ' 4   6 |   1   '   5 6 '   5   |  
@@ -1057,26 +1051,3 @@ We were able to determine 54 cells.
   9 |   7   '   9   '   2   |   6   '   8   '   5   |   3   '   4   '   1   |  
     |       '       '       |       '       '       |       '       '       |  
     +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
-
-    "Remote pair" on Sudoku Snake
-
-    Cell Chain of 5-7 naked pairs starting from
-    1 @ (4,4)
-    2 @ (3,4)
-    3 @ (3,8)
-    4 @ (2,9)
-
-    are all connected:
-    1 & 2 share a column - 4
-    2 & 3 share a row    - 3
-    3 & 4 share a box    - 3
-
-    Cell @ (4,9) lies at the intersection of the end points of the chain.  
-
-    since if the first cell is 5, then second is 7, the third is 5 and the forth is 7   AND
-    since if the first cell is 7, then second is 5, the third is 7 and the forth is 5   AND
-
-    this allows both 5 and 7 values to be removed from the cell connected to both the first and forth cells
-    ie cell @ (4,9) leaving it with 2 being it's only possible value left.
-
-    This in fact solves the puzzle.

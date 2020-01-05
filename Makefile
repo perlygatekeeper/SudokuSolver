@@ -5,11 +5,8 @@ Puzzles = Puzzle_01 Puzzle_02 Puzzle_03 Puzzle_04 Puzzle_05 Puzzle_06 Puzzle_07 
 	  Puzzle_31 Puzzle_32 Puzzle_33 Puzzle_34 Puzzle_35 Puzzle_36 Puzzle_37 Puzzle_38 Puzzle_39 Puzzle_40 \
 	  Puzzle_41 Puzzle_42 Puzzle_43 Puzzle_44 Puzzle_45 Puzzle_46 Puzzle_47 Puzzle_48 Puzzle_49 Puzzle_50
 
-
-
-
 echo:
-	-echo ${Puzzles}
+	@echo ${Puzzles}
 
 all:
 	for puzzle in $(Puzzles); do \
@@ -23,3 +20,12 @@ all:
 	  ./bin/sudoku.pl "$$puzzle" > Puzzles/sudoku17_$${puzzle}_solution.txt || exit 1; \
 	done
 
+solved:
+	@echo "solved:   \c"
+	@tail -1 Puzzles/sudoku17_* | perl -lane "print if  m'\d{81}';"    | wc -l
+	@echo "unsolved: \c"
+	@tail -1 Puzzles/sudoku17_* | perl -lane "print if  m'\+------'; " | wc -l
+
+report:
+	@tail -1 Puzzles/sudoku17_* | perl -ape " s/ \<==\n/  /; s/==\> Puzzles\/sudoku17_//; s/_solution\.txt/  /; s/(\+\s*|\d)\n/$$1/; "
+	@echo " "

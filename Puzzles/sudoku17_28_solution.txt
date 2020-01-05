@@ -241,7 +241,7 @@ So far we filled this many cells: 21
   9 | 4 5   ' 4 5   ' 4 5   |   3   '   7   '   5 6 | 4     ' 4   6 '   5 6 |  
     |     9 '   8 9 '   8 9 |       '       '   8 9 |   8   '     9 '   8 9 |  
     +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
----- end imaginary values method ----
+---- end imaginary values processing ----
 
 Looking for Imaginary Values (all 2 or 3 representatives of a given value in a cluster share all belong to another cluster):
 Found and removed 0 possible values from cells via imaginary numbers.
@@ -252,12 +252,6 @@ Found and processed 0 naked pairs.
 
 Looking for Hidden Pairs, (any two candidate values which exist 
 only in the same two cells in a given cluster):
----- find_hidden_pairs: Start all possibility counts ------
-2 col6:1
-2 col6:3
-3 col6:4
-4 col6:8
----- find_hidden_pairs: End   all possibility counts ------
 Hidden pair (box): comparing candadate values box2:6 and box2:7.
 Two candidate values shared first cell.
 Two candidate values shared second cell!  We have a pair.
@@ -387,12 +381,6 @@ Found and processed 0 naked pairs.
 
 Looking for Hidden Pairs, (any two candidate values which exist 
 only in the same two cells in a given cluster):
----- find_hidden_pairs: Start all possibility counts ------
-2 col6:1
-2 col6:3
-3 col6:4
-4 col6:8
----- find_hidden_pairs: End   all possibility counts ------
 Hidden pair (box): comparing candadate values box2:6 and box2:7.
 Two candidate values shared first cell.
 Two candidate values shared second cell!  We have a pair.
@@ -480,12 +468,6 @@ Found and processed 0 naked pairs.
 
 Looking for Hidden Pairs, (any two candidate values which exist 
 only in the same two cells in a given cluster):
----- find_hidden_pairs: Start all possibility counts ------
-2 col6:1
-2 col6:3
-3 col6:4
-4 col6:8
----- find_hidden_pairs: End   all possibility counts ------
 Hidden pair (box): comparing candadate values box2:6 and box2:7.
 Two candidate values shared first cell.
 Two candidate values shared second cell!  We have a pair.

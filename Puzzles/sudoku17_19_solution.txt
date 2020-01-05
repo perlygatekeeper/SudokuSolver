@@ -46,8 +46,8 @@ Looking for Lone representatives (possible value's present in only one cell of a
 Lone in Box    Setting cell ( 2, 6, 2 ) to 1
 Lone in Box    Setting cell ( 2, 9, 3 ) to 2
 Lone in Row    Setting cell ( 4, 9, 6 ) to 1
-Lone in Column Setting cell ( 6, 4, 5 ) to 1
 Lone in Column Setting cell ( 3, 2, 1 ) to 1
+Lone in Column Setting cell ( 6, 4, 5 ) to 1
 Lone in Column Setting cell ( 7, 7, 9 ) to 1
 Found and set 9 cells this lone representatives search pass.
 
@@ -96,8 +96,8 @@ So far we filled this many cells: 23
 Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):
 Lone in Box    Setting cell ( 6, 9, 6 ) to 7
 Lone in Box    Setting cell ( 8, 3, 7 ) to 1
-Lone in Column Setting cell ( 9, 7, 9 ) to 7
 Lone in Column Setting cell ( 5, 9, 6 ) to 5
+Lone in Column Setting cell ( 9, 7, 9 ) to 7
 Found and set 6 cells this lone representatives search pass.
 
 So far we filled this many cells: 27
@@ -145,10 +145,10 @@ So far we filled this many cells: 27
 Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):
 Lone in Box    Setting cell ( 8, 1, 7 ) to 7
 Lone in Row    Setting cell ( 3, 5, 2 ) to 7
-Lone in Column Setting cell ( 3, 9, 3 ) to 6
 Lone in Column Setting cell ( 7, 4, 8 ) to 7
-Lone in Column Setting cell ( 5, 7, 6 ) to 3
 Lone in Column Setting cell ( 1, 2, 1 ) to 7
+Lone in Column Setting cell ( 3, 9, 3 ) to 6
+Lone in Column Setting cell ( 5, 7, 6 ) to 3
 Found and set 10 cells this lone representatives search pass.
 
 So far we filled this many cells: 33
@@ -340,12 +340,12 @@ So far we filled this many cells: 44
 ---- end lone representatives method ----
 
 Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):
-Lone in Row    Setting cell ( 8, 8, 9 ) to 2
 Lone in Row    Setting cell ( 7, 6, 8 ) to 6
-Lone in Column Setting cell ( 1, 4, 2 ) to 6
-Lone in Column Setting cell ( 9, 8, 9 ) to 3
+Lone in Row    Setting cell ( 8, 8, 9 ) to 2
 Lone in Column Setting cell ( 9, 2, 7 ) to 2
 Lone in Column Setting cell ( 9, 6, 8 ) to 4
+Lone in Column Setting cell ( 9, 8, 9 ) to 3
+Lone in Column Setting cell ( 1, 4, 2 ) to 6
 Found and set 10 cells this lone representatives search pass.
 
 So far we filled this many cells: 50
@@ -495,9 +495,9 @@ So far we filled this many cells: 62
 Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):
 Lone in Box    Setting cell ( 4, 8, 6 ) to 8
 Lone in Row    Setting cell ( 4, 5, 5 ) to 6
+Lone in Column Setting cell ( 6, 8, 6 ) to 6
 Lone in Column Setting cell ( 2, 2, 1 ) to 5
 Lone in Column Setting cell ( 6, 5, 5 ) to 5
-Lone in Column Setting cell ( 6, 8, 6 ) to 6
 Found and set 8 cells this lone representatives search pass.
 
 So far we filled this many cells: 67
@@ -597,8 +597,8 @@ Lone in Box    Setting cell ( 2, 7, 3 ) to 4
 Lone in Box    Setting cell ( 4, 1, 4 ) to 5
 Lone in Row    Setting cell ( 9, 3, 7 ) to 5
 Lone in Row    Setting cell ( 3, 3, 1 ) to 4
-Lone in Column Setting cell ( 6, 1, 4 ) to 4
 Lone in Column Setting cell ( 2, 3, 1 ) to 6
+Lone in Column Setting cell ( 6, 1, 4 ) to 4
 Found and set 9 cells this lone representatives search pass.
 
 So far we filled this many cells: 78

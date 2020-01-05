@@ -141,8 +141,8 @@ So far we filled this many cells: 23
 Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):
 Lone in Box    Setting cell ( 8, 6, 8 ) to 7
 Lone in Box    Setting cell ( 9, 8, 9 ) to 5
-Lone in Row    Setting cell ( 7, 3, 7 ) to 7
 Lone in Row    Setting cell ( 8, 4, 8 ) to 5
+Lone in Row    Setting cell ( 7, 3, 7 ) to 7
 Lone in Column Setting cell ( 3, 8, 3 ) to 3
 Lone in Column Setting cell ( 6, 7, 6 ) to 5
 Lone in Column Setting cell ( 1, 1, 1 ) to 7
@@ -194,10 +194,10 @@ Looking for Lone representatives (possible value's present in only one cell of a
 Lone in Box    Setting cell ( 3, 5, 2 ) to 7
 Lone in Box    Setting cell ( 6, 9, 6 ) to 4
 Lone in Row    Setting cell ( 3, 3, 1 ) to 1
+Lone in Column Setting cell ( 2, 5, 2 ) to 1
 Lone in Column Setting cell ( 7, 8, 9 ) to 8
 Lone in Column Setting cell ( 6, 1, 4 ) to 1
 Lone in Column Setting cell ( 1, 4, 2 ) to 3
-Lone in Column Setting cell ( 2, 5, 2 ) to 1
 Found and set 11 cells this lone representatives search pass.
 
 So far we filled this many cells: 37
@@ -352,7 +352,7 @@ So far we filled this many cells: 38
   9 |       '   1   ' 4   6 | 4     ' 4     ' 4     |   7   '   5   '     6 |  
     |       '       '       |   8   '   8 9 '   8 9 |       '       '       |  
     +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
----- end imaginary values method ----
+---- end imaginary values processing ----
 
 Looking for Imaginary Values (all 2 or 3 representatives of a given value in a cluster share all belong to another cluster):
 Found and removed 0 possible values from cells via imaginary numbers.
@@ -411,7 +411,7 @@ So far we filled this many cells: 38
   9 |       '   1   ' 4   6 | 4     ' 4     ' 4     |   7   '   5   '     6 |  
     |       '       '       |   8   '   8   '   8 9 |       '       '       |  
     +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
----- end naked pairs method ----
+---- end naked pairs processing ----
 
 Looking for Naked Pairs, any two cells with the same
 pair of possible values that exist in the same cluster [row column or box]):
@@ -459,7 +459,7 @@ So far we filled this many cells: 38
   9 |       '   1   ' 4   6 | 4     ' 4     ' 4     |   7   '   5   '     6 |  
     |       '       '       |   8   '   8   '   8 9 |       '       '       |  
     +-------+-------+-------+-------+-------+-------+-------+-------+-------+  
----- end naked pairs method ----
+---- end naked pairs processing ----
 
 Looking for Naked Pairs, any two cells with the same
 pair of possible values that exist in the same cluster [row column or box]):
@@ -467,11 +467,6 @@ Found and processed 0 naked pairs.
 
 Looking for Hidden Pairs, (any two candidate values which exist 
 only in the same two cells in a given cluster):
----- find_hidden_pairs: Start all possibility counts ------
-2 col6:4
-2 col6:6
-2 col6:9
----- find_hidden_pairs: End   all possibility counts ------
 Hidden pair (box): comparing candadate values box2:2 and box2:4.
 Hidden pair (box): comparing candadate values box2:2 and box2:6.
 Hidden pair (box): comparing candadate values box2:2 and box2:8.

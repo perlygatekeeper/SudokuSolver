@@ -92,12 +92,13 @@ while ( $puzzle->solved <= 80 and $pass_progress ) {
   }
 
   # X Wings
-  while ( $puzzle->solved <= 80 and $progress = $puzzle->find_x_wings ) {
+# while ( $puzzle->solved <= 80 and $progress = $puzzle->find_x_wings ) {
     print "So far we filled this many cells: " . $puzzle->solved . "\n";
     $puzzle->big_print;
+    $progress = $puzzle->find_x_wings;
     $pass_progress += $progress;
-    print "---- end x-wing processing ----\n\n";
-  }
+    print "---- end an x-wing search ----\n\n";
+# }
 
   # Naked Triplets
   # XY Wings
