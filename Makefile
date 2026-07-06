@@ -1,4 +1,7 @@
-.PHONY: help check syntax test run clean status
+.PHONY: \
+    all help check syntax test run clean status \
+    deps deps-notest version gitadd perl-version \
+    backup tarball report solved echo 17-50
 
 PERL          ?= perl5.34
 PROVE         := prove

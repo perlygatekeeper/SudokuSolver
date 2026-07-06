@@ -5,31 +5,86 @@ use strict;
 use warnings;
 use v5.34;
 
-my $name = $0; $name =~ s'.*/''; # remove path--like basename
-my $usage = "usage:\n$name puzzle_number";
+my $name = $0;
+$name =~ s'.*/''; # remove path--like basename
 
-use Grid;
-#
-# use Data::Dumper;
+use Getopt::Long qw(GetOptions);
+use Pod::Usage qw(pod2usage);
+use Sudoku ();
 
-my $puzzle_strings;
-my $puzzle_name;
+my $default_puzzle_file = 'Puzzles/sudoku17-first50.txt';
+my $puzzle_file;
+my $puzzle_index;
+my $puzzle_string;
+my $show_help;
+my $show_version;
 
-my $puzzle_file="Puzzles/sudoku17-first50.txt";
-open my $puzzle_fh, '<', $puzzle_file
-    or die "Could not open '$puzzle_file': $!";
-while (my $line = <$puzzle_fh>) {
-  next if ($line =~ /^\s*$|^\s*#/); # skip white, blank and commented lines.
-  chomp;
-  push( @$puzzle_strings, $_);
+GetOptions(
+  'file|f=s'   => \$puzzle_file,
+  'puzzle|p=i' => \$puzzle_index,
+  'string|s=s' => \$puzzle_string,
+  'help|h'     => \$show_help,
+  'version|v'  => \$show_version,
+) or pod2usage(2);
+
+pod2usage(0) if $show_help;
+
+if ($show_version) {
+  print "SudokuSolver $Sudoku::VERSION\n";
+  exit 0;
 }
-close $puzzle_fh;
 
-$puzzle_name = $ARGV[0];
-print "puzzle_string: $puzzle_strings->[$puzzle_name-1]\n";
+my $positional_arg = shift @ARGV;
+pod2usage("Too many arguments\n") if @ARGV;
+
+if (defined $positional_arg) {
+  if ($positional_arg =~ /^\d+$/) {
+    $puzzle_index //= $positional_arg;
+  } elsif ($positional_arg =~ /^Puzzle_(\d+)$/i) {
+    $puzzle_index //= $1;
+  } elsif ($positional_arg =~ /^[0-9.]{81}$/) {
+    $puzzle_string //= $positional_arg;
+  } else {
+    $puzzle_file //= $positional_arg;
+  }
+}
+
+if (defined $puzzle_string) {
+  $puzzle_string =~ tr/./0/;
+  die "Puzzle string must contain exactly 81 digits or dots\n"
+    unless $puzzle_string =~ /^\d{81}$/;
+} else {
+  $puzzle_file //= $default_puzzle_file;
+
+  open my $puzzle_fh, '<', $puzzle_file
+      or die "Could not open '$puzzle_file': $!";
+
+  my @puzzle_strings;
+  while (my $line = <$puzzle_fh>) {
+    next if ($line =~ /^\s*$|^\s*#/); # skip white, blank and commented lines.
+    chomp $line;
+    $line =~ s/\s+//g;
+    $line =~ tr/./0/;
+    next unless length $line;
+    push @puzzle_strings, $line;
+  }
+  close $puzzle_fh;
+
+  die "No puzzle strings found in '$puzzle_file'\n" unless @puzzle_strings;
+
+  $puzzle_index //= 1;
+  die "Puzzle number must be between 1 and " . scalar(@puzzle_strings) . "\n"
+    if $puzzle_index < 1 || $puzzle_index > @puzzle_strings;
+
+  $puzzle_string = $puzzle_strings[$puzzle_index - 1];
+}
+
+print "puzzle_string: $puzzle_string\n";
+
+require Grid;
 
 my $puzzle = Grid->new;
-$puzzle->load_from_string($puzzle_strings->[$puzzle_name-1]);
+$puzzle->load_from_string($puzzle_string);
 
 my($this_cell);
 my($progress);
@@ -112,6 +167,53 @@ if ( $puzzle->solved == 81 ) {
 }
 
 1;
+
+
+=head1 NAME
+
+sudoku.pl - solve a Sudoku puzzle
+
+=head1 SYNOPSIS
+
+  sudoku.pl --file Puzzles/Puzzle3.txt
+  sudoku.pl --file Puzzles/sudoku17-first50.txt --puzzle 7
+  sudoku.pl --string 003020600900305001001806400008102900700000008006708200002609500800203009005010300
+  sudoku.pl --version
+  sudoku.pl --help
+
+For compatibility with the legacy Makefile, a single positional argument is also accepted:
+
+  sudoku.pl 7
+  sudoku.pl Puzzle_07
+  sudoku.pl Puzzles/Puzzle3.txt
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<--file>, B<-f>
+
+Read puzzle strings from the given file.
+
+=item B<--puzzle>, B<-p>
+
+Select the 1-based puzzle number from the puzzle file.
+
+=item B<--string>, B<-s>
+
+Solve the given 81-character puzzle string. Dots are accepted as blanks.
+
+=item B<--version>, B<-v>
+
+Print the SudokuSolver version and exit.
+
+=item B<--help>, B<-h>
+
+Print usage information.
+
+=back
+
+=cut
 
 __END__
 
