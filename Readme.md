@@ -1,2 +1,3 @@
 # SudokuSolver
-Perl code to solve a sudoku puzzle using logic-based algorithim
+Perl code to solve a sudoku puzzle using logic-based algorithims
+explaining each step as it goes.

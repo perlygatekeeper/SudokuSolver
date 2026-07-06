@@ -1,3 +1,16 @@
+.PHONY: help check systax test run clean status
+
+PERL          ?= perl5.34
+PROVE         := prove
+SCRIPT        := bin/sudoku.pl
+MODS          := lib/Grid.pm lib/Solver.pm
+PUZZLE        := Puzzles/Puzzle3.txt
+TAR           := gtar
+NAME          := SudokuSolver
+TESTDIR       := t/
+DOCS          := docs/
+RELEASE_NOTES := $(shell ls docs/Release_*.txt)
+ROADMAP       := $(shell ls docs/Roadmap*.txt)
 
 Puzzles = Puzzle_01 Puzzle_02 Puzzle_03 Puzzle_04 Puzzle_05 Puzzle_06 Puzzle_07 Puzzle_08 Puzzle_09 Puzzle_10 \
 	  Puzzle_11 Puzzle_12 Puzzle_13 Puzzle_14 Puzzle_15 Puzzle_16 Puzzle_17 Puzzle_18 Puzzle_19 Puzzle_20 \
@@ -29,3 +42,77 @@ solved:
 report:
 	@tail -1 Puzzles/sudoku17_* | perl -ape " s/ \<==\n/  /; s/==\> Puzzles\/sudoku17_//; s/_solution\.txt/  /; s/(\+\s*|\d)\n/$$1/; "
 	@echo " "
+
+help:
+	@echo "SudokuSolver Makefile"
+	@echo ""
+	@echo "Targets:"
+	@echo "  make check    - run syntax and tests"
+	@echo "  make syntax   - perl -c main script and libraries"
+	@echo "  make test     - run Perl tests with prove"
+	@echo "  make run      - run solver"
+	@echo "  make clean    - remove generated output files"
+	@echo "  make status   - git status"
+	@echo ""
+	@echo "Variables:"
+	@echo "  make run PUZZLE=Puzzles/Puzzle.txt"
+
+check: syntax test
+
+syntax:
+	$(PERL) -Ilib -c $(SCRIPT)
+	@for mod in $(MODS); do \
+	  echo "Checking $$mod"; \
+	  $(PERL) -Ilib -c $$mod || exit 1; \
+	done
+
+test:
+	@if [ -d t ]; then \
+		$(PROVE) -l t; \
+	else \
+		echo "No t/ directory yet; skipping tests."; \
+	fi
+
+run:
+	$(PERL) -Ilib $(SCRIPT) $(PUZZLE)
+
+clean:
+	rm -f *.out *.solution
+	rm -f Puzzle*.out Puzzle*.solution
+	rm -f Puzzles/*.out Puzzles/*.solution
+
+status:
+	git status --short
+
+tarball: backup
+
+backup:
+	$(TAR) -cvzf ../$(NAME)-`date +%Y%m%d-%H%M`.tgz \
+		Makefile
+		$(SCRIPT) \
+		$(MODS) \
+		$(TESTDIR) \
+		$(DOCS)/*.txt
+
+version:
+	-grep -i 'version  *=' $(SCRIPT) $(MODS)
+
+gitadd:
+	git add Makefile $(SCRIPT) $(MODS) $(TESTDIR)*.t $(DOCS)*.txt
+	git status
+
+perl-version:
+	$(PERL) -v
+
+clean:
+	find . -name '*~' -delete
+	find . -name '*.bak' -delete
+	find . -name '.DS_Store' -delete
+
+size:
+	@echo "Project size, non-blank lines"
+	@echo "============================="
+
+size-modules:
+	@echo "Module size, non-blank lines"
+	@echo "============================"
