@@ -3,7 +3,10 @@ package Types;
 use strict;
 use warnings;
 
+use Moose;
 use Moose::Util::TypeConstraints;
+
+use Types;
 
 subtype 'CellValue',
     as 'Int',
