@@ -6,8 +6,6 @@ use warnings;
 use Moose;
 use Moose::Util::TypeConstraints;
 
-use Types;
-
 subtype 'CellValue',
     as 'Int',
     where { $_ >= 0 && $_ <= 9 },

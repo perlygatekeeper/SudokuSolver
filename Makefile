@@ -11,6 +11,8 @@ TESTDIR       := t/
 DOCSDIR       := docs/
 RELEASE_NOTES := $(shell ls docs/Release_*.txt)
 ROADMAP       := $(shell ls docs/Roadmap*.txt)
+CPANFILE      := cpanfile
+VERSION_MOD   := lib/Sudoku.pm
 
 Puzzles = Puzzle_01 Puzzle_02 Puzzle_03 Puzzle_04 Puzzle_05 Puzzle_06 Puzzle_07 Puzzle_08 Puzzle_09 Puzzle_10 \
 	  Puzzle_11 Puzzle_12 Puzzle_13 Puzzle_14 Puzzle_15 Puzzle_16 Puzzle_17 Puzzle_18 Puzzle_19 Puzzle_20 \
@@ -53,6 +55,8 @@ help:
 	@echo "  make run      - run solver"
 	@echo "  make clean    - remove generated output files"
 	@echo "  make status   - git status"
+	@echo "  make deps     - install CPAN dependencies from cpanfile"
+	@echo "  make version  - show project version"
 	@echo ""
 	@echo "Variables:"
 	@echo "  make run PUZZLE=Puzzles/Puzzle.txt"
@@ -72,6 +76,12 @@ test:
 	else \
 		echo "No t/ directory yet; skipping tests."; \
 	fi
+
+deps:
+	cpanm --installdeps .
+
+deps-notest:
+	cpanm --notest --installdeps .
 
 run:
 	$(PERL) -Ilib $(SCRIPT) $(PUZZLE)
@@ -95,13 +105,14 @@ backup:
 		$(SCRIPT) \
 		$(MODS) \
 		$(TESTDIR) \
-		$(DOCSDIR)*.txt
+		$(DOCSDIR)*.txt \
+		$(CPANFILE)
 
 version:
-	-grep -i 'version  *=' $(SCRIPT) $(MODS)
+	@$(PERL) -Ilib -MSudoku -e 'print "SudokuSolver $$Sudoku::VERSION\n"'
 
 gitadd:
-	git add Makefile $(SCRIPT) $(MODS) $(TESTDIR)*.t $(DOCSDIR)*.txt
+	git add Makefile $(SCRIPT) $(MODS) $(VERSION_MOD) $(TESTDIR)*.t $(DOCSDIR)*.txt $(CPANFILE)
 	git status
 
 perl-version:

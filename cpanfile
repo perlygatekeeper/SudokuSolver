@@ -1,4 +1,4 @@
-requires 'perl', '5.034.003';
+requires 'perl', '5.034';
 
 # Object system
 requires 'Moose';

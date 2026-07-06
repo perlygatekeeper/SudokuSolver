@@ -7,7 +7,7 @@ use Moose;
 use Moose::Util::TypeConstraints;
 
 use Types;
-use Cells;
+use Cell;
 use Grid;
 
 1;
