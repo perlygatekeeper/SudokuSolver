@@ -80,6 +80,9 @@ clean:
 	rm -f *.out *.solution
 	rm -f Puzzle*.out Puzzle*.solution
 	rm -f Puzzles/*.out Puzzles/*.solution
+	find . -name '*~' -delete
+	find . -name '*.bak' -delete
+	find . -name '.DS_Store' -delete
 
 status:
 	git status --short
@@ -103,11 +106,6 @@ gitadd:
 
 perl-version:
 	$(PERL) -v
-
-clean:
-	find . -name '*~' -delete
-	find . -name '*.bak' -delete
-	find . -name '.DS_Store' -delete
 
 size:
 	@echo "Project size, non-blank lines"
