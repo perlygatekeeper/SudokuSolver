@@ -1,15 +1,16 @@
 package Cell;
 use Moose;
 use Moose::Util::TypeConstraints;
+use Types;
 use Data::Dumper;
 use Carp;
 
-has 'given'         => (isa => 'Int',      is => 'rw');
-has 'value'         => (isa => 'Value',    is => 'rw');
-has 'possibilities' => (isa => 'ArrayRef', is => 'rw'); # element 0 will contain NUMBER of possilities
-has 'row'           => (isa => 'Value',    is => 'rw');
-has 'column'        => (isa => 'Value',    is => 'rw');
-has 'box'           => (isa => 'Value',    is => 'rw');
+has 'given'         => (isa => 'Int',       is => 'rw');
+has 'value'         => (isa => 'CellValue', is => 'rw');
+has 'possibilities' => (isa => 'ArrayRef',  is => 'rw'); # element 0 will contain NUMBER of possilities
+has 'row'           => (isa => 'CellValue', is => 'rw');
+has 'column'        => (isa => 'CellValue', is => 'rw');
+has 'box'           => (isa => 'CellValue', is => 'rw');
 
 # Methods
 

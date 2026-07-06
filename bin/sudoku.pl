@@ -8,7 +8,7 @@ use warnings;
 use v5.10;
 
 use Grid;
-use Data::Dump;
+use Data::Dumper;
 
 my $puzzle_strings;
 my $puzzle_name;

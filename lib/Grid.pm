@@ -1,12 +1,13 @@
 package Grid;
 use Moose;
 use Moose::Util::TypeConstraints;
+use Types;
 use Data::Dumper;
 use Carp;
 use Cell;
 
 has 'difficulty'  => (isa => 'Difficulty', is => 'rw');
-has 'notes'       => (isa => 'String',     is => 'rw');
+has 'notes'       => (isa => 'Str',        is => 'rw');
 has 'solved'      => (isa => 'Int',        is => 'rw');
 has 'rows'        => (isa => 'ArrayRef',   is => 'rw');
 has 'columns'     => (isa => 'ArrayRef',   is => 'rw');
@@ -32,12 +33,6 @@ sub load_from_string {
   $self->rows([[],[],[],[],[],[],[],[],[]]);
   $self->columns([[],[],[],[],[],[],[],[],[]]);
   $self->boxes([[],[],[],[],[],[],[],[],[]]);
-# print $self->cells   . " <- cells\n";
-# print $self->rows    . " <- rows\n";
-# print $self->columns . " <- columns\n";
-# print $col . " <- col\n";
-# print $self->columns->[0] . " <- column->[0]\n";
-# print $self->boxes   . " <- boxes\n";
   foreach ( split(//,$string) ) {
     s/[^1-9]/0/; # Change any character not 1, 2, 3, 4, 5, 6, 7, 8 OR 9  TO A  '0'  Such as underscores, dashes, periods or spaces
     my($col) = ( $cell  % 9 );
@@ -50,9 +45,9 @@ sub load_from_string {
     $new_cell->box($box);
 
     $self->cells->[$cell++]      = $new_cell;
-    push ( $self->rows->[$row],    $new_cell );
-    push ( $self->columns->[$col], $new_cell );
-    push ( $self->boxes->[$box],   $new_cell );
+    push ( @{ $self->rows->[$row] },    $new_cell );
+    push ( @{ $self->columns->[$col] }, $new_cell );
+    push ( @{ $self->boxes->[$box] },   $new_cell );
   }
 # print "We have populated the grid with the given clues,
 # now we will remove the given's as possibilities from their rows, columns and boxes.\n";
@@ -421,7 +416,7 @@ sub find_x_wings {
     print "xwing_candidates: ( $xwing_candidates) \n";
     # loop over all values which have 2 or more columns where this value only appears twice as a candidate
     # for each pair of such columns see if this value forms an x-wing
-    foreach $value ( grep { scalar( @{$xwing_candidates->{$_}} ) >= 2 } keys $xwing_candidates ) {
+    foreach $value ( grep { scalar( @{$xwing_candidates->{$_}} ) >= 2 } keys %{ $xwing_candidates } ) {
       printf "X-wing (column-based): processing value $value,  " if ($debug);
       printf "which has %d columns where it appears as a candidate only twice.\n", scalar( @{ $xwing_candidates->{$value} } ) if ($debug);
       foreach my $first    ( 0               ..  ( $#{$xwing_candidates->{$value}} - 1 ) ) { # from first to next-to-last
@@ -486,7 +481,7 @@ sub find_x_wings {
     }
     # loop over all values which have 2 or more rows where this value only appears twice as a candidate
     # for each pair of such rows see if this value forms an x-wing
-    foreach $value ( grep { scalar( @{$xwing_candidates->{$_}} ) >= 2 } keys $xwing_candidates ) {
+    foreach $value ( grep { scalar( @{$xwing_candidates->{$_}} ) >= 2 } keys %{ $xwing_candidates } ) {
       printf "X-wing (row-based): processing value $value,  " if ($debug);
       printf "which has %d rows where it appears as a candidate only twice.\n", scalar( @{ $xwing_candidates->{$value} } ) if ($debug);
       foreach my $first    ( 0               ..  ( $#{$xwing_candidates->{$value}} - 1 ) ) { # from first to next-to-last
