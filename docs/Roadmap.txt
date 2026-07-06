@@ -1,0 +1,15 @@
+
+## Guiding Principles
+
+These principles guide the long-term evolution of the Sudoku Solver
+
+* Preserve backward compatibility whenever practical.
+* Logic over brute force solutions.
+* Use accepted names for techniques over homemade ones.
+  Keeping a history of homemade names for historical purposes.
+
+## Version 0.5.1
+
+Completed techniques so far
+
+Cleanup activaties

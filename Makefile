@@ -4,11 +4,12 @@ PERL          ?= perl5.34
 PROVE         := prove
 SCRIPT        := bin/sudoku.pl
 MODS          := lib/Grid.pm lib/Solver.pm
+MODS          := $(shell ls lib/*.pm)
 PUZZLE        := Puzzles/Puzzle3.txt
 TAR           := gtar
-NAME          := SudokuSolver
+NAME          := sukoku_solver
 TESTDIR       := t/
-DOCS          := docs/
+DOCSDIR       := docs/
 RELEASE_NOTES := $(shell ls docs/Release_*.txt)
 ROADMAP       := $(shell ls docs/Roadmap*.txt)
 
@@ -91,11 +92,11 @@ tarball: backup
 
 backup:
 	$(TAR) -cvzf ../$(NAME)-`date +%Y%m%d-%H%M`.tgz \
-		Makefile
+		Makefile \
 		$(SCRIPT) \
 		$(MODS) \
 		$(TESTDIR) \
-		$(DOCS)/*.txt
+		$(DOCSDIR)*.txt
 
 version:
 	-grep -i 'version  *=' $(SCRIPT) $(MODS)
