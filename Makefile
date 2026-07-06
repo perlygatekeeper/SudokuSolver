@@ -1,13 +1,12 @@
-.PHONY: help check systax test run clean status
+.PHONY: help check syntax test run clean status
 
 PERL          ?= perl5.34
 PROVE         := prove
 SCRIPT        := bin/sudoku.pl
-MODS          := lib/Grid.pm lib/Solver.pm
 MODS          := $(shell ls lib/*.pm)
 PUZZLE        := Puzzles/Puzzle3.txt
 TAR           := gtar
-NAME          := sukoku_solver
+NAME          := sudoku_solver
 TESTDIR       := t/
 DOCSDIR       := docs/
 RELEASE_NOTES := $(shell ls docs/Release_*.txt)
@@ -102,7 +101,7 @@ version:
 	-grep -i 'version  *=' $(SCRIPT) $(MODS)
 
 gitadd:
-	git add Makefile $(SCRIPT) $(MODS) $(TESTDIR)*.t $(DOCS)*.txt
+	git add Makefile $(SCRIPT) $(MODS) $(TESTDIR)*.t $(DOCSDIR)*.txt
 	git status
 
 perl-version:
