@@ -1,9 +1,14 @@
 package Cell;
+
+use strict;
+use warnings;
+
 use Moose;
 use Moose::Util::TypeConstraints;
 use Types;
-use Data::Dumper;
-use Carp;
+
+# use Data::Dumper;
+# use Carp;
 
 has 'given'         => (isa => 'Int',       is => 'rw');
 has 'value'         => (isa => 'CellValue', is => 'rw');

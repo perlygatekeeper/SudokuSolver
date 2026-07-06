@@ -1,36 +1,29 @@
 #!/usr/bin/env perl 
 # A perl script to read in, solve and output a sudoku puzzle.
-my $name = $0; $name =~ s'.*/''; # remove path--like basename
-my $usage = "usage:\n$name puzzle_number";
 
 use strict;
 use warnings;
-use v5.10;
+use v5.34;
+
+my $name = $0; $name =~ s'.*/''; # remove path--like basename
+my $usage = "usage:\n$name puzzle_number";
 
 use Grid;
-use Data::Dumper;
+#
+# use Data::Dumper;
 
 my $puzzle_strings;
 my $puzzle_name;
-# while (<DATA>) {
-#   chomp;
-#   if (/^\s*$|^\s*#/) { # found a puzzle header
-#     $puzzle_name = $_;
-#     $puzzle_name =~ s/^\s*#\s*//;
-#   } else {
-#     $puzzle_strings->{$puzzle_name} .= $_;
-#   }
-# }
-# $puzzle_name = $ARGV[0] || "Puzzle_50";
 
 my $puzzle_file="Puzzles/sudoku17-first50.txt";
-open( PUZZLE_FILE, "<", $puzzle_file ) || die("$name: Cannot read from '$puzzle_file': $!\n");
-while (<PUZZLE_FILE>) {
-  next if (/^\s*$|^\s*#/); # skip white, blank and commented lines.
+open my $puzzle_fh, '<', $puzzle_file
+    or die "Could not open '$puzzle_file': $!";
+while (my $line = <$puzzle_fh>) {
+  next if ($line =~ /^\s*$|^\s*#/); # skip white, blank and commented lines.
   chomp;
   push( @$puzzle_strings, $_);
 }
-close(PUZZLE_FILE);
+close $puzzle_fh;
 
 $puzzle_name = $ARGV[0];
 print "puzzle_string: $puzzle_strings->[$puzzle_name-1]\n";
@@ -104,12 +97,6 @@ while ( $puzzle->solved <= 80 and $pass_progress ) {
   # XY Wings
 
   # Remote Pairs
-# while ( $puzzle->solved <= 80 and $progress = $puzzle->find_remote_pairs ) {
-#   print "So far we filled this many cells: " . $puzzle->solved . "\n";
-#   $puzzle->big_print;
-#   $pass_progress += $progress;
-#   print "---- end remote pairs method ----\n\n";
-# }
 
   print "==== End Pass " . $pass . " (progress is $pass_progress) ====\n";
 
@@ -124,9 +111,10 @@ if ( $puzzle->solved == 81 ) {
   $puzzle->big_print;
 }
 
-
 1;
+
 __END__
+
 # Puzzle_01
 003020600
 900305001

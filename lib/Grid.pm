@@ -1,10 +1,15 @@
 package Grid;
+
+use strict;
+use warnings;
+
 use Moose;
 use Moose::Util::TypeConstraints;
 use Types;
-use Data::Dumper;
-use Carp;
 use Cell;
+
+# use Data::Dumper;
+# use Carp;
 
 has 'difficulty'  => (isa => 'Difficulty', is => 'rw');
 has 'notes'       => (isa => 'Str',        is => 'rw');
@@ -416,7 +421,7 @@ sub find_x_wings {
     print "xwing_candidates: ( $xwing_candidates) \n";
     # loop over all values which have 2 or more columns where this value only appears twice as a candidate
     # for each pair of such columns see if this value forms an x-wing
-    foreach $value ( grep { scalar( @{$xwing_candidates->{$_}} ) >= 2 } keys %{ $xwing_candidates } ) {
+    foreach my $value ( grep { scalar( @{$xwing_candidates->{$_}} ) >= 2 } keys %{ $xwing_candidates } ) {
       printf "X-wing (column-based): processing value $value,  " if ($debug);
       printf "which has %d columns where it appears as a candidate only twice.\n", scalar( @{ $xwing_candidates->{$value} } ) if ($debug);
       foreach my $first    ( 0               ..  ( $#{$xwing_candidates->{$value}} - 1 ) ) { # from first to next-to-last
@@ -481,7 +486,7 @@ sub find_x_wings {
     }
     # loop over all values which have 2 or more rows where this value only appears twice as a candidate
     # for each pair of such rows see if this value forms an x-wing
-    foreach $value ( grep { scalar( @{$xwing_candidates->{$_}} ) >= 2 } keys %{ $xwing_candidates } ) {
+    foreach my $value ( grep { scalar( @{$xwing_candidates->{$_}} ) >= 2 } keys %{ $xwing_candidates } ) {
       printf "X-wing (row-based): processing value $value,  " if ($debug);
       printf "which has %d rows where it appears as a candidate only twice.\n", scalar( @{ $xwing_candidates->{$value} } ) if ($debug);
       foreach my $first    ( 0               ..  ( $#{$xwing_candidates->{$value}} - 1 ) ) { # from first to next-to-last
@@ -907,7 +912,7 @@ sub possibilities_hash {
   foreach my $row ( @{ $self->rows } ) {
     foreach my $cell ( @{ $row } ) {
       if ( not $cell->value ) { # look for unsolved cells in this cluster
-        foreach $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
+        foreach my $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
           #                               "row0:7"
           push ( @{ $possibility_counts->{"row$cluster:" .$possible_value} } , $cell );
         }
@@ -919,7 +924,7 @@ sub possibilities_hash {
   foreach my $column ( @{ $self->columns } ) {
     foreach my $cell ( @{ $column } ) {
       if ( not $cell->value ) { # look for unsolved cells in this cluster
-        foreach $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
+        foreach my $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
           push ( @{ $possibility_counts->{"col$cluster:" .$possible_value} } , $cell );
         }
       }
@@ -930,7 +935,7 @@ sub possibilities_hash {
   foreach my $box ( @{ $self->boxes } ) {
     foreach my $cell ( @{ $box } ) {
       if ( not $cell->value ) { # look for unsolved cells in this cluster
-        foreach $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
+        foreach my $possible_value ( grep { $_ } @{ $cell->possibilities }[1..9] ) {  # a pointer to the cell is pushed onto the array all of the cell's possible values
           push ( @{ $possibility_counts->{"box$cluster:" .$possible_value} } , $cell );
         }
       }
