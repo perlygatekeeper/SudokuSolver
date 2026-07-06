@@ -1,0 +1,81 @@
+
+# Version 0.5.1
+
+## Guiding Principles
+
+These principles guide the long-term evolution of SudokuSolver.
+
+* Preserve backward compatibility whenever practical.
+* Prefer logic-based solving over brute force.
+* Use accepted Sudoku technique names in code and public docs.
+* Preserve original/historical project terminology in notes.
+* Add tests before major refactors.
+* Keep each solving strategy small, explainable, and independently testable.
+
+## Version 0.5.1 - Revival Cleanup
+
+Goals:
+
+* Restore the project to a clean, buildable development state.
+* Add a Makefile for common development commands.
+* Add the initial test harness.
+* Preserve historical notes and solution-output examples.
+* Begin documenting the existing solver capabilities.
+* Prepare for moving solve orchestration into Solver.pm.
+
+Completed techniques so far:
+
+* Singletons / Naked Singles
+* Lone Representatives / Hidden Singles
+* Imaginary Values / Pointing and Claiming
+* Naked Pairs
+* Hidden Pairs
+* X-Wings
+* Experimental Remote Pairs notes/code
+
+Cleanup activities:
+
+* Fix Makefile typos and target issues.
+* Add or improve .gitignore.
+* Add t/00_placeholder.t.
+* Add syntax/test/check automation.
+* Document current output style.
+* Identify unfinished strategy work.
+* Prepare command-line interface cleanup.
+
+## Version 0.5.2 - CLI and Harness
+
+* Replace hardcoded puzzle loading with command-line options.
+* Support solving by puzzle file.
+* Support solving by puzzle index from sudoku17-first50.txt.
+* Add quiet/verbose output modes.
+* Add repeatable tests for known puzzle strings.
+
+## Version 0.5.3 - Solver Separation
+
+* Move solve loop from bin/sudoku.pl into Solver.pm.
+* Make bin/sudoku.pl a thin command-line wrapper.
+* Add tests around Solver behavior.
+* Preserve current output format.
+
+## Version 0.6.0 - Strategy Refactor
+
+* Split solving techniques out of Grid.pm.
+* Create strategy modules.
+* Make each strategy report what it changed and why.
+* Prepare for hint/explanation mode.
+
+## Version 0.7.0 - Advanced Strategy Work
+
+* Review and complete X-Wing support.
+* Review remote pairs design.
+* Add regression puzzles for advanced strategies.
+* Consider additional techniques only after existing ones are tested.
+
+## Version 1.0.0 - Stable Release
+
+* Complete public documentation.
+* Complete test suite.
+* Stable CLI.
+* CPAN-ready packaging.
+* Clear versioned release notes.

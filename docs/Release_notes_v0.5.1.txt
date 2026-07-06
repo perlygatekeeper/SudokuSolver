@@ -1,57 +1,87 @@
-SudokuSolver v0.5.1
-===================
 
-Overview
---------
+# Release Notes — Version 0.5.1
 
-This is the first active cleanup release after reviving the legacy
-SudokuSolver project.
+## Overview
 
-The purpose of this release is not to add new solving techniques, but to
-stabilize the project, preserve the existing design notes, and prepare the
-codebase for test-driven cleanup.
+Version 0.5.1 marks the beginning of active development following the restoration of the legacy SudokuSolver project.
 
-Highlights
-----------
+This release focuses on restoring a stable development environment rather than introducing new solving techniques.
 
-* Restored the project as an active standalone repository.
-* Added a Makefile for common development commands.
-* Added an initial placeholder test under t/.
-* Preserved historical solver concept notes under docs/.
-* Preserved example solution-output files under docs/.
-* Began documenting the current roadmap.
+The objective is to establish a clean foundation upon which future development can proceed with confidence.
 
-Existing solver techniques
---------------------------
+---
 
-The revived codebase contains support or partial support for:
+## Highlights
 
-* Singletons, also known as Naked Singles.
-* Lone Representatives, also known as Hidden Singles.
-* Imaginary Values, corresponding to Pointing and Claiming.
-* Naked Pairs.
-* Hidden Pairs.
-* X-Wings.
-* Experimental Remote Pairs work.
+### Project Revival
 
-Known limitations
------------------
+* Restored the original Git repository.
+* Re-established active development.
+* Preserved historical design notes and documentation.
 
-* bin/sudoku.pl still contains the main solve loop.
-* Solver.pm is currently only a placeholder.
-* Puzzle selection is still primitive.
-* Grid.pm contains too many responsibilities.
-* Some solving techniques require review and regression tests.
-* There is not yet a meaningful test suite beyond the placeholder test.
-* Moose is required.
+### Build System
 
-Next steps
-----------
+* Added a development Makefile.
+* Standardized common development tasks.
+* Established `make check` as the primary project health check.
 
-The next development work should focus on:
+### Modernization
 
-* Fixing Makefile polish issues.
-* Adding real load/syntax tests.
-* Cleaning command-line puzzle selection.
-* Moving solver orchestration into Solver.pm.
-* Adding regression tests using known puzzle/solution pairs.
+* Restored successful syntax checking under Perl 5.34.
+* Updated legacy Moose type definitions.
+* Replaced obsolete debugging dependency on Data::Dump with Data::Dumper.
+* Corrected legacy module loading issues.
+
+### Testing
+
+* Established the project test framework.
+* Added the initial placeholder test.
+* Prepared the project for incremental test-driven development.
+
+---
+
+## Existing Solver Techniques
+
+The current solver includes implementations or partial implementations of:
+
+* Naked Singles
+* Hidden Singles
+* Pointing / Claiming
+* Naked Pairs
+* Hidden Pairs
+* X-Wings
+* Experimental Remote Pairs
+
+These techniques are being preserved while the surrounding infrastructure is
+modernized.
+
+---
+
+## Known Limitations
+
+Current areas targeted for future work include:
+
+* Command-line interface improvements.
+* Separation of solving logic from the executable.
+* Refactoring Grid.pm into smaller modules.
+* Expanded regression testing.
+* Improved documentation.
+* Consistent strategy interfaces.
+* Explainable solving steps.
+
+---
+
+## Looking Ahead
+
+The immediate development priorities are:
+
+1. Improve command-line handling.
+2. Expand automated testing.
+3. Move solver orchestration into Solver.pm.
+4. Continue modularizing the solver.
+5. Preserve existing behavior while improving maintainability.
+
+Long-term development will focus on creating an explainable, logic-based Sudoku
+solver that can both solve puzzles and teach the reasoning behind each
+deduction.
+

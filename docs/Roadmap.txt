@@ -1,81 +1,186 @@
+# Roadmap
 
-# Version 0.5.1
+## SudokuSolver Development Roadmap
 
-## Guiding Principles
+---
 
-These principles guide the long-term evolution of SudokuSolver.
+## Project Philosophy
 
+SudokuSolver is intended to be a logic-based Sudoku solver whose primary goal is to solve puzzles using techniques that a human player can understand.
+
+Whenever practical:
+
+* Prefer logical deduction over brute-force search.
+* Keep solving techniques independent and easily testable.
+* Each solving strategy should be capable of explaining *why* a deduction is valid.
 * Preserve backward compatibility whenever practical.
-* Prefer logic-based solving over brute force.
-* Use accepted Sudoku technique names in code and public docs.
-* Preserve original/historical project terminology in notes.
-* Add tests before major refactors.
-* Keep each solving strategy small, explainable, and independently testable.
+* Favor readable, maintainable code over clever code.
+* Keep commits small and focused on a single logical change.
+* Follow test-driven development whenever possible.
 
-## Version 0.5.1 - Revival Cleanup
+Ultimately, SudokuSolver should become not only an excellent solver, but an excellent teaching tool.
 
-Goals:
+---
 
-* Restore the project to a clean, buildable development state.
-* Add a Makefile for common development commands.
-* Add the initial test harness.
-* Preserve historical notes and solution-output examples.
-* Begin documenting the existing solver capabilities.
-* Prepare for moving solve orchestration into Solver.pm.
+## Current Status
 
-Completed techniques so far:
+The legacy project has been successfully revived.
 
-* Singletons / Naked Singles
-* Lone Representatives / Hidden Singles
-* Imaginary Values / Pointing and Claiming
+Completed:
+
+* Repository restored and modernized.
+* Build environment repaired.
+* Makefile added for common development tasks.
+* Test framework established.
+* Syntax checking restored under Perl 5.34.
+* Initial project documentation created.
+
+The existing solver already contains implementations or partial implementations of:
+
+* Naked Singles (Singletons)
+* Hidden Singles (Lone Representatives)
+* Pointing / Claiming (Imaginary Values)
 * Naked Pairs
 * Hidden Pairs
 * X-Wings
-* Experimental Remote Pairs notes/code
+* Experimental Remote Pairs
 
-Cleanup activities:
+---
 
-* Fix Makefile typos and target issues.
-* Add or improve .gitignore.
-* Add t/00_placeholder.t.
-* Add syntax/test/check automation.
-* Document current output style.
-* Identify unfinished strategy work.
-* Prepare command-line interface cleanup.
+# Version 0.5.1 — Project Revival
 
-## Version 0.5.2 - CLI and Harness
+Primary goal:
 
-* Replace hardcoded puzzle loading with command-line options.
-* Support solving by puzzle file.
-* Support solving by puzzle index from sudoku17-first50.txt.
-* Add quiet/verbose output modes.
-* Add repeatable tests for known puzzle strings.
+Restore the project to a clean, stable development baseline.
 
-## Version 0.5.3 - Solver Separation
+Objectives:
 
-* Move solve loop from bin/sudoku.pl into Solver.pm.
-* Make bin/sudoku.pl a thin command-line wrapper.
-* Add tests around Solver behavior.
-* Preserve current output format.
+* Restore successful syntax checking.
+* Restore successful test execution.
+* Improve Makefile.
+* Establish documentation.
+* Preserve historical notes.
+* Preserve existing solving behavior.
+* Remove obsolete legacy code where appropriate.
+* Begin modernizing the codebase without changing functionality.
 
-## Version 0.6.0 - Strategy Refactor
+No new solving techniques should be added during this release.
 
-* Split solving techniques out of Grid.pm.
-* Create strategy modules.
-* Make each strategy report what it changed and why.
-* Prepare for hint/explanation mode.
+---
 
-## Version 0.7.0 - Advanced Strategy Work
+# Version 0.5.2 — Infrastructure
 
-* Review and complete X-Wing support.
-* Review remote pairs design.
-* Add regression puzzles for advanced strategies.
-* Consider additional techniques only after existing ones are tested.
+Objectives:
 
-## Version 1.0.0 - Stable Release
+* Replace hardcoded puzzle selection with proper command-line options.
+* Improve puzzle loading.
+* Support puzzle strings.
+* Improve error handling.
+* Improve diagnostics.
+* Add additional regression tests.
+* Introduce a cpanfile for dependency management.
 
-* Complete public documentation.
-* Complete test suite.
-* Stable CLI.
+---
+
+# Version 0.5.3 — Solver Architecture
+
+Objectives:
+
+* Move solving orchestration into Solver.pm.
+* Reduce responsibilities of sudoku.pl.
+* Improve separation of concerns.
+* Increase automated test coverage.
+
+---
+
+# Version 0.6.0 — Strategy Refactoring
+
+Objectives:
+
+* Split Grid.pm into smaller modules.
+* Place each solving strategy into its own module.
+* Standardize strategy interfaces.
+* Improve code reuse.
+* Improve maintainability.
+
+Each strategy should:
+
+* Determine whether it applies.
+* Describe why it applies.
+* Return deductions performed.
+* Report progress consistently.
+
+---
+
+# Version 0.7.x — Advanced Solving
+
+Review and improve existing advanced techniques.
+
+Possible additions:
+
+* Remote Pairs
+* Simple Coloring
+* Multi-Coloring
+* Swordfish
+* Jellyfish
+* XY-Wing
+* XYZ-Wing
+* Unique Rectangles
+
+Only techniques that are well understood and fully tested should be added.
+
+---
+
+# Version 0.8.x — User Experience
+
+Possible improvements:
+
+* Hint Mode
+* Explain Mode
+* Strategy statistics
+* Difficulty estimation
+* Interactive solving
+* Puzzle grading
+
+---
+
+# Version 1.0.0 — Stable Release
+
+Requirements:
+
+* Complete documentation.
+* Comprehensive automated test suite.
+* Stable command-line interface.
+* Consistent strategy architecture.
+* Explainable logical solving.
 * CPAN-ready packaging.
-* Clear versioned release notes.
+* Full developer documentation.
+
+---
+
+## Future Ideas
+
+Ideas for future exploration:
+
+* Puzzle generator.
+* Puzzle minimizer.
+* Graphical interface.
+* Web interface.
+* Benchmark suite.
+* Performance profiler.
+* Strategy timing statistics.
+* Batch puzzle solving.
+* Puzzle corpus analysis.
+
+---
+
+## Development Guidelines
+
+Every commit should ideally:
+
+* Perform one logical task.
+* Compile successfully.
+* Pass `make check`.
+* Be accompanied by documentation updates when appropriate.
+* Leave the repository in a releasable state.
+
