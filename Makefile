@@ -102,6 +102,7 @@ tarball: backup
 backup:
 	$(TAR) -cvzf ../$(NAME)-`date +%Y%m%d-%H%M`.tgz \
 		Makefile \
+		Readme.md \
 		$(SCRIPT) \
 		$(MODS) \
 		$(TESTDIR) \
@@ -112,7 +113,7 @@ version:
 	@$(PERL) -Ilib -MSudoku -e 'print "SudokuSolver $$Sudoku::VERSION\n"'
 
 gitadd:
-	git add Makefile $(SCRIPT) $(MODS) $(VERSION_MOD) $(TESTDIR)*.t $(DOCSDIR)*.txt $(CPANFILE)
+	git add Makefile Readme.md $(SCRIPT) $(MODS) $(VERSION_MOD) $(TESTDIR)*.t $(DOCSDIR)*.txt $(CPANFILE)
 	git status
 
 perl-version:
