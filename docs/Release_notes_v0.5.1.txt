@@ -1,0 +1,57 @@
+SudokuSolver v0.5.1
+===================
+
+Overview
+--------
+
+This is the first active cleanup release after reviving the legacy
+SudokuSolver project.
+
+The purpose of this release is not to add new solving techniques, but to
+stabilize the project, preserve the existing design notes, and prepare the
+codebase for test-driven cleanup.
+
+Highlights
+----------
+
+* Restored the project as an active standalone repository.
+* Added a Makefile for common development commands.
+* Added an initial placeholder test under t/.
+* Preserved historical solver concept notes under docs/.
+* Preserved example solution-output files under docs/.
+* Began documenting the current roadmap.
+
+Existing solver techniques
+--------------------------
+
+The revived codebase contains support or partial support for:
+
+* Singletons, also known as Naked Singles.
+* Lone Representatives, also known as Hidden Singles.
+* Imaginary Values, corresponding to Pointing and Claiming.
+* Naked Pairs.
+* Hidden Pairs.
+* X-Wings.
+* Experimental Remote Pairs work.
+
+Known limitations
+-----------------
+
+* bin/sudoku.pl still contains the main solve loop.
+* Solver.pm is currently only a placeholder.
+* Puzzle selection is still primitive.
+* Grid.pm contains too many responsibilities.
+* Some solving techniques require review and regression tests.
+* There is not yet a meaningful test suite beyond the placeholder test.
+* Moose is required.
+
+Next steps
+----------
+
+The next development work should focus on:
+
+* Fixing Makefile polish issues.
+* Adding real load/syntax tests.
+* Cleaning command-line puzzle selection.
+* Moving solver orchestration into Solver.pm.
+* Adding regression tests using known puzzle/solution pairs.
