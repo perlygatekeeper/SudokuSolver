@@ -39,6 +39,10 @@ Suggested naming convention:
 
 Known puzzle and solution pairs should become regression tests. The goal is to preserve current solver behavior while the internal architecture changes.
 
+Regression tests are different from strategy tests. A strategy test should isolate one technique. A regression test should exercise the solver as a user would: provide a puzzle, run the solver, and verify the final result.
+
+The 90-series test files should prefer durable public outcomes, such as final grid values and solved status, over fragile implementation details such as pass counts or the exact order in which strategies fire.
+
 When a refactor changes output format intentionally, update the regression tests and document the reason.
 
 ## Test Responsibilities
