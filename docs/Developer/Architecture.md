@@ -96,3 +96,19 @@ The log is intentionally simple at this stage. Future work will make the
 solver responsible for applying deductions consistently across all strategy
 modules.
 
+
+## Strategy Registry
+
+`Sudoku::Strategy` owns the canonical ordered strategy list.
+
+The registry provides:
+
+```perl
+Sudoku::Strategy->ordered_strategy_classes;
+Sudoku::Strategy->ordered_strategy_names;
+Sudoku::Strategy->strategies;
+```
+
+`Solver` uses this list as the default strategy order.  This keeps strategy
+ordering in one place and prepares the solver for configurable strategy sets,
+strategy statistics, difficulty scoring, and Hint Mode.

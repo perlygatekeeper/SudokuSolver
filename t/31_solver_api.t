@@ -17,6 +17,9 @@ can_ok(
     $solver,
     qw(
         default_puzzle_file
+        strategy_classes
+        strategies
+        strategy_names
         deductions
         record_deduction
         clear_deductions
@@ -30,6 +33,21 @@ can_ok(
     ),
 );
 
+
+is_deeply(
+    [ $solver->strategy_names ],
+    [
+        'Naked Singles',
+        'Hidden Singles',
+        'Pointing / Claiming',
+        'Naked Pairs',
+        'Hidden Pairs',
+        'X-Wing',
+        'Remote Pairs',
+    ],
+    'Solver exposes canonical strategy order',
+);
+
 is(
     $solver->default_puzzle_file,
     'Puzzles/sudoku17-first50.txt',
@@ -37,6 +55,21 @@ is(
 );
 
 $solver->default_puzzle_file('Puzzles/Puzzle3.txt');
+
+is_deeply(
+    [ $solver->strategy_names ],
+    [
+        'Naked Singles',
+        'Hidden Singles',
+        'Pointing / Claiming',
+        'Naked Pairs',
+        'Hidden Pairs',
+        'X-Wing',
+        'Remote Pairs',
+    ],
+    'Solver exposes canonical strategy order',
+);
+
 is(
     $solver->default_puzzle_file,
     'Puzzles/Puzzle3.txt',

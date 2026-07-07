@@ -11,9 +11,7 @@ use Cell;
 use Grid;
 use Scalar::Util qw(blessed);
 use Sudoku::Deduction;
-use Sudoku::Strategy::NakedSingles;
-use Sudoku::Strategy::HiddenSingles;
-use Sudoku::Strategy::PointingClaiming;
+use Sudoku::Strategy;
 
 has 'default_puzzle_file' => (
   isa     => 'Str',
@@ -21,6 +19,25 @@ has 'default_puzzle_file' => (
   default => 'Puzzles/sudoku17-first50.txt',
 );
 
+
+
+has 'strategy_classes' => (
+  isa     => 'ArrayRef[Str]',
+  is      => 'rw',
+  default => sub { [ Sudoku::Strategy->ordered_strategy_classes ] },
+);
+
+sub strategies {
+  my ($self) = @_;
+
+  return map { $_->new } @{ $self->strategy_classes };
+}
+
+sub strategy_names {
+  my ($self) = @_;
+
+  return map { $_->name } $self->strategies;
+}
 
 has 'deductions' => (
   isa     => 'ArrayRef[Sudoku::Deduction]',
