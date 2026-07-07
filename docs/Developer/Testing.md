@@ -58,3 +58,13 @@ Solver tests are divided by responsibility:
 * `32_solver_execution.t` covers the solve lifecycle at a high level.
 
 Strategy-specific behavior should not be tested in the solver test group. Those tests belong in the later strategy-numbered groups.
+
+## Basic Strategy Tests
+
+Basic strategy tests cover one solving technique per file:
+
+* `40_singletons.t` covers Naked Singles / Singletons.
+* `41_lone_representatives.t` covers Hidden Singles / Lone Representatives.
+* `42_imaginary_values.t` covers Pointing and Claiming / Imaginary Values.
+
+Strategy tests should focus on public strategy behavior: the reported progress, the cells solved or candidates removed, and any candidate cleanup caused by the strategy. They should not depend on temporary local variables or internal counting structures unless those structures become part of a documented public contract.

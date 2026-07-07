@@ -1,0 +1,58 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use Test::More;
+
+use lib 'lib';
+
+use Grid;
+use Sudoku::Test qw(capture_stdout);
+
+my $grid = Grid->new;
+$grid->load_from_string('.' x 81);
+
+my $target = $grid->cell_from_row_column(0, 4);
+
+for my $column (0 .. 8) {
+    next if $column == 4;
+
+    my $cell = $grid->cell_from_row_column(0, $column);
+    ok($cell->remove_possibility(5), "removed 5 from row cell column $column");
+}
+
+ok($target->possibilities->[5], 'target cell still allows the hidden single value');
+is($grid->solved, 0, 'empty grid starts with no solved cells');
+
+my $progress;
+my $output = capture_stdout {
+    $progress = $grid->find_and_set_lone_representatives;
+};
+
+is($progress, 1, 'find_and_set_lone_representatives reports one solved cell');
+like($output, qr/Looking for Lone representatives/, 'strategy announces lone representative search');
+is($target->value, 5, 'lone representative value is assigned');
+is($grid->solved, 1, 'solved count increments after lone representative is set');
+is_deeply(
+    $target->possibilities,
+    [ (0) x 10 ],
+    'assigned lone representative has no remaining possibilities',
+);
+
+for my $mate (@{ $grid->row_mates_of($target) }) {
+    ok(!$mate->possibilities->[5], 'lone representative value removed from row mate');
+}
+
+for my $mate (@{ $grid->column_mates_of($target) }) {
+    ok(!$mate->possibilities->[5], 'lone representative value removed from column mate');
+}
+
+for my $mate (@{ $grid->box_mates_of($target) }) {
+    ok(!$mate->possibilities->[5], 'lone representative value removed from box mate');
+}
+
+my $unrelated = $grid->cell_from_row_column(8, 8);
+ok($unrelated->possibilities->[5], 'lone representative value remains possible in unrelated cell');
+
+done_testing();
