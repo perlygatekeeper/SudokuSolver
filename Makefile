@@ -108,7 +108,7 @@ backup:
 		Readme.md \
 		$(SCRIPT) \
 		$(MODS) \
-		$(TESTDIR) \
+		$(TESTDIR)*.t \
 		$(DOCSDIR)*.txt \
 		$(CPANFILE)
 
