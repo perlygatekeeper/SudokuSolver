@@ -40,3 +40,21 @@ Suggested naming convention:
 Known puzzle and solution pairs should become regression tests. The goal is to preserve current solver behavior while the internal architecture changes.
 
 When a refactor changes output format intentionally, update the regression tests and document the reason.
+
+## Test Responsibilities
+
+Each test file should verify one public responsibility.
+
+Tests should avoid depending on implementation details whenever practical. If a refactor changes the implementation but preserves public behavior, the relevant tests should continue to pass without modification.
+
+When a public interface changes intentionally, update the tests to reflect the new contract and document the reason in the appropriate developer note or release note.
+
+## Solver Tests
+
+Solver tests are divided by responsibility:
+
+* `30_solver_options.t` covers puzzle input normalization and option handling.
+* `31_solver_api.t` covers the public `Solver` object interface.
+* `32_solver_execution.t` covers the solve lifecycle at a high level.
+
+Strategy-specific behavior should not be tested in the solver test group. Those tests belong in the later strategy-numbered groups.
