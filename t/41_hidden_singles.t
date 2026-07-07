@@ -40,15 +40,15 @@ is($deductions[0]->cell, $target, 'deduction records the target cell');
 is($deductions[0]->value, 5, 'deduction records the value to set');
 is($target->value, 0, 'strategy discovery does not directly set the cell');
 is($grid->solved, 0, 'strategy discovery does not update the solved count');
-like($strategy_output, qr/Looking for Lone representatives/, 'direct strategy announces Hidden Singles search');
+like($strategy_output, qr/Looking for Hidden Singles/, 'direct strategy announces Hidden Singles search');
 
 my $progress;
 my $output = capture_stdout {
-    $progress = $grid->find_and_set_lone_representatives;
+    $progress = $grid->find_and_set_hidden_singles;
 };
 
-is($progress, 1, 'find_and_set_lone_representatives reports one Hidden Single solved cell');
-like($output, qr/Looking for Lone representatives/, 'strategy announces Hidden Singles search');
+is($progress, 1, 'find_and_set_hidden_singles reports one Hidden Single solved cell');
+like($output, qr/Looking for Hidden Singles/, 'strategy announces Hidden Singles search');
 is($target->value, 5, 'Hidden Single value is assigned');
 is($grid->solved, 1, 'solved count increments after Hidden Single is set');
 is_deeply(

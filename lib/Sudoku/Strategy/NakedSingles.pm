@@ -16,7 +16,7 @@ sub apply {
 
     my @deductions;
 
-    print "Looking for Singletons\n";
+    print "Looking for Naked Singles\n";
 
     for my $cell (@{ $grid->cells }) {
         next if $cell->value;

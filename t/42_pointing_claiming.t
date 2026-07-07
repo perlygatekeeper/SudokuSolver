@@ -14,7 +14,6 @@ my $grid = Grid->new;
 $grid->load_from_string('.' x 81);
 
 # Force value 7 in box 0 to appear only in row 0.  This is the
-# Pointing / Claiming was called "imaginary values" in legacy project notes.
 # called pointing/claiming.
 for my $row (1, 2) {
     for my $column (0, 1, 2) {
@@ -39,11 +38,11 @@ for my $column (3 .. 8) {
 
 my $progress;
 my $output = capture_stdout {
-    $progress = $grid->find_imaginary_values;
+    $progress = $grid->find_pointing_claiming;
 };
 
-is($progress, 6, 'find_imaginary_values applies Pointing / Claiming and removes six outside-row possibilities');
-like($output, qr/Looking for Imaginary Values/, 'strategy announces Pointing / Claiming search');
+is($progress, 6, 'find_pointing_claiming applies Pointing / Claiming and removes six outside-row possibilities');
+like($output, qr/Looking for Pointing \/ Claiming/, 'strategy announces Pointing/Claiming search');
 
 for my $column (0, 1, 2) {
     ok(

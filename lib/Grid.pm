@@ -66,7 +66,7 @@ sub load_from_string {
   }
 }
 
-sub find_and_set_singletons {  # Naked Single: a cell with only one possible value left
+sub find_and_set_naked_singles {  # Naked Single: a cell with only one possible value left
   my $self = shift;
 
   my @deductions = Sudoku::Strategy::NakedSingles->new->apply($self);
@@ -118,7 +118,7 @@ sub _apply_set_value_deduction {
   $cell->possibilities([ (0) x 10 ]);
   $self->remove_my_solution_from_my_mates($cell);
 
-  if ( $deduction->reason =~ /^Lone in / ) {
+  if ( $deduction->reason =~ /^Hidden in / ) {
     printf "%s Setting cell ( %d, %d, %d ) to %d\n",
       $deduction->reason,
       ( $cell->row + 1 ),
@@ -157,7 +157,7 @@ sub cell_from_row_column {
   return $cell;
 }
 
-sub find_and_set_lone_representatives {  # Hidden Single: only one cell in a unit can contain a value
+sub find_and_set_hidden_singles {  # Hidden Single: only one cell in a unit can contain a value
   my $self = shift;
 
   my @deductions = Sudoku::Strategy::HiddenSingles->new->apply($self);
@@ -659,8 +659,7 @@ sub find_hidden_pairs {
 }
 
 # Pointing / Claiming: a candidate whose possible locations in one unit are confined to a single intersecting unit
-# Legacy notes called this technique "imaginary values".
-sub find_imaginary_values {
+sub find_pointing_claiming {
   my $self = shift;
 
   my @deductions = Sudoku::Strategy::PointingClaiming->new->apply($self);

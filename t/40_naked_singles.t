@@ -38,16 +38,16 @@ is($deductions[0]->cell, $cell, 'deduction records the target cell');
 is($deductions[0]->value, 9, 'deduction records the value to set');
 is($cell->value, 0, 'strategy discovery does not directly set the cell');
 is($grid->solved, 0, 'strategy discovery does not update the solved count');
-like($strategy_output, qr/Looking for Singletons/, 'direct strategy announces Naked Singles search');
+like($strategy_output, qr/Looking for Naked Singles/, 'direct strategy announces Naked Singles search');
 
 my $progress;
 my $output = capture_stdout {
-    $progress = $grid->find_and_set_singletons;
+    $progress = $grid->find_and_set_naked_singles;
 };
 
-is($progress, 1, 'find_and_set_singletons reports one Naked Single solved cell');
-like($output, qr/Looking for Singletons/, 'strategy announces Naked Singles search');
-is($grid->solved, 1, 'solved count increments after singleton is set');
+is($progress, 1, 'find_and_set_naked_singles reports one Naked Single solved cell');
+like($output, qr/Looking for Naked Singles/, 'strategy announces Naked Singles search');
+is($grid->solved, 1, 'solved count increments after naked single is set');
 is($cell->value, 9, 'Naked Single value is assigned to the cell');
 is_deeply(
     $cell->possibilities,

@@ -18,7 +18,7 @@ sub apply {
     my $possible_value;
     my $possibility_counts;
 
-    print "Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):\n";
+    print "Looking for Hidden Singles (candidate values present in only one cell of a unit [row, column, or box]):\n";
 
     $possibility_counts = $grid->possibilities_hash;
 
@@ -30,7 +30,7 @@ sub apply {
             $possibility_counts->{$key}[0],
             $possible_value,
             'box',
-            'Lone in Box   ',
+            'Hidden in Box  ',
         );
         push @deductions, $deduction if $deduction;
     }
@@ -45,7 +45,7 @@ sub apply {
             $possibility_counts->{$key}[0],
             $possible_value,
             'row',
-            'Lone in Row   ',
+            'Hidden in Row  ',
         );
         push @deductions, $deduction if $deduction;
     }
@@ -60,12 +60,12 @@ sub apply {
             $possibility_counts->{$key}[0],
             $possible_value,
             'column',
-            'Lone in Column',
+            'Hidden in Col  ',
         );
         push @deductions, $deduction if $deduction;
     }
 
-    print "Found and set " . scalar(@deductions) . " cells this lone representatives search pass.\n\n";
+    print "Found and set " . scalar(@deductions) . " cells this Hidden Singles search pass.\n\n";
     return @deductions;
 }
 

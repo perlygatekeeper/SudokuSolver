@@ -17,7 +17,7 @@ sub apply {
     my @deductions;
     my %seen;
 
-    print "Looking for Imaginary Values\n";
+    print "Looking for Pointing / Claiming\n";
 
     for my $value (1 .. 9) {
         push @deductions, $self->_pointing_deductions($grid, $value, \%seen);

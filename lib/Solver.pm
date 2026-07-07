@@ -87,31 +87,31 @@ sub run {
     $puzzle->big_print;
 
     # Naked Singles
-    while ( $puzzle->solved <= 80 and $progress = $puzzle->find_and_set_singletons ) {
+    while ( $puzzle->solved <= 80 and $progress = $puzzle->find_and_set_naked_singles ) {
       print "So far we filled this many cells: " . $puzzle->solved . "\n";
 #     $puzzle->pretty_print;
 #     $puzzle->multi_column_status;
       $puzzle->big_print;
       $pass_progress += $progress;
-      print "---- end singletons method ----\n\n";
+      print "---- end naked singles method ----\n\n";
     }
 
     # Hidden Singles
-    while ( $puzzle->solved <= 80 and $progress = $puzzle->find_and_set_lone_representatives ) {
+    while ( $puzzle->solved <= 80 and $progress = $puzzle->find_and_set_hidden_singles ) {
       print "So far we filled this many cells: " . $puzzle->solved . "\n";
 #     $puzzle->pretty_print;
 #     $puzzle->multi_column_status;
       $puzzle->big_print;
       $pass_progress += $progress;
-      print "---- end lone representatives method ----\n\n";
+      print "---- end hidden singles method ----\n\n";
     }
 
     # Pointing / Claiming
-    while ( $puzzle->solved <= 80 and $progress = $puzzle->find_imaginary_values ) {
+    while ( $puzzle->solved <= 80 and $progress = $puzzle->find_pointing_claiming ) {
       print "So far we filled this many cells: " . $puzzle->solved . "\n";
       $puzzle->big_print;
       $pass_progress += $progress;
-      print "---- end imaginary values processing ----\n\n";
+      print "---- end pointing / claiming processing ----\n\n";
     }
 
     # Naked Pairs
