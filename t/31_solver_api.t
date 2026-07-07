@@ -17,6 +17,10 @@ can_ok(
     $solver,
     qw(
         default_puzzle_file
+        deductions
+        record_deduction
+        clear_deductions
+        deduction_count
         normalize_puzzle_string
         puzzle_strings_from_file
         puzzle_string_from_options

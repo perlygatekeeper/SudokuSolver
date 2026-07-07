@@ -75,3 +75,24 @@ Deduction objects without changing the command-line interface.
 Eventually each solving strategy should be explainable. A strategy should not merely change the grid; it should also be able to report what it changed and why the deduction is valid.
 
 That design supports future features such as hint mode, explain mode, strategy statistics, and difficulty estimation.
+
+## Solver Deduction Log
+
+`Solver` owns the deduction log. Strategies may produce `Sudoku::Deduction`
+objects, and the solver records them in order. This keeps the solving
+process separate from presentation while preparing for Hint Mode, Explain
+Mode, statistics, and difficulty analysis.
+
+Current Solver log methods:
+
+```perl
+$solver->record_deduction($deduction);
+$solver->deductions;
+$solver->deduction_count;
+$solver->clear_deductions;
+```
+
+The log is intentionally simple at this stage. Future work will make the
+solver responsible for applying deductions consistently across all strategy
+modules.
+

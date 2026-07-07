@@ -9,12 +9,47 @@ use Moose::Util::TypeConstraints;
 use Types;
 use Cell;
 use Grid;
+use Scalar::Util qw(blessed);
+use Sudoku::Deduction;
 
 has 'default_puzzle_file' => (
   isa     => 'Str',
   is      => 'rw',
   default => 'Puzzles/sudoku17-first50.txt',
 );
+
+
+has 'deductions' => (
+  isa     => 'ArrayRef[Sudoku::Deduction]',
+  is      => 'rw',
+  default => sub { [] },
+);
+
+sub record_deduction {
+  my ( $self, $deduction ) = @_;
+
+  die "record_deduction requires a Sudoku::Deduction object
+"
+    unless blessed($deduction) && $deduction->isa('Sudoku::Deduction');
+
+  push @{ $self->deductions }, $deduction;
+
+  return $deduction;
+}
+
+sub clear_deductions {
+  my ($self) = @_;
+
+  $self->deductions([]);
+
+  return $self;
+}
+
+sub deduction_count {
+  my ($self) = @_;
+
+  return scalar @{ $self->deductions };
+}
 
 sub normalize_puzzle_string {
   my ( $self, $puzzle_string ) = @_;
