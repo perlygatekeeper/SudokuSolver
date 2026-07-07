@@ -6,7 +6,7 @@
 PERL          ?= perl5.34
 PROVE         := prove
 SCRIPT        := bin/sudoku.pl
-MODS          := $(shell ls lib/*.pm)
+MODS          := $(shell find lib -name '*.pm' | sort)
 PUZZLE        := Puzzles/Puzzle3.txt
 TAR           := gtar
 NAME          := sudoku_solver

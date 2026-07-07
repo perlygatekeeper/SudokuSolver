@@ -4,16 +4,9 @@ use strict;
 use warnings;
 
 use Test::More;
-use Test::More tests => 7;
+use Sudoku::Test qw(test_project_modules);
 
-BEGIN {
-    use_ok('Sudoku');
-    use_ok('Constants');
-    use_ok('Types');
-    use_ok('Cell');
-    use_ok('Grid');
-    use_ok('Solver');
-}
+test_project_modules();
 
 is(
     $Sudoku::VERSION,
@@ -21,3 +14,4 @@ is(
     'Project version is correct',
 );
 
+done_testing();
