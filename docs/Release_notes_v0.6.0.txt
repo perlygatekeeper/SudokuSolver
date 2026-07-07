@@ -1,0 +1,104 @@
+==============================================================================
+SudokuSolver v0.6.0 Release Notes
+==============================================================================
+
+Release Date: <YYYY-MM-DD>
+
+This release marks the beginning of SudokuSolver's architectural
+modernization. While preserving existing solving behavior, much of the
+foundation has been laid for a more modular, maintainable, and explainable
+solver.
+
+Highlights
+==========
+
+Architecture
+
+* Introduced the Sudoku::Strategy namespace.
+* Added Sudoku::Strategy::Base as the common strategy contract.
+* Began migrating solving algorithms out of Grid.pm.
+* Extracted the following strategies into independent modules:
+
+    - Naked Singles
+    - Hidden Singles
+    - Pointing / Claiming
+
+Deduction Objects
+
+* Introduced Sudoku::Deduction.
+* Established the long-term architecture of strategies producing
+  structured deduction objects rather than directly modifying output.
+* Laid the foundation for:
+
+    - Hint Mode
+    - Explain Mode
+    - Difficulty analysis
+    - Solver statistics
+    - GUI integration
+    - Rich regression testing
+
+Testing
+
+* Expanded the automated test suite.
+* Organized tests into architectural groups:
+
+    00  Project
+    10  Cell
+    20  Grid
+    30  Solver
+    40  Basic Strategies
+    50  Intermediate Strategies
+    60  Advanced Strategies
+    90  Regression
+
+* Continued improving regression coverage.
+* Canonicalized strategy naming throughout the tests.
+
+Documentation
+
+Added substantial developer documentation covering:
+
+* Architecture
+* Testing philosophy
+* Strategy implementation
+* Sudoku symmetry
+* Canonicalization
+* Difficulty analysis
+* Individual strategy documentation
+* Cell and Grid object responsibilities
+
+Naming
+
+* Adopted standard Sudoku terminology throughout the project.
+* Replaced historical names in active code and documentation while
+  preserving legacy material in docs/Legacy.
+
+Refactoring
+
+* Continued reducing the responsibilities of Grid.pm.
+* Established the long-term separation between:
+
+    Cell
+        represents puzzle state
+
+    Grid
+        represents the board
+
+    Solver
+        orchestrates solving
+
+    Strategy
+        finds deductions
+
+    Deduction
+        represents logical actions
+
+Future Direction
+================
+
+The next development cycle will continue migrating remaining strategies
+into the Strategy namespace and begin making the solver fully deduction-
+driven.
+
+As always, all changes should preserve the existing solver behavior while
+improving maintainability and testability.
