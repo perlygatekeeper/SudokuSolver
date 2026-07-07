@@ -21,6 +21,8 @@ can_ok(
         record_deduction
         clear_deductions
         deduction_count
+        apply_deductions
+        apply_deduction
         normalize_puzzle_string
         puzzle_strings_from_file
         puzzle_string_from_options
