@@ -9,6 +9,7 @@ use Moose::Util::TypeConstraints;
 use Types;
 use Cell;
 use Sudoku::Strategy::NakedSingles;
+use Sudoku::Strategy::HiddenSingles;
 
 # use Data::Dumper;
 # use Carp;
@@ -78,92 +79,9 @@ sub cell_from_row_column {
 }
 
 sub find_and_set_lone_representatives {  # a lone_representative is only cell with a possible value in a cell cluster (row column or box)
-  my $self  = shift;
-  my $progress  = 0;
-  my $possible_value;
-  my $possibility_counts = {};
-  # Plan: foreach cluster, count the number of cells foreach unsolved value
-  # case 1) value has only one cell, this is a "lone representative" and may be assigned immediately
-  # case 2) value has two or three cells.  If these cells all reside in another cluster, this value may be removed as a possibility 
-  #         in that other cluster's other member cells
-  # case 3) naked pair    two   cells with the same two   possibilites put this one in it's own method
-  # case 4) naked triplet three cells with the same three possibilites put this one in it's own method as well
-  # Starting with case 1:
+  my $self = shift;
 
-  print "Looking for Lone representatives (possible value's present in only one cell of a cluster [row column or box]):\n";
-
-  $possibility_counts = $self->possibilities_hash;
-  # we now have a cell count of all possible values for all cells organized by cell cluster
-  # we will search these counts for a 1, this represents a value that has only one cell in this box
-  # in which this value is still a possibility.
-  # CHECK BOXES FOR LONE REPRESENTATIVES
-  foreach my $key ( sort grep { $_ =~ /box/ } keys %{ $possibility_counts } ) {
-#   print "DEBUG - key for possibility_counts is $key\n"; next;
-    if ( scalar ( @{ $possibility_counts->{$key} } ) == 1 ) { # found a lone representative cell/value
-      ( $possible_value = $key ) =~ s/box\d://;
-      $progress++;
-      $self->solved( 1 + $self->solved );
-      my $lone_representative = $possibility_counts->{$key}[0];
-      $lone_representative->value($possible_value);
-      $lone_representative->possibilities( [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] );
-      $self->remove_my_solution_from_my_mates($lone_representative);
-      printf "Lone in Box    Setting cell ( %d, %d, %d ) to %d\n"
-        , ( $lone_representative->row + 1 )
-        , ( $lone_representative->column + 1 )
-        , ( $lone_representative->box + 1 )
-        , $possible_value;
-    }
-  }
-
-  # refresh possibility_counts hash as the lone representatives in BOXES above may have exposed more in ROWS
-  $possibility_counts = $self->possibilities_hash;
-  # we now have a new cell count of all possible values for all cells organized by cell cluster
-  # we will search these counts for a 1, this represents a value that has only one cell in this row
-  # in which this value is still a possibility.
-  # CHECK ROWS FOR LONE REPRESENTATIVES
-  foreach my $key ( grep { $_ =~ /row/ } keys %{ $possibility_counts } ) {
-    if ( scalar ( @{ $possibility_counts->{$key} } ) == 1 ) { # found a lone representative cell/value
-      ( $possible_value = $key ) =~ s/row\d://;
-      $progress++;
-      $self->solved( 1 + $self->solved );
-      my $lone_representative = $possibility_counts->{$key}[0];
-      $lone_representative->value($possible_value);
-      $lone_representative->possibilities( [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] );
-      $self->remove_my_solution_from_my_mates($lone_representative);
-      printf "Lone in Row    Setting cell ( %d, %d, %d ) to %d\n"
-        , ( $lone_representative->row + 1 )
-        , ( $lone_representative->column + 1 )
-        , ( $lone_representative->box + 1 )
-        , $possible_value;
-    }
-  }
-
-  # refresh possibility_counts hash as the lone representatives in ROWS above may have exposed more in COLS
-  $possibility_counts = $self->possibilities_hash;
-  # CHECK COLUMNS FOR LONE REPRESENTATIVES
-  # we now have a new cell count of all possible values for all cells organized by cell cluster
-  # we will search these counts for a 1, this represents a value that has only one cell in this column
-  # in which this value is still a possibility.
-  foreach my $key ( grep { $_ =~ /col/ } keys %{ $possibility_counts } ) {
-    if ( scalar ( @{ $possibility_counts->{$key} } ) == 1 ) { # found a lone representative cell/value
-      ( $possible_value = $key ) =~ s/col\d://;
-      $progress++;
-      $self->solved( 1 + $self->solved );
-      my $lone_representative = $possibility_counts->{$key}[0];
-      $lone_representative->value($possible_value);
-      $lone_representative->possibilities( [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ] );
-      $self->remove_my_solution_from_my_mates($lone_representative);
-      printf "Lone in Column Setting cell ( %d, %d, %d ) to %d\n"
-        , ( $lone_representative->row + 1 )
-        , ( $lone_representative->column + 1 )
-        , ( $lone_representative->box + 1 )
-        , $possible_value;
-      $progress++;
-    }
-  }
-
-  print "Found and set $progress cells this lone representatives search pass.\n\n";
-  return $progress;
+  return Sudoku::Strategy::HiddenSingles->new->apply($self);
 }
 
 # Logic for this method was incorrect because it was based on my incorrect understanding of what a
