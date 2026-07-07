@@ -16,9 +16,7 @@ Use narrower commands only when isolating a failure.
 
 Reusable test helpers should live in:
 
-```text
 lib/Sudoku/Test.pm
-```
 
 This module is for test convenience and shared project test behavior. It may provide helpers for loading puzzles, running solvers, comparing grids, and checking output.
 
@@ -28,14 +26,14 @@ Do not create test abstractions before they are useful. Add helpers when multipl
 
 Suggested naming convention:
 
-```text
-00_*.t   project load and integrity tests
-10_*.t   Cell tests
-20_*.t   Grid tests
-30_*.t   Solver tests
-40_*.t   Strategy tests
-90_*.t   regression tests
-```
+00  Project integrity
+10  Cell
+20  Grid
+30  Solver
+40  Basic solving strategies
+50  Intermediate solving strategies
+60  Advanced solving strategies
+90  Regression tests
 
 ## Regression Tests
 
