@@ -77,3 +77,12 @@ Intermediate strategy tests cover techniques that depend on candidate patterns r
 * `51_hidden_pairs.t` covers Hidden Pairs.
 
 These tests should use deliberately constructed candidate grids so each strategy can be tested in isolation. When a legacy strategy has a known defect, prefer documenting it with a TODO test rather than hiding the defect or changing the test to match the bug permanently.
+
+## Advanced Strategy Tests
+
+Advanced strategy tests cover techniques that depend on larger candidate patterns or chained reasoning:
+
+* `60_x_wings.t` covers X-Wings.
+* `61_remote_pairs.t` records the current legacy Remote Pairs behavior.
+
+When an advanced strategy is known to be experimental or historically incomplete, tests should make that status clear. Prefer documenting the current behavior and the intended future repair rather than silently treating incomplete legacy behavior as final design.
