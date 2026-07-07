@@ -91,95 +91,91 @@ Objectives:
 * Improve separation of concerns.
 * Increase automated test coverage.
 
----
+==============================================================================
+Version 0.6.x — Strategy Architecture
+==============================================================================
 
-# Version 0.6.0 — Strategy Refactoring
+Status
 
-Objectives:
+    ✔ Complete
 
-* Split Grid.pm into smaller modules.
-* Place each solving strategy into its own module.
-* Standardize strategy interfaces.
-* Improve code reuse.
-* Improve maintainability.
+Objectives
 
-Each strategy should:
+    ✔ Create the Sudoku::Strategy namespace.
+    ✔ Introduce Sudoku::Strategy::Base.
+    ✔ Begin moving strategies out of Grid.pm.
+    ✔ Introduce Sudoku::Deduction.
+    ✔ Begin using Deduction objects for value placement.
+    ✔ Canonicalize strategy names.
+    ✔ Expand developer documentation.
+    ✔ Expand regression and strategy tests.
 
-* Determine whether it applies.
-* Describe why it applies.
-* Return deductions performed.
-* Report progress consistently.
+Completed
 
-## Deduction Objects
+    ✔ Naked Singles extracted.
+    ✔ Hidden Singles extracted.
+    ✔ Pointing / Claiming extracted.
+    ✔ Deduction object introduced.
+    ✔ Strategy architecture documented.
+    ✔ Cell/Grid responsibilities documented.
+    ✔ Testing hierarchy established.
 
-Future strategy modules should return structured Deduction objects rather than
-only reporting progress or printing directly.
+------------------------------------------------------------------------------
 
-A Deduction object should describe:
+Version 0.7.x — Strategy Extraction
+==============================================================================
 
-* strategy name
-* action performed
-* affected cell or cells
-* affected candidate or solved value
-* reason the deduction is valid
-* optional human-readable explanation
+Objectives
 
-Example:
+    □ Extract Naked Pairs.
+    □ Extract Hidden Pairs.
+    □ Extract X-Wing.
+    □ Extract Remote Pairs.
 
-{
-    strategy    => 'Hidden Single',
-    action      => 'set_value',
-    row         => 3,
-    column      => 7,
-    value       => 5,
-    explanation => 'Candidate 5 appears only once in row 3.'
-}
+    □ Solver becomes the owner of deduction application.
 
-This design supports:
+    □ Grid becomes a pure board model.
 
-* Hint Mode
-* Explain Mode
-* difficulty rating
-* strategy statistics
-* regression testing
-* GUI or web visualization
-* cleaner separation between solving logic and output formatting
+    □ Introduce strategy registry.
 
-Long-term solving flow:
+    □ Introduce strategy manager.
+
+    □ Strategy modules return only deductions.
+
+------------------------------------------------------------------------------
+
+Long-Term Vision
+==============================================================================
+
+Cell
+    Represents a single Sudoku cell.
 
 Grid
-  -> Strategy
-  -> Deduction
-  -> Solver
-  -> Explanation Log
-  -> Output / Hint / Report
+    Represents puzzle state and provides lookup/mutation services.
 
----
+Solver
+    Controls solving order and applies deductions.
 
-# Version 0.7.x — Advanced Solving
+Strategy
+    Finds logical deductions.
 
-Review and improve existing advanced techniques.
+Deduction
+    Represents a logical action.
 
-* Remote Pairs - Already included?
+Formatter / Renderer
+    Produces console, HTML, GUI, Markdown, or other output.
 
-Possible additions:
+Statistics
+    Records solving metrics.
 
-* Naked Triples
-* Hidden Triples
-* Naked Quads
-* Hidden Quads
-* Swordfish
-* XY-Wing
-* XYZ-Wing
-* Skyscraper
-* Two-String Kite
-* Simple Coloring
-* Multi-Coloring
-* Jellyfish
-* Unique Rectangles
+Difficulty
+    Rates puzzles based on the solving process.
 
-Only techniques that are well understood and fully tested should be added.
+Hint
+    Presents the next logical deduction.
 
+Explain
+    Generates human-readable reasoning for every deduction.
 ---
 
 # Version 0.8.x — User Experience
@@ -235,3 +231,18 @@ Every commit should ideally:
 * Be accompanied by documentation updates when appropriate.
 * Leave the repository in a releasable state.
 
+---
+
+## Architecture Milestones
+
+    ✔ Test infrastructure
+    ✔ Documentation framework
+    ✔ Strategy namespace
+    ✔ Deduction objects
+    □ Strategy registry
+    □ Deduction-driven solver
+    □ Explanation engine
+    □ Hint engine
+    □ Difficulty engine
+    □ Canonicalization
+    □ Rendering subsystem
