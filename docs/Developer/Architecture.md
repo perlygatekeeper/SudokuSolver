@@ -39,6 +39,37 @@ For v0.5.x, prefer small patches that:
 * preserve existing output unless the patch explicitly changes output,
 * make later tests and refactors easier.
 
+
+
+## Deduction Objects
+
+Strategy modules should eventually return `Sudoku::Deduction` objects rather
+than printing directly or merely returning a boolean progress flag.
+
+A Deduction object describes one logical action:
+
+* the strategy that found the deduction,
+* the action being proposed or performed,
+* the affected cell or cells,
+* the affected value or candidate,
+* the reason the deduction is valid,
+* and an optional human-readable explanation.
+
+This creates a common data stream for future features:
+
+```text
+Strategy
+    -> Deduction
+    -> Solver
+    -> Explanation Log
+    -> Hint / Report / Statistics / Difficulty Rating
+```
+
+The first implementation of `Sudoku::Deduction` is intentionally small.  The
+legacy strategies may continue returning progress counts while they are being
+migrated.  Once the object contract is stable, each strategy can begin returning
+Deduction objects without changing the command-line interface.
+
 ## Long-Term Direction
 
 Eventually each solving strategy should be explainable. A strategy should not merely change the grid; it should also be able to report what it changed and why the deduction is valid.
