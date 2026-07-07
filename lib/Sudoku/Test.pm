@@ -29,6 +29,7 @@ my @PROJECT_MODULES = qw(
     Sudoku::Strategy::Base
     Sudoku::Strategy::NakedSingles
     Sudoku::Strategy::HiddenSingles
+    Sudoku::Strategy::PointingClaiming
 );
 
 sub project_modules {
