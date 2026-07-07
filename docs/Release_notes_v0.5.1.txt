@@ -49,7 +49,7 @@ The current solver includes implementations or partial implementations of:
 * Pointing / Claiming
 * Naked Pairs
 * Hidden Pairs
-* X-Wings
+* X-Wing
 * Experimental Remote Pairs
 
 These techniques are being preserved while the surrounding infrastructure is

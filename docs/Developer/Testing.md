@@ -67,9 +67,9 @@ Strategy-specific behavior should not be tested in the solver test group. Those 
 
 Basic strategy tests cover one solving technique per file:
 
-* `40_singletons.t` covers Naked Singles / Singletons.
-* `41_lone_representatives.t` covers Hidden Singles / Lone Representatives.
-* `42_imaginary_values.t` covers Pointing and Claiming / Imaginary Values.
+* `40_naked_singles.t` covers Naked Singles.
+* `41_hidden_singles.t` covers Hidden Singles.
+* `42_pointing_claiming.t` covers Pointing / Claiming.
 
 Strategy tests should focus on public strategy behavior: the reported progress, the cells solved or candidates removed, and any candidate cleanup caused by the strategy. They should not depend on temporary local variables or internal counting structures unless those structures become part of a documented public contract.
 
@@ -86,7 +86,7 @@ These tests should use deliberately constructed candidate grids so each strategy
 
 Advanced strategy tests cover techniques that depend on larger candidate patterns or chained reasoning:
 
-* `60_x_wings.t` covers X-Wings.
+* `60_x_wings.t` covers X-Wing.
 * `61_remote_pairs.t` records the current legacy Remote Pairs behavior.
 
 When an advanced strategy is known to be experimental or historically incomplete, tests should make that status clear. Prefer documenting the current behavior and the intended future repair rather than silently treating incomplete legacy behavior as final design.

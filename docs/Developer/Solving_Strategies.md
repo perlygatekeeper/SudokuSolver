@@ -31,9 +31,9 @@ This structure supports both solving and hint generation.
 
 ### Naked Singles
 
-Historical project name:
+Canonical name: **Naked Singles**.
 
-Singletons
+Legacy name: `Singletons`.
 
 A cell has only one remaining possible value.
 
@@ -46,9 +46,9 @@ Therefore R4C5 = 7.
 
 ### Hidden Singles
 
-Historical project name:
+Canonical name: **Hidden Singles**.
 
-Lone Representatives
+Legacy name: `Lone Representatives`.
 
 A value appears as a candidate in only one cell within a row, column, or box.
 
@@ -61,9 +61,9 @@ Therefore R6C2 = 9.
 
 ### Pointing and Claiming
 
-Historical project name:
+Canonical name: **Pointing / Claiming**.
 
-Imaginary Values
+Legacy name: `Imaginary Values`.
 
 A candidate is restricted to a single row or column within a box, allowing that candidate to be removed elsewhere in the same row or column.
 
@@ -129,7 +129,7 @@ This strategy is currently experimental in the legacy codebase and should be rev
 
 Eventually, each strategy should live in its own module:
 
-lib/Sudoku/Strategy/Singletons.pm
+lib/Sudoku/Strategy/NakedSingles.pm
 lib/Sudoku/Strategy/HiddenSingles.pm
 lib/Sudoku/Strategy/PointingClaiming.pm
 lib/Sudoku/Strategy/NakedPairs.pm
@@ -159,9 +159,9 @@ The original project terms should be preserved in historical notes, but public c
 
 | Legacy Name | Standard Name |
 |------------|---------------|
-| Singleton | Naked Single |
-| Lone Representative | Hidden Single |
-| Imaginary Value | Pointing / Claiming |
+| Singletons | Naked Singles |
+| Lone Representatives | Hidden Singles |
+| Imaginary Values | Pointing / Claiming |
 | Naked Pair | Naked Pair |
 | Hidden Pair | Hidden Pair |
 | X-Wing | X-Wing |
@@ -175,9 +175,9 @@ Strategy tests should verify behavior, not internal implementation.
 
 Recommended numbering:
 
-40_singletons.t
-41_lone_representatives.t
-42_imaginary_values.t
+40_naked_singles.t
+41_hidden_singles.t
+42_pointing_claiming.t
 
 50_naked_pairs.t
 51_hidden_pairs.t

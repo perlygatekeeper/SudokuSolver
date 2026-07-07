@@ -50,7 +50,7 @@ my $output = capture_stdout {
 };
 
 is($progress, 14, 'find_x_wings removes fourteen candidates from two columns');
-like($output, qr/Looking for X-Wings/, 'strategy announces X-Wing search');
+like($output, qr/Looking for X-Wing/, 'strategy announces X-Wing search');
 like($output, qr/row-based X-wing/, 'strategy finds the row-based X-Wing');
 
 for my $row (0, 3) {

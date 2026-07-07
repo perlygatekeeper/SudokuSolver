@@ -86,7 +86,7 @@ sub run {
     $pass_progress = 0;
     $puzzle->big_print;
 
-    # Singletons
+    # Naked Singles
     while ( $puzzle->solved <= 80 and $progress = $puzzle->find_and_set_singletons ) {
       print "So far we filled this many cells: " . $puzzle->solved . "\n";
 #     $puzzle->pretty_print;
@@ -96,7 +96,7 @@ sub run {
       print "---- end singletons method ----\n\n";
     }
 
-    # Lone Representatives
+    # Hidden Singles
     while ( $puzzle->solved <= 80 and $progress = $puzzle->find_and_set_lone_representatives ) {
       print "So far we filled this many cells: " . $puzzle->solved . "\n";
 #     $puzzle->pretty_print;
@@ -106,7 +106,7 @@ sub run {
       print "---- end lone representatives method ----\n\n";
     }
 
-    # Imaginary Values in Boxes
+    # Pointing / Claiming
     while ( $puzzle->solved <= 80 and $progress = $puzzle->find_imaginary_values ) {
       print "So far we filled this many cells: " . $puzzle->solved . "\n";
       $puzzle->big_print;
@@ -130,7 +130,7 @@ sub run {
       print "---- end hidden pairs processing ----\n\n";
     }
 
-    # X Wings
+    # X-Wing
 #   while ( $puzzle->solved <= 80 and $progress = $puzzle->find_x_wings ) {
       print "So far we filled this many cells: " . $puzzle->solved . "\n";
       $puzzle->big_print;

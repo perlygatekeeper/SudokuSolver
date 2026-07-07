@@ -37,12 +37,12 @@ Completed:
 
 The existing solver already contains implementations or partial implementations of:
 
-* Naked Singles (Singletons)
-* Hidden Singles (Lone Representatives)
-* Pointing / Claiming (Imaginary Values)
+* Naked Singles
+* Hidden Singles
+* Pointing / Claiming
 * Naked Pairs
 * Hidden Pairs
-* X-Wings
+* X-Wing
 * Experimental Remote Pairs
 
 ---

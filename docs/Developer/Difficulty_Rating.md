@@ -34,7 +34,7 @@ A simple first model:
 | Easy | Naked Singles, Hidden Singles |
 | Moderate | Pointing / Claiming |
 | Intermediate | Naked Pairs, Hidden Pairs |
-| Hard | X-Wings |
+| Hard | X-Wing |
 | Expert | Remote Pairs, Coloring, Wings |
 | Extreme | Requires trial, contradiction, or search |
 

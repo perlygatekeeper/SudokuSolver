@@ -87,9 +87,9 @@ Tests techniques that are commonly considered basic.
 
 Examples:
 
-40_singletons.t
-41_lone_representatives.t
-42_imaginary_values.t
+40_naked_singles.t
+41_hidden_singles.t
+42_pointing_claiming.t
 
 ---
 

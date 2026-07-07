@@ -9,7 +9,7 @@ Examples include:
 * Pointing / Claiming
 * Naked Pairs
 * Hidden Pairs
-* X-Wings
+* X-Wing
 * Remote Pairs
 
 ## Future Strategy Responsibilities

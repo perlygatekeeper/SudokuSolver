@@ -66,7 +66,7 @@ sub load_from_string {
   }
 }
 
-sub find_and_set_singletons {  # a singleton is a cell which has only one possible value left
+sub find_and_set_singletons {  # Naked Single: a cell with only one possible value left
   my $self = shift;
 
   my @deductions = Sudoku::Strategy::NakedSingles->new->apply($self);
@@ -157,7 +157,7 @@ sub cell_from_row_column {
   return $cell;
 }
 
-sub find_and_set_lone_representatives {  # a lone_representative is only cell with a possible value in a cell cluster (row column or box)
+sub find_and_set_lone_representatives {  # Hidden Single: only one cell in a unit can contain a value
   my $self = shift;
 
   my @deductions = Sudoku::Strategy::HiddenSingles->new->apply($self);
@@ -418,7 +418,7 @@ sub find_x_wings {
           }
           # I have a pair of columns for which $value shows up only twice as a candidate
           # if they happen to be in the same two rows, this will form an X-Wing and this value may be removed
-          # from all other cells in the two rows which aren't part of the x-wing, see notes_x_wings.txt file
+          # from all other cells in the two rows which aren't part of the x-wing, see X-Wing strategy notes
           # for more information.
           my $row_count = {};
           # process the 2 cells in the first column, noting the row in which they reside
@@ -658,8 +658,8 @@ sub find_hidden_pairs {
   return $progress;
 }
 
-# An imaginary value is a value whose only possible locations in one cluster are all exclusively in a single cluster of a different kind 
-# See see the notes_imaginary_values.txt
+# Pointing / Claiming: a candidate whose possible locations in one unit are confined to a single intersecting unit
+# Legacy notes called this technique "imaginary values".
 sub find_imaginary_values {
   my $self = shift;
 
