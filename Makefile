@@ -110,13 +110,14 @@ backup:
 		$(MODS) \
 		$(TESTDIR)*.t \
 		$(DOCSDIR)*.txt \
+		$(DOCSDIR)Developer/*.md \
 		$(CPANFILE)
 
 version:
 	@$(PERL) -Ilib -MSudoku -e 'print "SudokuSolver $$Sudoku::VERSION\n"'
 
 gitadd:
-	git add Makefile Readme.md $(SCRIPT) $(MODS) $(VERSION_MOD) $(TESTDIR)*.t $(DOCSDIR)*.txt $(CPANFILE)
+	git add Makefile Readme.md $(SCRIPT) $(MODS) $(VERSION_MOD) $(TESTDIR)*.t $(DOCSDIR)*.txt $(DOCSDIR)Developer/*.md $(CPANFILE)
 	git status
 
 perl-version:
