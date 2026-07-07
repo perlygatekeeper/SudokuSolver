@@ -51,96 +51,11 @@ if (defined $positional_arg) {
 require Solver;
 
 my $solver = Solver->new;
-$puzzle_string = $solver->puzzle_string_from_options(
+$solver->run(
   puzzle_file   => $puzzle_file,
   puzzle_index  => $puzzle_index,
   puzzle_string => $puzzle_string,
 );
-
-print "puzzle_string: $puzzle_string\n";
-
-my $puzzle = Grid->new;
-$puzzle->load_from_string($puzzle_string);
-
-my($this_cell);
-my($progress);
-my($pass_progress) = 1;
-my($pass) = 0;
-
-while ( $puzzle->solved <= 80 and $pass_progress ) {
-  print "==== Pass " . ++$pass . " ====\n"; $pass_progress = 0;
-  $puzzle->big_print;
-
-  # Singletons
-  while ( $puzzle->solved <= 80 and $progress = $puzzle->find_and_set_singletons ) {
-    print "So far we filled this many cells: " . $puzzle->solved . "\n";
-#   $puzzle->pretty_print;
-#   $puzzle->multi_column_status;
-    $puzzle->big_print;
-    $pass_progress += $progress;
-    print "---- end singletons method ----\n\n";
-  }
-
-  # Lone Representatives
-  while ( $puzzle->solved <= 80 and $progress = $puzzle->find_and_set_lone_representatives ) {
-    print "So far we filled this many cells: " . $puzzle->solved . "\n";
-#   $puzzle->pretty_print;
-#   $puzzle->multi_column_status;
-    $puzzle->big_print;
-    $pass_progress += $progress;
-    print "---- end lone representatives method ----\n\n";
-  }
-
-  # Imaginary Values in Boxes
-  while ( $puzzle->solved <= 80 and $progress = $puzzle->find_imaginary_values ) {
-    print "So far we filled this many cells: " . $puzzle->solved . "\n";
-    $puzzle->big_print;
-    $pass_progress += $progress;
-    print "---- end imaginary values processing ----\n\n";
-  }
-
-  # Naked Pairs
-  while ( $puzzle->solved <= 80 and $progress = $puzzle->find_naked_pairs ) {
-    print "So far we filled this many cells: " . $puzzle->solved . "\n";
-    $puzzle->big_print;
-    $pass_progress += $progress;
-    print "---- end naked pairs processing ----\n\n";
-  }
-
-  # Hidden Pairs
-  while ( $puzzle->solved <= 80 and $progress = $puzzle->find_hidden_pairs ) {
-    print "So far we filled this many cells: " . $puzzle->solved . "\n";
-    $puzzle->big_print;
-    $pass_progress += $progress;
-    print "---- end hidden pairs processing ----\n\n";
-  }
-
-  # X Wings
-# while ( $puzzle->solved <= 80 and $progress = $puzzle->find_x_wings ) {
-    print "So far we filled this many cells: " . $puzzle->solved . "\n";
-    $puzzle->big_print;
-    $progress = $puzzle->find_x_wings;
-    $pass_progress += $progress;
-    print "---- end an x-wing search ----\n\n";
-# }
-
-  # Naked Triplets
-  # XY Wings
-
-  # Remote Pairs
-
-  print "==== End Pass " . $pass . " (progress is $pass_progress) ====\n";
-
-}
-
-if ( $puzzle->solved == 81 ) {
-  print "We have solved this puzzle.  Final solution is:\n";
-  print $_->value foreach ( @{$puzzle->cells} );
-  print "\n";
-} else {
-  printf "We were able to determine %d cells.\n", $puzzle->solved;
-  $puzzle->big_print;
-}
 
 1;
 
