@@ -19,6 +19,13 @@ my @PROJECT_MODULES = qw(
     Cell
     Grid
     Solver
+    Sudoku::Deduction
+    Sudoku::Statistics
+    Sudoku::Difficulty
+    Sudoku::Canonical
+    Sudoku::Explain
+    Sudoku::Hint
+    Sudoku::Strategy
 );
 
 sub project_modules {
