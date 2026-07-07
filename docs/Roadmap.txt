@@ -110,21 +110,72 @@ Each strategy should:
 * Return deductions performed.
 * Report progress consistently.
 
+## Deduction Objects
+
+Future strategy modules should return structured Deduction objects rather than
+only reporting progress or printing directly.
+
+A Deduction object should describe:
+
+* strategy name
+* action performed
+* affected cell or cells
+* affected candidate or solved value
+* reason the deduction is valid
+* optional human-readable explanation
+
+Example:
+
+{
+    strategy    => 'Hidden Single',
+    action      => 'set_value',
+    row         => 3,
+    column      => 7,
+    value       => 5,
+    explanation => 'Candidate 5 appears only once in row 3.'
+}
+
+This design supports:
+
+* Hint Mode
+* Explain Mode
+* difficulty rating
+* strategy statistics
+* regression testing
+* GUI or web visualization
+* cleaner separation between solving logic and output formatting
+
+Long-term solving flow:
+
+Grid
+  -> Strategy
+  -> Deduction
+  -> Solver
+  -> Explanation Log
+  -> Output / Hint / Report
+
 ---
 
 # Version 0.7.x — Advanced Solving
 
 Review and improve existing advanced techniques.
 
+* Remote Pairs - Already included?
+
 Possible additions:
 
-* Remote Pairs
-* Simple Coloring
-* Multi-Coloring
+* Naked Triples
+* Hidden Triples
+* Naked Quads
+* Hidden Quads
 * Swordfish
-* Jellyfish
 * XY-Wing
 * XYZ-Wing
+* Skyscraper
+* Two-String Kite
+* Simple Coloring
+* Multi-Coloring
+* Jellyfish
 * Unique Rectangles
 
 Only techniques that are well understood and fully tested should be added.
