@@ -5,6 +5,8 @@ use warnings;
 
 use parent 'Sudoku::Strategy::Base';
 
+use Sudoku::Deduction;
+
 sub name {
     return 'Hidden Singles';
 }
@@ -12,7 +14,7 @@ sub name {
 sub apply {
     my ($self, $grid) = @_;
 
-    my $progress = 0;
+    my @deductions;
     my $possible_value;
     my $possibility_counts;
 
@@ -24,12 +26,13 @@ sub apply {
         next unless scalar(@{ $possibility_counts->{$key} }) == 1;
 
         ($possible_value = $key) =~ s/box\d://;
-        $progress += $self->_set_hidden_single(
-            $grid,
+        my $deduction = $self->_hidden_single_deduction(
             $possibility_counts->{$key}[0],
             $possible_value,
+            'box',
             'Lone in Box   ',
         );
+        push @deductions, $deduction if $deduction;
     }
 
     $possibility_counts = $grid->possibilities_hash;
@@ -38,12 +41,13 @@ sub apply {
         next unless scalar(@{ $possibility_counts->{$key} }) == 1;
 
         ($possible_value = $key) =~ s/row\d://;
-        $progress += $self->_set_hidden_single(
-            $grid,
+        my $deduction = $self->_hidden_single_deduction(
             $possibility_counts->{$key}[0],
             $possible_value,
+            'row',
             'Lone in Row   ',
         );
+        push @deductions, $deduction if $deduction;
     }
 
     $possibility_counts = $grid->possibilities_hash;
@@ -52,36 +56,39 @@ sub apply {
         next unless scalar(@{ $possibility_counts->{$key} }) == 1;
 
         ($possible_value = $key) =~ s/col\d://;
-        $progress += $self->_set_hidden_single(
-            $grid,
+        my $deduction = $self->_hidden_single_deduction(
             $possibility_counts->{$key}[0],
             $possible_value,
+            'column',
             'Lone in Column',
         );
+        push @deductions, $deduction if $deduction;
     }
 
-    print "Found and set $progress cells this lone representatives search pass.\n\n";
-    return $progress;
+    print "Found and set " . scalar(@deductions) . " cells this lone representatives search pass.\n\n";
+    return @deductions;
 }
 
-sub _set_hidden_single {
-    my ($self, $grid, $cell, $value, $label) = @_;
+sub _hidden_single_deduction {
+    my ($self, $cell, $value, $unit_type, $label) = @_;
 
-    return 0 if $cell->value;
+    return if $cell->value;
 
-    $grid->solved(1 + $grid->solved);
-    $cell->value($value);
-    $cell->possibilities([ (0) x 10 ]);
-    $grid->remove_my_solution_from_my_mates($cell);
-
-    printf "%s Setting cell ( %d, %d, %d ) to %d\n",
-        $label,
-        ($cell->row + 1),
-        ($cell->column + 1),
-        ($cell->box + 1),
-        $value;
-
-    return 1;
+    return Sudoku::Deduction->new(
+        strategy    => $self->name,
+        action      => 'set_value',
+        cell        => $cell,
+        value       => $value,
+        reason      => $label,
+        explanation => sprintf(
+            'Candidate %d appears only once in this %s, so R%dC%d must be %d.',
+            $value,
+            $unit_type,
+            $cell->row + 1,
+            $cell->column + 1,
+            $value,
+        ),
+    );
 }
 
 1;

@@ -16,8 +16,8 @@ strategy.  It is deliberately presentation-neutral so it can support solver
 logs, hints, difficulty scoring, regression tests, and future UI/reporting.
 
 This first version is intentionally small.  Strategies are not yet required to
-return Deduction objects, but this module defines the shape they will migrate
-toward.
+return Deduction objects.  This module defines the shared shape for those
+deductions.
 
 =cut
 
@@ -31,6 +31,12 @@ has 'action' => (
     is       => 'ro',
     isa      => 'Str',
     required => 1,
+);
+
+has 'cell' => (
+    is        => 'ro',
+    isa       => 'Maybe[Object]',
+    predicate => 'has_cell',
 );
 
 has 'row' => (
@@ -84,6 +90,7 @@ has 'explanation' => (
 sub has_cell_location {
     my ($self) = @_;
 
+    return 1 if $self->has_cell;
     return $self->has_row && $self->has_column;
 }
 
@@ -91,6 +98,10 @@ sub location {
     my ($self) = @_;
 
     return q{} unless $self->has_cell_location;
+
+    if ($self->has_cell) {
+        return sprintf 'R%dC%d', $self->cell->row + 1, $self->cell->column + 1;
+    }
 
     return sprintf 'R%dC%d', $self->row + 1, $self->column + 1;
 }
@@ -105,6 +116,8 @@ sub as_hash {
         reason      => $self->reason,
         explanation => $self->explanation,
     );
+
+    $deduction{cell} = $self->cell if $self->has_cell;
 
     for my $field (qw(row column box value candidate)) {
         my $predicate = "has_$field";

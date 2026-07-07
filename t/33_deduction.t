@@ -5,6 +5,7 @@ use warnings;
 
 use Test::More;
 use Sudoku::Deduction;
+use Cell;
 
 my $deduction = Sudoku::Deduction->new(
     strategy    => 'Hidden Single',
@@ -79,5 +80,33 @@ my $another = Sudoku::Deduction->new(
     action   => 'progress',
 );
 isnt($minimal->cells, $another->cells, 'cells default is not shared between objects');
+
+
+my $cell = Cell->new;
+$cell->clue(0);
+$cell->row(1);
+$cell->column(2);
+$cell->box(0);
+
+my $cell_deduction = Sudoku::Deduction->new(
+    strategy    => 'Naked Singles',
+    action      => 'set_value',
+    cell        => $cell,
+    value       => 9,
+    explanation => 'The cell has only one candidate remaining.',
+);
+
+ok($cell_deduction->has_cell, 'cell predicate is true when a cell is supplied');
+is($cell_deduction->cell, $cell, 'cell object is stored');
+ok($cell_deduction->has_cell_location, 'cell-backed deduction has a location');
+is($cell_deduction->location, 'R2C3', 'location renders from the cell object');
+like(
+    $cell_deduction->summary,
+    qr/Naked Singles set_value R2C3 value=9/,
+    'summary uses the cell-backed location',
+);
+
+my $cell_hash = $cell_deduction->as_hash;
+is($cell_hash->{cell}, $cell, 'as_hash includes cell when present');
 
 done_testing();

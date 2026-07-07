@@ -68,7 +68,61 @@ sub load_from_string {
 sub find_and_set_singletons {  # a singleton is a cell which has only one possible value left
   my $self = shift;
 
-  return Sudoku::Strategy::NakedSingles->new->apply($self);
+  my @deductions = Sudoku::Strategy::NakedSingles->new->apply($self);
+
+  return $self->apply_deductions(@deductions);
+}
+
+
+sub apply_deductions {
+  my ( $self, @deductions ) = @_;
+
+  my $progress = 0;
+
+  for my $deduction (@deductions) {
+    next unless $deduction;
+    $progress += $self->apply_deduction($deduction);
+  }
+
+  return $progress;
+}
+
+sub apply_deduction {
+  my ( $self, $deduction ) = @_;
+
+  if ( $deduction->action eq 'set_value' ) {
+    return $self->_apply_set_value_deduction($deduction);
+  }
+
+  die "Unknown deduction action: " . $deduction->action . "\n";
+}
+
+sub _apply_set_value_deduction {
+  my ( $self, $deduction ) = @_;
+
+  my $cell = $deduction->has_cell
+    ? $deduction->cell
+    : $self->cell_from_row_column( $deduction->row, $deduction->column );
+
+  return 0 if $cell->value;
+
+  my $value = $deduction->value;
+
+  $self->solved( 1 + $self->solved );
+  $cell->value($value);
+  $cell->possibilities([ (0) x 10 ]);
+  $self->remove_my_solution_from_my_mates($cell);
+
+  if ( $deduction->reason =~ /^Lone in / ) {
+    printf "%s Setting cell ( %d, %d, %d ) to %d\n",
+      $deduction->reason,
+      ( $cell->row + 1 ),
+      ( $cell->column + 1 ),
+      ( $cell->box + 1 ),
+      $value;
+  }
+
+  return 1;
 }
 
 sub cell_from_row_column {
@@ -81,7 +135,9 @@ sub cell_from_row_column {
 sub find_and_set_lone_representatives {  # a lone_representative is only cell with a possible value in a cell cluster (row column or box)
   my $self = shift;
 
-  return Sudoku::Strategy::HiddenSingles->new->apply($self);
+  my @deductions = Sudoku::Strategy::HiddenSingles->new->apply($self);
+
+  return $self->apply_deductions(@deductions);
 }
 
 # Logic for this method was incorrect because it was based on my incorrect understanding of what a

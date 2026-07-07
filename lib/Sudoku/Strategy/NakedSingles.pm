@@ -5,6 +5,8 @@ use warnings;
 
 use parent 'Sudoku::Strategy::Base';
 
+use Sudoku::Deduction;
+
 sub name {
     return 'Naked Singles';
 }
@@ -12,7 +14,7 @@ sub name {
 sub apply {
     my ($self, $grid) = @_;
 
-    my $progress = 0;
+    my @deductions;
 
     print "Looking for Singletons\n";
 
@@ -23,16 +25,22 @@ sub apply {
         my ($value) = grep { $cell->possibilities->[$_] } 1 .. 9;
         next unless $value;
 
-        $cell->value($value);
-        $cell->possibilities([ (0) x 10 ]);
-
-        $grid->solved(1 + $grid->solved);
-        $grid->remove_my_solution_from_my_mates($cell);
-
-        $progress++;
+        push @deductions, Sudoku::Deduction->new(
+            strategy    => $self->name,
+            action      => 'set_value',
+            cell        => $cell,
+            value       => $value,
+            reason      => 'Only one candidate remains in the cell.',
+            explanation => sprintf(
+                'Cell R%dC%d has only candidate %d remaining.',
+                $cell->row + 1,
+                $cell->column + 1,
+                $value,
+            ),
+        );
     }
 
-    return $progress;
+    return @deductions;
 }
 
 1;

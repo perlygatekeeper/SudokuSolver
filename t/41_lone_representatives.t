@@ -8,6 +8,8 @@ use Test::More;
 use lib 'lib';
 
 use Grid;
+use Sudoku::Deduction;
+use Sudoku::Strategy::HiddenSingles;
 use Sudoku::Test qw(capture_stdout);
 
 my $grid = Grid->new;
@@ -24,6 +26,21 @@ for my $column (0 .. 8) {
 
 ok($target->possibilities->[5], 'target cell still allows the hidden single value');
 is($grid->solved, 0, 'empty grid starts with no solved cells');
+
+my @deductions;
+my $strategy_output = capture_stdout {
+    @deductions = Sudoku::Strategy::HiddenSingles->new->apply($grid);
+};
+
+is(scalar @deductions, 1, 'Hidden Singles strategy returns one deduction');
+isa_ok($deductions[0], 'Sudoku::Deduction');
+is($deductions[0]->strategy, 'Hidden Singles', 'deduction records the strategy name');
+is($deductions[0]->action, 'set_value', 'deduction action sets a value');
+is($deductions[0]->cell, $target, 'deduction records the target cell');
+is($deductions[0]->value, 5, 'deduction records the value to set');
+is($target->value, 0, 'strategy discovery does not directly set the cell');
+is($grid->solved, 0, 'strategy discovery does not update the solved count');
+like($strategy_output, qr/Looking for Lone representatives/, 'direct strategy announces lone representative search');
 
 my $progress;
 my $output = capture_stdout {
