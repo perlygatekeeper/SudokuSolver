@@ -51,14 +51,18 @@ for my $cell ($upper_intersection, $lower_intersection) {
 }
 
 my $progress;
+my @deductions;
 my $output = capture_stdout {
-    $progress = $grid->find_remote_pairs;
+    @deductions = Sudoku::Strategy::RemotePairs->new->apply($grid);
+    $progress = $grid->apply_deductions(@deductions);
 };
 
 # This records the current legacy behavior.  The project notes say the
 # remote-pairs logic is based on an incomplete understanding of the
 # technique, so future work may replace this contract intentionally.
-is($progress, 4, 'find_remote_pairs removes two candidates from two intersections');
+is(scalar @deductions, 4, 'RemotePairs returns two candidate removals for two intersections');
+isa_ok($deductions[0], 'Sudoku::Deduction');
+is($progress, 4, 'applying RemotePairs deductions removes two candidates from two intersections');
 like($output, qr/Looking for Remote Pairs/, 'strategy announces remote pair search');
 like($output, qr/Remote pair candidate: 25 is in 2 cells/, 'strategy identifies the pair candidate');
 

@@ -175,25 +175,33 @@ sub find_and_set_hidden_singles {  # Hidden Single: only one cell in a unit can 
 sub find_remote_pairs {
   my $self = shift;
 
-  return Sudoku::Strategy::RemotePairs->new->apply($self);
+  my @deductions = Sudoku::Strategy::RemotePairs->new->apply($self);
+
+  return $self->apply_deductions(@deductions);
 }
 
 sub find_naked_pairs {
   my $self = shift;
 
-  return Sudoku::Strategy::NakedPairs->new->apply($self);
+  my @deductions = Sudoku::Strategy::NakedPairs->new->apply($self);
+
+  return $self->apply_deductions(@deductions);
 }
 
 sub find_x_wings {
   my $self = shift;
 
-  return Sudoku::Strategy::XWing->new->apply($self);
+  my @deductions = Sudoku::Strategy::XWing->new->apply($self);
+
+  return $self->apply_deductions(@deductions);
 }
 
 sub find_hidden_pairs {
   my $self = shift;
 
-  return Sudoku::Strategy::HiddenPairs->new->apply($self);
+  my @deductions = Sudoku::Strategy::HiddenPairs->new->apply($self);
+
+  return $self->apply_deductions(@deductions);
 }
 
 # Pointing / Claiming: a candidate whose possible locations in one unit are confined to a single intersecting unit

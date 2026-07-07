@@ -35,23 +35,21 @@ is_deeply(values_left($first),  [ 1 .. 9 ], 'first hidden-pair cell starts with 
 is_deeply(values_left($second), [ 1 .. 9 ], 'second hidden-pair cell starts with all candidates');
 
 my $progress;
+my @deductions;
 my $output = capture_stdout {
-    $progress = $grid->find_hidden_pairs;
+    @deductions = Sudoku::Strategy::HiddenPairs->new->apply($grid);
+    $progress = $grid->apply_deductions(@deductions);
 };
 
-# The legacy method currently performs removals but does not increment
-# its progress counter.  This test records that behavior until the
-# strategy is repaired.
-is($progress, 0, 'find_hidden_pairs currently reports no progress');
+is(scalar @deductions, 14, 'HiddenPairs returns candidate-removal deductions for both pair cells');
+isa_ok($deductions[0], 'Sudoku::Deduction');
+is($progress, 14, 'applying HiddenPairs deductions removes all non-pair candidates');
 like($output, qr/Looking for Hidden Pairs/, 'strategy announces hidden pair search');
 like($output, qr/Hidden pair \(row\)/, 'strategy finds the row-based hidden pair');
 
 is_deeply(values_left($first), [ 2, 5 ], 'first hidden-pair cell keeps only the pair values');
 
-TODO: {
-    local $TODO = 'legacy find_hidden_pairs only cleans the first cell of the hidden pair';
-    is_deeply(values_left($second), [ 2, 5 ], 'second hidden-pair cell keeps only the pair values');
-}
+is_deeply(values_left($second), [ 2, 5 ], 'second hidden-pair cell keeps only the pair values');
 
 for my $column (1, 2, 4 .. 8) {
     my $cell = $grid->cell_from_row_column(0, $column);

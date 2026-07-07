@@ -46,11 +46,15 @@ for my $row (1, 2, 4 .. 8) {
 }
 
 my $progress;
+my @deductions;
 my $output = capture_stdout {
-    $progress = $grid->find_x_wings;
+    @deductions = Sudoku::Strategy::XWing->new->apply($grid);
+    $progress = $grid->apply_deductions(@deductions);
 };
 
-is($progress, 14, 'find_x_wings removes fourteen candidates from two columns');
+is(scalar @deductions, 14, 'XWing returns fourteen candidate-removal deductions');
+isa_ok($deductions[0], 'Sudoku::Deduction');
+is($progress, 14, 'applying XWing deductions removes fourteen candidates from two columns');
 like($output, qr/Looking for X-Wing/, 'strategy announces X-Wing search');
 like($output, qr/row-based X-wing/, 'strategy finds the row-based X-Wing');
 
