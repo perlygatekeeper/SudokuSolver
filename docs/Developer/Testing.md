@@ -68,3 +68,12 @@ Basic strategy tests cover one solving technique per file:
 * `42_imaginary_values.t` covers Pointing and Claiming / Imaginary Values.
 
 Strategy tests should focus on public strategy behavior: the reported progress, the cells solved or candidates removed, and any candidate cleanup caused by the strategy. They should not depend on temporary local variables or internal counting structures unless those structures become part of a documented public contract.
+
+## Intermediate Strategy Tests
+
+Intermediate strategy tests cover techniques that depend on candidate patterns rather than immediate singles:
+
+* `50_naked_pairs.t` covers Naked Pairs.
+* `51_hidden_pairs.t` covers Hidden Pairs.
+
+These tests should use deliberately constructed candidate grids so each strategy can be tested in isolation. When a legacy strategy has a known defect, prefer documenting it with a TODO test rather than hiding the defect or changing the test to match the bug permanently.
