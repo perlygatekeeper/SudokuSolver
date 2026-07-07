@@ -207,6 +207,35 @@ sub puzzle_string_from_options {
   return $puzzle_strings[ $puzzle_index - 1 ];
 }
 
+sub run_strategy {
+  my ( $self, $grid, $strategy ) = @_;
+
+  die "run_strategy requires a Grid object\n"
+    unless blessed($grid) && $grid->isa('Grid');
+
+  die "run_strategy requires a strategy object with apply()\n"
+    unless blessed($strategy) && $strategy->can('apply');
+
+  my $total_progress = 0;
+
+  while ( $grid->solved <= 80 ) {
+    my @deductions = $strategy->apply($grid);
+    my $progress   = $self->apply_deductions( $grid, @deductions );
+
+    last unless $progress;
+
+    print "So far we filled this many cells: " . $grid->solved . "\n";
+    $grid->big_print;
+
+    $total_progress += $progress;
+
+    my $name = $strategy->can('name') ? lc $strategy->name : 'strategy';
+    print "---- end $name processing ----\n\n";
+  }
+
+  return $total_progress;
+}
+
 sub run {
   my ( $self, %options ) = @_;
 
@@ -217,7 +246,6 @@ sub run {
   my $puzzle = Grid->new;
   $puzzle->load_from_string($puzzle_string);
 
-  my($progress);
   my($pass_progress) = 1;
   my($pass) = 0;
 
@@ -226,75 +254,10 @@ sub run {
     $pass_progress = 0;
     $puzzle->big_print;
 
-    # Naked Singles
-    while ( $puzzle->solved <= 80 ) {
-      my @deductions = Sudoku::Strategy::NakedSingles->new->apply($puzzle);
-      $progress = $self->apply_deductions( $puzzle, @deductions );
-      last unless $progress;
-
-      print "So far we filled this many cells: " . $puzzle->solved . "\n";
-#     $puzzle->pretty_print;
-#     $puzzle->multi_column_status;
-      $puzzle->big_print;
-      $pass_progress += $progress;
-      print "---- end naked singles method ----\n\n";
+    for my $strategy ( $self->strategies ) {
+      last if $puzzle->solved > 80;
+      $pass_progress += $self->run_strategy( $puzzle, $strategy );
     }
-
-    # Hidden Singles
-    while ( $puzzle->solved <= 80 ) {
-      my @deductions = Sudoku::Strategy::HiddenSingles->new->apply($puzzle);
-      $progress = $self->apply_deductions( $puzzle, @deductions );
-      last unless $progress;
-
-      print "So far we filled this many cells: " . $puzzle->solved . "\n";
-#     $puzzle->pretty_print;
-#     $puzzle->multi_column_status;
-      $puzzle->big_print;
-      $pass_progress += $progress;
-      print "---- end hidden singles method ----\n\n";
-    }
-
-    # Pointing / Claiming
-    while ( $puzzle->solved <= 80 ) {
-      my @deductions = Sudoku::Strategy::PointingClaiming->new->apply($puzzle);
-      $progress = $self->apply_deductions( $puzzle, @deductions );
-      last unless $progress;
-
-      print "So far we filled this many cells: " . $puzzle->solved . "\n";
-      $puzzle->big_print;
-      $pass_progress += $progress;
-      print "---- end pointing / claiming processing ----\n\n";
-    }
-
-    # Naked Pairs
-    while ( $puzzle->solved <= 80 and $progress = $puzzle->find_naked_pairs ) {
-      print "So far we filled this many cells: " . $puzzle->solved . "\n";
-      $puzzle->big_print;
-      $pass_progress += $progress;
-      print "---- end naked pairs processing ----\n\n";
-    }
-
-    # Hidden Pairs
-    while ( $puzzle->solved <= 80 and $progress = $puzzle->find_hidden_pairs ) {
-      print "So far we filled this many cells: " . $puzzle->solved . "\n";
-      $puzzle->big_print;
-      $pass_progress += $progress;
-      print "---- end hidden pairs processing ----\n\n";
-    }
-
-    # X-Wing
-#   while ( $puzzle->solved <= 80 and $progress = $puzzle->find_x_wings ) {
-      print "So far we filled this many cells: " . $puzzle->solved . "\n";
-      $puzzle->big_print;
-      $progress = $puzzle->find_x_wings;
-      $pass_progress += $progress;
-      print "---- end an x-wing search ----\n\n";
-#   }
-
-    # Naked Triplets
-    # XY Wings
-
-    # Remote Pairs
 
     print "==== End Pass " . $pass . " (progress is $pass_progress) ====\n";
 

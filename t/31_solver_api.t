@@ -26,6 +26,7 @@ can_ok(
         deduction_count
         apply_deductions
         apply_deduction
+        run_strategy
         normalize_puzzle_string
         puzzle_strings_from_file
         puzzle_string_from_options
