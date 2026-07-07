@@ -12,7 +12,6 @@ use Getopt::Long qw(GetOptions);
 use Pod::Usage qw(pod2usage);
 use Sudoku ();
 
-my $default_puzzle_file = 'Puzzles/sudoku17-first50.txt';
 my $puzzle_file;
 my $puzzle_index;
 my $puzzle_string;
@@ -49,39 +48,16 @@ if (defined $positional_arg) {
   }
 }
 
-if (defined $puzzle_string) {
-  $puzzle_string =~ tr/./0/;
-  die "Puzzle string must contain exactly 81 digits or dots\n"
-    unless $puzzle_string =~ /^\d{81}$/;
-} else {
-  $puzzle_file //= $default_puzzle_file;
+require Solver;
 
-  open my $puzzle_fh, '<', $puzzle_file
-      or die "Could not open '$puzzle_file': $!";
-
-  my @puzzle_strings;
-  while (my $line = <$puzzle_fh>) {
-    next if ($line =~ /^\s*$|^\s*#/); # skip white, blank and commented lines.
-    chomp $line;
-    $line =~ s/\s+//g;
-    $line =~ tr/./0/;
-    next unless length $line;
-    push @puzzle_strings, $line;
-  }
-  close $puzzle_fh;
-
-  die "No puzzle strings found in '$puzzle_file'\n" unless @puzzle_strings;
-
-  $puzzle_index //= 1;
-  die "Puzzle number must be between 1 and " . scalar(@puzzle_strings) . "\n"
-    if $puzzle_index < 1 || $puzzle_index > @puzzle_strings;
-
-  $puzzle_string = $puzzle_strings[$puzzle_index - 1];
-}
+my $solver = Solver->new;
+$puzzle_string = $solver->puzzle_string_from_options(
+  puzzle_file   => $puzzle_file,
+  puzzle_index  => $puzzle_index,
+  puzzle_string => $puzzle_string,
+);
 
 print "puzzle_string: $puzzle_string\n";
-
-require Grid;
 
 my $puzzle = Grid->new;
 $puzzle->load_from_string($puzzle_string);
