@@ -1,4 +1,4 @@
-#!/usr/bin/env perl 
+#!/usr/bin/env perl
 # A perl script to read in, solve and output a sudoku puzzle.
 
 use strict;

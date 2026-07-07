@@ -11,6 +11,10 @@ use Cell;
 use Sudoku::Strategy::NakedSingles;
 use Sudoku::Strategy::HiddenSingles;
 use Sudoku::Strategy::PointingClaiming;
+use Sudoku::Strategy::NakedPairs;
+use Sudoku::Strategy::HiddenPairs;
+use Sudoku::Strategy::XWing;
+use Sudoku::Strategy::RemotePairs;
 
 # use Data::Dumper;
 # use Carp;
@@ -170,492 +174,26 @@ sub find_and_set_hidden_singles {  # Hidden Single: only one cell in a unit can 
 # in sudoku17-50 that will be solved with the proper find of a single remote pair.
 sub find_remote_pairs {
   my $self = shift;
-  my $progress = 0;
-  print "Looking for Remote Pairs, any two cells with the same\n";
-  print "pair of possible values that exist in the different clusters [row column or box]):\n";
-  my $pairs = $self->pairs_possible;
-  foreach my $key ( grep { scalar( @{ $pairs->{$_} } ) >= 2  } ( keys %{ $pairs } ) ) {
-    printf "Remote pair candidate: %s is in %d cells.\n", $key, scalar ( @{ $pairs->{$key} } ) ;
-    # we have a pair that appears at least twice
-    # compare every two cells that have this pair and see if they
-    # share any cluster, if they do, skip them, because then they are a naked pair.
-    foreach my $first ( 0 .. ( $#{$pairs->{$key}} - 1 ) ) {         # from first to next-to-last
-      foreach my $second ( ( $first + 1 ) .. $#{$pairs->{$key}} ) { # from one after first to last
-#       printf "Remote pair: comparing cells numbered  %d and %d.\n", $first, $second;
-#       printf "Remote pair: rows    for the cells are %d and %d.\n", $pairs->{$key}[$first]->row,    $pairs->{$key}[$second]->row;
-#       printf "Remote pair: columns for the cells are %d and %d.\n", $pairs->{$key}[$first]->column, $pairs->{$key}[$second]->column;
-#       printf "Remote pair: boxes   for the cells are %d and %d.\n", $pairs->{$key}[$first]->box,    $pairs->{$key}[$second]->box;
-        next if ( $pairs->{$key}[$first]->row    == $pairs->{$key}[$second]->row );
-#       print "passed rows.\n";
-        next if ( $pairs->{$key}[$first]->column == $pairs->{$key}[$second]->column );
-#       print "passed columns.\n";
-        next if ( $pairs->{$key}[$first]->box    == $pairs->{$key}[$second]->box );
-#       printf "Remote pair: they are in fact 'remote'.\n";
-        my $cell;
-        # these two cells are now determined to be remote, ie having no cluster in common
-        my $row1 = $pairs->{$key}[$first]->row;
-        my $col1 = $pairs->{$key}[$first]->column;
-        my $row2 = $pairs->{$key}[$second]->row;
-        my $col2 = $pairs->{$key}[$second]->column;
-        my ( $pair1, $pair2 ) = ( $key =~ /(\d)(\d)/ );
-        # remove both possible values in the pair from both intersecting cells
-        # at ( row1, col2 ) and ( row2 , col1 )
-        foreach my $cell (
-          $self->cell_from_row_column( $row1, $col2 ),
-          $self->cell_from_row_column( $row2, $col1 )
-        ) {
-#         printf "Remote pair %d, %d will be removed from cell ( %d, %d, %d ).\n"
-#                , $pair1
-#                , $pair2
-#                , ( $cell->row + 1 )
-#                , ( $cell->column + 1 )
-#                , ( $cell->box + 1 );
-          # Is this cell also on the list of pairs.  If so, skip this one.
-          next if ( scalar ( grep { $_ == $cell } ( @{ $pairs->{$key} } ) ) );
-          # if $pair1 is still possible in this cell, remove it.
-          if ( $cell->possibilities->[$pair1] ) {
-            printf "Remote pair %d will be removed from cell ( %d, %d, %d ).\n"
-                   , $pair1
-                   , ( $cell->row + 1 )
-                   , ( $cell->column + 1 )
-                   , ( $cell->box + 1 );
-              $cell->possibilities->[$pair1] = 0;
-              $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
-              $progress++;
-          }
-          # if $pair2 is still possible in this cell, remove it.
-          if ( $cell->possibilities->[$pair2] ) {
-            printf "Remote pair %d will be removed from cell ( %d, %d, %d ).\n"
-                   , $pair2
-                   , ( $cell->row + 1 )
-                   , ( $cell->column + 1 )
-                   , ( $cell->box + 1 );
-              $cell->possibilities->[$pair2] = 0;
-              $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
-              $progress++;
-          }
-        }
-      }
-    }
-  }
-  print "Found and processed $progress cells this remote pair search pass.\n\n";
-  return $progress;
+
+  return Sudoku::Strategy::RemotePairs->new->apply($self);
 }
 
 sub find_naked_pairs {
   my $self = shift;
-  my $progress = 0;
-  print "Looking for Naked Pairs, any two cells with the same\n";
-  print "pair of possible values that exist in the same cluster [row column or box]):\n";
 
-  my $pairs = $self->pairs_possible_by_cluster;
-
-  # look for pairs that have 2 cells
-
-  foreach my $key ( grep { scalar ( @{ $pairs->{$_} } == 2 ) } keys %{ $pairs } ) {
-    # we have a naked pair
-    if ( $key =~ /row/ ) {
-      my ( $col1, $col2, $row, $pair1, $pair2 );
-      ( $row, $pair1, $pair2 )  = ( $key =~ /row:(\d) -> (\d)(\d)/ );
-      # find the columns of the 2 cells holding the naked pair
-      $col1 = $pairs->{ $key }[0]->column;
-      $col2 = $pairs->{ $key }[1]->column;
-      foreach my $cell ( grep { not $_->value } ( @{ $self->rows->[$row] } ) ) { # find unsolved cells in this row that aren't either of the naked pair.
-        my $col = $cell->column;
-        next if ( $col == $col1 or  $col == $col2 );
-        # if $pair1 is still possible in this cell, remove it.
-        if ( $cell->possibilities->[$pair1] ) {
-          if ( $cell->possibilities->[$pair1] ) {
-            printf "Naked pair in row %d, cols %d and %d leads to %d being removed from cell ( %d, %d, %d ).\n"
-                   , $row + 1 , $col1 + 1 , $col2 + 1 , $pair1
-                   , ( $cell->row + 1 )
-                   , ( $cell->column + 1 )
-                   , ( $cell->box + 1 );
-            $cell->possibilities->[$pair1] = 0;
-            $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
-            $progress++;
-          }
-        }
-        # if $pair2 is still possible in this cell, remove it.
-        if ( $cell->possibilities->[$pair2] ) {
-          if ( $cell->possibilities->[$pair2] ) {
-            printf "Naked pair in row %d, cols %d and %d leads to %d being removed from cell ( %d, %d, %d ).\n"
-                   , $row + 1 , $col1 + 1 , $col2 + 1 , $pair2
-                   , ( $cell->row + 1 )
-                   , ( $cell->column + 1 )
-                   , ( $cell->box + 1 );
-            $cell->possibilities->[$pair2] = 0;
-            $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
-            $progress++;
-          }
-        }
-      }
-    }
-
-    if ( $key =~ /col/ ) {
-      my ( $row1, $row2, $col, $pair1, $pair2 );
-      ( $col, $pair1, $pair2 )  = ( $key =~ /col:(\d) -> (\d)(\d)/ );
-      # find the columns of the 2 cells holding the naked pair
-      $row1 = $pairs->{ $key }[0]->row;
-      $row2 = $pairs->{ $key }[1]->row;
-      foreach my $cell ( grep { not $_->value } ( @{ $self->columns->[$col] } ) ) { # find unsolved cells in this column that aren't either of the naked pair.
-        my $row = $cell->row;
-        next if ( $row == $row1 or  $row == $row2 );
-        # if $pair1 is still possible in this cell, remove it.
-        if ( $cell->possibilities->[$pair1] ) {
-          if ( $cell->possibilities->[$pair1] ) {
-            printf "Naked pair in col %d, rows %d and %d leads to %d being removed from cell ( %d, %d, %d ).\n"
-                   , $col + 1 , $row1 + 1 , $row2 + 1 , $pair1
-                   , ( $cell->row + 1 )
-                   , ( $cell->column + 1 )
-                   , ( $cell->box + 1 );
-            $cell->possibilities->[$pair1] = 0;
-            $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
-            $progress++;
-          }
-        }
-        # if $pair2 is still possible in this cell, remove it.
-        if ( $cell->possibilities->[$pair2] ) {
-          if ( $cell->possibilities->[$pair2] ) {
-            printf "Naked pair in col %d, rows %d and %d leads to %d being removed from cell ( %d, %d, %d ).\n"
-                   , $col + 1 , $row1 + 1 , $row2 + 1 , $pair2
-                   , ( $cell->row + 1 )
-                   , ( $cell->column + 1 )
-                   , ( $cell->box + 1 );
-            $cell->possibilities->[$pair2] = 0;
-            $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
-            $progress++;
-          }
-        }
-      }
-    }
-
-    if ( $key =~ /box/ ) {
-      my ( $row1, $row2, $col1, $col2, $box, $pair1, $pair2 );
-      ( $box, $pair1, $pair2 )  = ( $key =~ /box:(\d) -> (\d)(\d)/ );
-      # find the rows and columns of the 2 cells holding the naked pair
-      $row1 = $pairs->{ $key }[0]->row;
-      $row2 = $pairs->{ $key }[1]->row;
-      $col1 = $pairs->{ $key }[0]->column;
-      $col2 = $pairs->{ $key }[1]->column;
-      foreach my $cell ( grep { not $_->value } ( @{ $self->boxes->[$box] } ) ) { # find unsolved cells in this row that aren't either of the naked pair.
-        my $row = $cell->row;
-        my $col = $cell->column;
-        next if ( ( $row == $row1 and $col == $col1 )
-               or ( $row == $row2 and $col == $col2 ) );
-        # if $pair1 is still possible in this cell, remove it.
-        if ( $cell->possibilities->[$pair1] ) {
-          if ( $cell->possibilities->[$pair1] ) {
-            printf "Naked pair in box %d, cells ( %d, %d ) and ( %d, %d ) leads to %d being removed from cell ( %d, %d, %d ).\n"
-                   , $box + 1 , $row1 + 1 , $col1 + 1 , $row2 + 1 , $col2 + 1
-                   , $pair1
-                   , ( $cell->row + 1 )
-                   , ( $cell->column + 1 )
-                   , ( $cell->box + 1 );
-            $cell->possibilities->[$pair1] = 0;
-            $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
-            $progress++;
-          }
-        }
-        # if $pair2 is still possible in this cell, remove it.
-        if ( $cell->possibilities->[$pair2] ) {
-          if ( $cell->possibilities->[$pair2] ) {
-            printf "Naked pair in box %d, cells ( %d, %d ) and ( %d, %d ) leads to %d being removed from cell ( %d, %d, %d ).\n"
-                   , $box + 1 , $row1 + 1 , $col1 + 1 , $row2 + 1 , $col2 + 1
-                   , $pair2
-                   , ( $cell->row + 1 )
-                   , ( $cell->column + 1 )
-                   , ( $cell->box + 1 );
-            $cell->possibilities->[$pair2] = 0;
-            $cell->possibilities->[0] = $cell->possibilities->[0] - 1;
-            $progress++;
-          }
-        }
-      }
-    }
-  }
-
-  print "Found and processed $progress naked pairs.\n\n";
-  return $progress;
+  return Sudoku::Strategy::NakedPairs->new->apply($self);
 }
 
 sub find_x_wings {
-  my $self  = shift;
-  my $x_wings = 0;
-  my $debug = 1;
-  my $progress = 0;
-  my ( $pairs, $value );
-  my ( $row, $column );
-  my $xwing_candidates;
-  print "Looking for X-Wings, any 4 cells with the same possible value\n";
-  print "that are only candidates in two cells of a given column or row and\n";
-  print "involve the same two rows or columns respectively, thus forming an X:\n";
+  my $self = shift;
 
-  # COLUMNS
-  my $possibility_counts = $self->possibilities_hash;
-  $pairs = [ grep { $_ =~ /col/ and scalar( @{ $possibility_counts->{$_} } ) == 2 } keys %{ $possibility_counts } ];
-  print "#pairs ( " . scalar @$pairs . " ) \n";
-  if ( scalar @$pairs ) {
-    foreach my $key ( @$pairs ) {
-      ( $column, $value )  = ( $key =~ /col(\d):(\d)/ );
-      push ( @{ $xwing_candidates->{$value} } , $column );
-      # $xwing_candidates->{ value is 4 } is array with all columns where it appears only twice
-    }
-    print "xwing_candidates: ( $xwing_candidates) \n";
-    # loop over all values which have 2 or more columns where this value only appears twice as a candidate
-    # for each pair of such columns see if this value forms an x-wing
-    foreach my $value ( grep { scalar( @{$xwing_candidates->{$_}} ) >= 2 } keys %{ $xwing_candidates } ) {
-      printf "X-wing (column-based): processing value $value,  " if ($debug);
-      printf "which has %d columns where it appears as a candidate only twice.\n", scalar( @{ $xwing_candidates->{$value} } ) if ($debug);
-      foreach my $first    ( 0               ..  ( $#{$xwing_candidates->{$value}} - 1 ) ) { # from first to next-to-last
-        foreach my $second ( ( $first + 1 )  ..  $#{$xwing_candidates->{$value}}         ) { # from one after first to last
-          my $first_column  = $xwing_candidates->{$value}[$first];
-          my $second_column = $xwing_candidates->{$value}[$second];
-          if ($debug) {
-              printf "Examining columns %d and %d.\n"
-                     , 1 + $first_column
-                     , 1 + $second_column;
-          }
-          # I have a pair of columns for which $value shows up only twice as a candidate
-          # if they happen to be in the same two rows, this will form an X-Wing and this value may be removed
-          # from all other cells in the two rows which aren't part of the x-wing, see X-Wing strategy notes
-          # for more information.
-          my $row_count = {};
-          # process the 2 cells in the first column, noting the row in which they reside
-          foreach my $cell ( @{ $possibility_counts->{ 'col' . $first_column  . ':' . $value } } ) {
-            $row_count->{ $cell->row }++;
-          }
-          # process the 2 cells in the second column, noting the row in which they reside
-          foreach my $cell ( @{ $possibility_counts->{ 'col' . $second_column . ':' . $value } } ) {
-            $row_count->{ $cell->row }++;
-          }
-          if ( scalar ( keys( %$row_count )  )  == 2 ) { 
-            if ($debug) {
-              printf "We have found a column-based X-wing for $value, involving columns %d and %d and rows %d and %d!\n"
-                     , 1 + $first_column
-                     , 1 + $second_column
-                     , map { 1 + $_ } keys %$row_count;
-            }
-            $x_wings++;
-            foreach my $row ( keys %$row_count ) {
-              foreach my $cell ( @{ $possibility_counts->{ 'row' . $row . ':' . $value } } ) {
-                next if ( $cell->column == $first_column or $cell->column == $second_column );
-                if ($debug) {
-                  printf "X-wing column-based: removal of %d from cell at ( %d, %d )\n"
-                         , $value
-                         , 1 + $row
-                         , 1 + $cell->column;
-                }
-                $progress += $cell->remove_possibility($value);
-              }
-            }
-          }
-        }
-      }
-    }
-  } else {
-    print "Found no row-based pair possibilities.\n";
-  }
-
-  # ROWS
-  $xwing_candidates = {};
-  $possibility_counts = $self->possibilities_hash;
-  $pairs = [ grep { $_ =~ /row/ and scalar( @{ $possibility_counts->{$_} } ) == 2 } keys %{ $possibility_counts } ];
-  if ( scalar @$pairs ) {
-    foreach my $key ( @$pairs ) {
-      ( $row, $value )  = ( $key =~ /row(\d):(\d)/ );
-      push ( @{ $xwing_candidates->{$value} } , $row );
-      # $xwing_candidates->{ value is 4 } is array with all rows where it appears only twice
-    }
-    # loop over all values which have 2 or more rows where this value only appears twice as a candidate
-    # for each pair of such rows see if this value forms an x-wing
-    foreach my $value ( grep { scalar( @{$xwing_candidates->{$_}} ) >= 2 } keys %{ $xwing_candidates } ) {
-      printf "X-wing (row-based): processing value $value,  " if ($debug);
-      printf "which has %d rows where it appears as a candidate only twice.\n", scalar( @{ $xwing_candidates->{$value} } ) if ($debug);
-      foreach my $first    ( 0               ..  ( $#{$xwing_candidates->{$value}} - 1 ) ) { # from first to next-to-last
-        foreach my $second ( ( $first + 1 )  ..  $#{$xwing_candidates->{$value}}         ) { # from one after first to last
-          my $first_row  = $xwing_candidates->{$value}[$first];
-          my $second_row = $xwing_candidates->{$value}[$second];
-          if ($debug) {
-              printf "Examining rows %d and %d.\n"
-                     , 1 + $first_row
-                     , 1 + $second_row;
-          }
-          # I have a pair of rows for which $value shows up only twice as a candidate
-          # if they happen to be in the same two columns, this will form an X-Wing and this value may be removed
-          # from all other cells in the two columns which aren't part of the x-wing.
-          my $column_count = {};
-          # process the 2 cells in the first column, noting the row in which they reside
-          foreach my $cell ( @{ $possibility_counts->{ 'row' . $first_row  . ':' . $value } } ) {
-            $column_count->{ $cell->column }++;
-          }
-          # process the 2 cells in the second column, noting the row in which they reside
-          foreach my $cell ( @{ $possibility_counts->{ 'row' . $second_row . ':' . $value } } ) {
-            $column_count->{ $cell->column }++;
-          }
-          if ( scalar ( keys( %$column_count )  )  == 2 ) { 
-            if ($debug) {
-              printf "We have found a row-based X-wing for $value, involving rows %d and %d and columns %d and %d!\n"
-                     , 1 + $first_row
-                     , 1 + $second_row
-                     , map { 1 + $_ } keys %$column_count;
-            }
-            $x_wings++;
-            foreach my $column ( keys %$column_count ) {
-              foreach my $cell ( @{ $possibility_counts->{ 'col' . $column . ':' . $value } } ) {
-                next if ( $cell->row == $first_row or $cell->row == $second_row );
-                if ($debug) {
-                  printf "X-wing row-based: removal of %d from cell at ( %d, %d )\n"
-                         , $value
-                         , 1 + $cell->row
-                         , 1 + $column;
-                }
-                $progress += $cell->remove_possibility($value);
-              }
-            }
-          }
-        }
-      }
-    }
-  } else {
-    print "Found no row-based pair possibilities.\n";
-  }
-  
-  print "Found and processed $x_wings X-Wings which resulted in $progress candidates being removed.\n\n";
-  return $progress;
+  return Sudoku::Strategy::XWing->new->apply($self);
 }
 
 sub find_hidden_pairs {
-  my $self  = shift;
-  my $progress = 0;
-  my $pairs;
-  print "Looking for Hidden Pairs, (any two candidate values which exist \n";
-  print "only in the same two cells in a given cluster):\n";
-  my $possibility_counts = $self->possibilities_hash;
-# { # DEBUG
-#   print "---- find_hidden_pairs: Start all possibility counts ------\n";
-#   printf "%d %s\n", scalar( @{ $possibility_counts->{$_} } ), $_ foreach ( sort grep { $_=~/col6/ } keys %{ $possibility_counts } );
-#   print "---- find_hidden_pairs: End   all possibility counts ------\n";
-# }
+  my $self = shift;
 
-  # Box examination
-  $pairs = [ sort grep { $_ =~ /box/ and scalar( @{ $possibility_counts->{$_} } ) == 2 } keys %{ $possibility_counts } ];
-  # pairs holds keys representing candidate values that are present only twice in a given box
-  foreach my $first ( 0 .. ( $#{$pairs} - 1 ) ) { # from first to next-to-last
-    foreach my $second ( ( $first + 1 ) .. $#{$pairs} ) { # from one after first to last
-      my( $box1, $box2, $value1, $value2, $cell1, $cell2 );
-      ( $box1, $value1 ) = ( $pairs->[$first]  =~ /box(\d):(\d)/ );
-      ( $box2, $value2 ) = ( $pairs->[$second] =~ /box(\d):(\d)/ );
-      next if ( $box1 != $box2 );
-      printf "Hidden pair (box): comparing candadate values %s and %s.\n", $pairs->[$first], $pairs->[$second];
-      next if ( $possibility_counts->{$pairs->[$first] }[0]->row    != $possibility_counts->{$pairs->[$second]}[0]->row );
-      next if ( $possibility_counts->{$pairs->[$first] }[0]->column != $possibility_counts->{$pairs->[$second]}[0]->column );
-      print "Two candidate values shared first cell.\n";
-      next if ( $possibility_counts->{$pairs->[$first] }[1]->row    != $possibility_counts->{$pairs->[$second]}[1]->row );
-      next if ( $possibility_counts->{$pairs->[$first] }[1]->column != $possibility_counts->{$pairs->[$second]}[1]->column );
-      print "Two candidate values shared second cell!  We have a pair.\n";
-      # two cells are the same for value1 and value2
-      $cell1 = $possibility_counts->{$pairs->[$first] }[0];
-      $cell2 = $possibility_counts->{$pairs->[$first] }[1];
-      if ( $cell1->possibilities->[0] > 2 ) { # first cell of this pair of candidate values have other candidate values
-        foreach my $value ( grep { $_ } @{ $cell1->possibilities }[1..9] ) {
-          print "Hidden pair (box): processing fist cell: candidate value $value?\n";
-          next if ( $value == $value1 or $value == $value2 );
-          print "Hidden pair (box): processing fist cell: Remove it!\n";
-          # remove all others
-          $cell1->remove_possibility($value);
-        }
-        print "Removed all other candidate values from first cell.\n";
-      }
-      if ( $cell2->possibilities->[0] > 2 ) { # second cell of this pair of candidate values have other candidate values
-        foreach my $value ( grep { $_ } @{ $cell1->possibilities }[1..9] ) {
-          next if ( $value == $value1 or $value == $value2 );
-          # remove all others
-          $cell2->remove_possibility($value);
-        }
-        print "Removed all other candidate values from second cell.\n";
-      }
-    }
-  }
-
-  # Row examination
-  $pairs = [ sort grep { $_ =~ /row/ and scalar( @{ $possibility_counts->{$_} } ) == 2 } keys %{ $possibility_counts } ];
-  # pairs holds keys representing candidate values that are present only twice in a given row
-  foreach my $first ( 0 .. ( $#{$pairs} - 1 ) ) {         # from first to next-to-last
-    foreach my $second ( ( $first + 1 ) .. $#{$pairs} ) { # from one after first to last
-      my( $row1, $row2, $value1, $value2, $cell1, $cell2 );
-      ( $row1, $value1 ) = ( $pairs->[$first]  =~ /row(\d):(\d)/ );
-      ( $row2, $value2 ) = ( $pairs->[$second] =~ /row(\d):(\d)/ );
-      next if ( $row1 != $row2 );
-      printf "Hidden pair (row): comparing candadate values %s and %s.\n", $pairs->[$first], $pairs->[$second];
-      next if ( $possibility_counts->{$pairs->[$first] }[0]->column != $possibility_counts->{$pairs->[$second]}[0]->column );
-      print "Two candidate values shared first cell.\n";
-      next if ( $possibility_counts->{$pairs->[$first] }[1]->column != $possibility_counts->{$pairs->[$second]}[1]->column );
-      print "Two candidate values shared second cell!  We have a pair.\n";
-      # two cells are the same for value1 and value2
-      $cell1 = $possibility_counts->{$pairs->[$first] }[0];
-      $cell2 = $possibility_counts->{$pairs->[$first] }[1];
-      if ( $cell1->possibilities->[0] > 2 ) { # first cell of this pair of candidate values have other candidate values
-        foreach my $value ( grep { $_ } @{ $cell1->possibilities }[1..9] ) {
-          print "Hidden pair (row): processing fist cell: candidate value $value?\n";
-          next if ( $value == $value1 or $value == $value2 );
-          print "Hidden pair (row): processing fist cell: Remove it!\n";
-          # remove all others
-          $cell1->remove_possibility($value);
-        }
-        print "Removed all other candidate values from first cell.\n";
-      }
-      if ( $cell2->possibilities->[0] > 2 ) { # second cell of this pair of candidate values have other candidate values
-        foreach my $value ( grep { $_ } @{ $cell1->possibilities }[1..9] ) {
-          next if ( $value == $value1 or $value == $value2 );
-          # remove all others
-          $cell2->remove_possibility($value);
-        }
-        print "Removed all other candidate values from second cell.\n";
-      }
-    }
-  }
-
-  # Column examination
-  $pairs = [ sort grep { $_ =~ /col/ and scalar( @{ $possibility_counts->{$_} } ) == 2 } keys %{ $possibility_counts } ];
-  # pairs holds keys representing candidate values that are present only twice in a given column
-  foreach my $first ( 0 .. ( $#{$pairs} - 1 ) ) {         # from first to next-to-last
-    foreach my $second ( ( $first + 1 ) .. $#{$pairs} ) { # from one after first to last
-      my( $col1, $col2, $value1, $value2, $cell1, $cell2 );
-      ( $col1, $value1 ) = ( $pairs->[$first]  =~ /col(\d):(\d)/ );
-      ( $col2, $value2 ) = ( $pairs->[$second] =~ /col(\d):(\d)/ );
-      next if ( $col1 != $col2 );
-      printf "Hidden pair (col): comparing candadate values %s and %s.\n", $pairs->[$first], $pairs->[$second];
-      next if ( $possibility_counts->{$pairs->[$first] }[0]->row != $possibility_counts->{$pairs->[$second]}[0]->row );
-      print "Two candidate values shared first cell.\n";
-      next if ( $possibility_counts->{$pairs->[$first] }[1]->row != $possibility_counts->{$pairs->[$second]}[1]->row );
-      print "Two candidate values shared second cell!  We have a pair.\n";
-      # two cells are the same for value1 and value2
-      $cell1 = $possibility_counts->{$pairs->[$first] }[0];
-      $cell2 = $possibility_counts->{$pairs->[$first] }[1];
-      if ( $cell1->possibilities->[0] > 2 ) { # first cell of this pair of candidate values have other candidate values
-        foreach my $value ( grep { $_ } @{ $cell1->possibilities }[1..9] ) {
-          print "Hidden pair (col): processing fist cell: candidate value $value?\n";
-          next if ( $value == $value1 or $value == $value2 );
-          print "Hidden pair (col): processing fist cell: Remove it!\n";
-          # remove all others
-          $cell1->remove_possibility($value);
-        }
-        print "Removed all other candidate values from first cell.\n";
-      }
-      if ( $cell2->possibilities->[0] > 2 ) { # second cell of this pair of candidate values have other candidate values
-        foreach my $value ( grep { $_ } @{ $cell1->possibilities }[1..9] ) {
-          next if ( $value == $value1 or $value == $value2 );
-          # remove all others
-          $cell2->remove_possibility($value);
-        }
-        print "Removed all other candidate values from second cell.\n";
-      }
-    }
-  }
-
-  print "Found and processed $progress hidden pairs.\n\n";
-  return $progress;
+  return Sudoku::Strategy::HiddenPairs->new->apply($self);
 }
 
 # Pointing / Claiming: a candidate whose possible locations in one unit are confined to a single intersecting unit
@@ -677,7 +215,7 @@ sub pairs_possible {
     if ( $cell->possibilities->[0] == 2 ) {
       my $pair = "";
       foreach my $value ( @{ $cell->possibilities }[1..9] ) {
-        $pair .= $value if $value;  
+        $pair .= $value if $value;
       }
       printf "Pair %d found in cell ( %d, %d, %d ).\n"
              , $pair
@@ -710,7 +248,7 @@ sub pairs_possible_by_cluster {
     if ( $cell->possibilities->[0] == 2 ) {
       my $pair = "";
       foreach my $value ( @{ $cell->possibilities }[1..9] ) {
-        $pair .= $value if $value;  
+        $pair .= $value if $value;
       }
       printf "Naked pair %d found in cell ( %d, %d, %d ).\n"
              , $pair
@@ -787,7 +325,7 @@ sub remove_my_solution_from_my_mates  {
   }
 }
 
-sub row_mates_of {  # return an array ref to an array containing all the other cells on my row that aren't me 
+sub row_mates_of {  # return an array ref to an array containing all the other cells on my row that aren't me
   my($self,$cell) = @_;
   my $row = $cell->row;
   my $a = [ grep { $_->column != $cell->column } @{$self->rows->[$row]} ];
@@ -795,7 +333,7 @@ sub row_mates_of {  # return an array ref to an array containing all the other c
   $a;
 }
 
-sub column_mates_of {  # return an array ref to an array containing all the other cells on my column that aren't me 
+sub column_mates_of {  # return an array ref to an array containing all the other cells on my column that aren't me
   my($self,$cell) = @_;
   my $column = $cell->column;
   my $a = [ grep { $_->row != $cell->row } @{$self->columns->[$column]} ];
@@ -803,7 +341,7 @@ sub column_mates_of {  # return an array ref to an array containing all the othe
   $a;
 }
 
-sub box_mates_of {  # return an array ref to an array containing all the other cells on my box that aren't me 
+sub box_mates_of {  # return an array ref to an array containing all the other cells on my box that aren't me
   my($self,$cell) = @_;
   my $box = $cell->box;
 # print "my box has " . scalar @{$self->boxes->[$box]} . " cells in it.\n";
@@ -820,7 +358,7 @@ sub intersections {
     print "Cell::intersections called with self as the 'other cell'... cut it out!\n";
     exit 1;
   } else {                                               # DIFF SOMETHING                  X,Y,Z  one+ is 0
-    if ( $cell_1->row == $cell_2->row ) {                # SAME ROW, DIFF COLUMN           
+    if ( $cell_1->row == $cell_2->row ) {                # SAME ROW, DIFF COLUMN
       if ( $cell_1->box == $cell_2->box ) {              # SAME ROW, DIFF COLUMN, SAME BOX 1,0,1
         # members of the shared box and shared row
         push ( @$intersections, grep { $_->column != $cell_2->column }                             @{ $self->row_mates_of($cell_1) } );
@@ -921,7 +459,7 @@ sub out {
   for ( my($r) = 0; $r <= 8; $r++ ) {
     my $off = $r * 9;
     print "   ";
-    printf "%3d", $self->cells->[ $off + $_ ]->value for ( 0 .. 8 ); 
+    printf "%3d", $self->cells->[ $off + $_ ]->value for ( 0 .. 8 );
     print "\n";
   }
 }
@@ -950,7 +488,7 @@ sub pretty_print {
   $format .= "   + - + - + - + - + - + - + - + - + - +\n";
   $format .= " 9 | %s ' %s ' %s | %s ' %s ' %s | %s ' %s ' %s |\n";
     $format .= "   +---+---+---+---+---+---+---+---+---+\n";
- 
+
   printf $format, ( map { $_->value == 0 ?  ' ' : $_->value } @{$self->cells} ) ;
 }
 
@@ -958,23 +496,23 @@ sub pretty_print {
 sub big_print  {
   my($self) = shift;
   my $grid = [];
-  #        ( ( $col + 1 ) * 8 ) 
-  #                        1         2         3         4         5         6         7        
+  #        ( ( $col + 1 ) * 8 )
+  #                        1         2         3         4         5         6         7
   #              0123456789012345678901234567890123456789012345678901234567890123456789012345678
   $grid->[ 0] = "                                                                               "; #  0   center of cell is ( $row * 4 )
-  $grid->[ 1] = "        1       2       3       4       5       6       7       8       9      "; #  1  
-  $grid->[ 2] = "    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  "; #  2      __________ row ______________ 
-  $grid->[ 3] = "    |       '       '       |       '       '       |       '       '       |  "; #  3      int ( ( $val - 1 ) / 3 )  - 1 
-  $grid->[ 4] = "  1 |       '       '       |       '       '       |       '       '       |  "; #  4   1:         0                  -1 
-  $grid->[ 5] = "    |       '       '       |       '       '       |       '       '       |  "; #  5   2:         0                  -1 
-  $grid->[ 6] = "    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  "; #  6   3:         0                  -1 
-  $grid->[ 7] = "    |       '       '       |       '       '       |       '       '       |  "; #  7   4:         1                   0 
-  $grid->[ 8] = "  2 |       '       '       |       '       '       |       '       '       |  "; #  8   5:         1                   0 
-  $grid->[ 9] = "    |       '       '       |       '       '       |       '       '       |  "; #  9   6:         1                   0 
-  $grid->[10] = "    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  "; # 10   7:         2                   1 
-  $grid->[11] = "    |       '       '       |       '       '       |       '       '       |  "; # 11   8:         2                   1 
-  $grid->[12] = "  3 |       '       '       |       '       '       |       '       '       |  "; # 12   9:         2                   1 
-  $grid->[13] = "    |       '       '       |       '       '       |       '       '       |  "; # 13 
+  $grid->[ 1] = "        1       2       3       4       5       6       7       8       9      "; #  1
+  $grid->[ 2] = "    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  "; #  2      __________ row ______________
+  $grid->[ 3] = "    |       '       '       |       '       '       |       '       '       |  "; #  3      int ( ( $val - 1 ) / 3 )  - 1
+  $grid->[ 4] = "  1 |       '       '       |       '       '       |       '       '       |  "; #  4   1:         0                  -1
+  $grid->[ 5] = "    |       '       '       |       '       '       |       '       '       |  "; #  5   2:         0                  -1
+  $grid->[ 6] = "    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  "; #  6   3:         0                  -1
+  $grid->[ 7] = "    |       '       '       |       '       '       |       '       '       |  "; #  7   4:         1                   0
+  $grid->[ 8] = "  2 |       '       '       |       '       '       |       '       '       |  "; #  8   5:         1                   0
+  $grid->[ 9] = "    |       '       '       |       '       '       |       '       '       |  "; #  9   6:         1                   0
+  $grid->[10] = "    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  "; # 10   7:         2                   1
+  $grid->[11] = "    |       '       '       |       '       '       |       '       '       |  "; # 11   8:         2                   1
+  $grid->[12] = "  3 |       '       '       |       '       '       |       '       '       |  "; # 12   9:         2                   1
+  $grid->[13] = "    |       '       '       |       '       '       |       '       '       |  "; # 13
   $grid->[14] = "    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  "; # 14   _____________ col ______________
   $grid->[15] = "    |       '       '       |       '       '       |       '       '       |  "; # 15   ( ( ( $val - 1 ) % 3 ) - 1 ) * 2
   $grid->[16] = "  4 |       '       '       |       '       '       |       '       '       |  "; # 16   1:     0                -1    -2
@@ -986,27 +524,27 @@ sub big_print  {
   $grid->[22] = "    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  "; # 22   7:     0                -1    -2
   $grid->[23] = "    |       '       '       |       '       '       |       '       '       |  "; # 23   8:     1                 0     0
   $grid->[24] = "  6 |       '       '       |       '       '       |       '       '       |  "; # 24   9:     2                 1     2
-  $grid->[25] = "    |       '       '       |       '       '       |       '       '       |  "; # 25 
-  $grid->[26] = "    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  "; # 26 
-  $grid->[27] = "    |       '       '       |       '       '       |       '       '       |  "; # 27 
-  $grid->[28] = "  7 |       '       '       |       '       '       |       '       '       |  "; # 28 
-  $grid->[29] = "    |       '       '       |       '       '       |       '       '       |  "; # 29 
-  $grid->[30] = "    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  "; # 30 
-  $grid->[31] = "    |       '       '       |       '       '       |       '       '       |  "; # 31 
-  $grid->[32] = "  8 |       '       '       |       '       '       |       '       '       |  "; # 32 
-  $grid->[33] = "    |       '       '       |       '       '       |       '       '       |  "; # 33 
-  $grid->[34] = "    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  "; # 34 
-  $grid->[35] = "    |       '       '       |       '       '       |       '       '       |  "; # 35 
-  $grid->[36] = "  9 |       '       '       |       '       '       |       '       '       |  "; # 36 
-  $grid->[37] = "    |       '       '       |       '       '       |       '       '       |  "; # 37 
-  $grid->[38] = "    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  "; # 38 
- 
+  $grid->[25] = "    |       '       '       |       '       '       |       '       '       |  "; # 25
+  $grid->[26] = "    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  "; # 26
+  $grid->[27] = "    |       '       '       |       '       '       |       '       '       |  "; # 27
+  $grid->[28] = "  7 |       '       '       |       '       '       |       '       '       |  "; # 28
+  $grid->[29] = "    |       '       '       |       '       '       |       '       '       |  "; # 29
+  $grid->[30] = "    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  "; # 30
+  $grid->[31] = "    |       '       '       |       '       '       |       '       '       |  "; # 31
+  $grid->[32] = "  8 |       '       '       |       '       '       |       '       '       |  "; # 32
+  $grid->[33] = "    |       '       '       |       '       '       |       '       '       |  "; # 33
+  $grid->[34] = "    + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- + ----- +  "; # 34
+  $grid->[35] = "    |       '       '       |       '       '       |       '       '       |  "; # 35
+  $grid->[36] = "  9 |       '       '       |       '       '       |       '       '       |  "; # 36
+  $grid->[37] = "    |       '       '       |       '       '       |       '       '       |  "; # 37
+  $grid->[38] = "    +-------+-------+-------+-------+-------+-------+-------+-------+-------+  "; # 38
+
    foreach my $cell ( @{ $self->solved_cells } ) {
     substr( $grid->[ ( $cell->row + 1 ) * 4 ],
             ( ( $cell->column + 1 ) * 8 ),
             1, $cell->value);
   }
-  
+
   foreach my $cell ( @{ $self->unsolved_cells } ) {
     foreach my $value ( grep { $_ } ( @{$cell->possibilities}[1..9] ) ) {
       substr( $grid->[ ( ( $cell->row + 1 ) * 4 )   +   int ( ( $value - 1 ) / 3 ) - 1 ],
@@ -1042,7 +580,7 @@ __END__
   $format .= " 9 I %s | %s | %s I %s | %s | %s I %s | %s | %s I\n";
   $format .= "   +===+===+===+===+===+===+===+===+===+\n";
 
-       1   2   3   4   5   6   7   8   9  
+       1   2   3   4   5   6   7   8   9
      +===+===+===+===+===+===+===+===+===+
    1 I   |   |   I   |   |   I   |   |   I
      + - + - + - + - + - + - + - + - + - +
@@ -1093,9 +631,9 @@ __END__
      Value           -> single digit 1 - 9
      Possible values -> array 1 .. 9, with numbers for those that are possible and zeros for those that are not.
                         example, [ 1, 0, 0, 4, 0, 0, 0, 0, 0, 9 ] would be a cell who's possible remaining values would be 1, 4 and 9
-     Box             -> number from 1 - 9, to which box    does this cell belong    
-     Row             -> number from 1 - 9, to which row    does this cell belong    
-     Column          -> number from 1 - 9, to which column does this cell belong    
+     Box             -> number from 1 - 9, to which box    does this cell belong
+     Row             -> number from 1 - 9, to which row    does this cell belong
+     Column          -> number from 1 - 9, to which column does this cell belong
 
 
      substr EXPR,OFFSET,LENGTH,REPLACEMENT

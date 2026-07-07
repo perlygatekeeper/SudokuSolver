@@ -30,6 +30,10 @@ my @PROJECT_MODULES = qw(
     Sudoku::Strategy::NakedSingles
     Sudoku::Strategy::HiddenSingles
     Sudoku::Strategy::PointingClaiming
+    Sudoku::Strategy::NakedPairs
+    Sudoku::Strategy::HiddenPairs
+    Sudoku::Strategy::XWing
+    Sudoku::Strategy::RemotePairs
 );
 
 sub project_modules {

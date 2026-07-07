@@ -31,7 +31,7 @@ sub clue {
      $self->value(0);
      $self->possibilities( [ 9, 1, 2, 3, 4, 5, 6, 7, 8, 9 ] );
   }
-}; 
+};
 
 sub remove_possibility {
   my ($self,$value) = @_;
@@ -70,24 +70,24 @@ sub show_my_possibilities {
 sub my_mates        { # all other cells in any of my row, column or box
   my $self = shift;
 
-}; 
+};
 
 sub my_row_mates    { # all other cells in his cell's row
   my $self = shift;
   $self->row;
   return [ ];
 
-}; 
+};
 
 sub my_column_mates { # all other cells in his cell's column
   my $self = shift;
 
-}; 
+};
 
 sub my_box_mates    { # all other cells in his cell's box
   my $self = shift;
 
-}; 
+};
 
 
 1;

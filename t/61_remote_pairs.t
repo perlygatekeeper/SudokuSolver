@@ -8,6 +8,7 @@ use Test::More;
 use lib 'lib';
 
 use Grid;
+use Sudoku::Strategy::RemotePairs;
 use Sudoku::Test qw(capture_stdout);
 
 sub set_possibilities {

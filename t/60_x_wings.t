@@ -8,6 +8,7 @@ use Test::More;
 use lib 'lib';
 
 use Grid;
+use Sudoku::Strategy::XWing;
 use Sudoku::Test qw(capture_stdout);
 
 my $grid = Grid->new;

@@ -32,6 +32,12 @@ all:
  	  ./bin/sudoku.pl $$puzzle > Puzzles/$${puzzle}_solution.txt || exit 1; \
 	done
 
+tidy:
+	@find lib t bin -name '*.pm' -o -name '*.pl' -o -name '*.t' | \
+	while read f; do \
+	    perl -pi -e 's/[ \t]+$$//' "$$f"; \
+	done
+
 17-50:
 	for puzzle in `countdown -f '%02d  ' 1 50`; do \
 	  echo $$puzzle; \
