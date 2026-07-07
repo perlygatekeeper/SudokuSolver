@@ -9,6 +9,7 @@ use Test::More ();
 our @EXPORT_OK = qw(
     project_modules
     test_project_modules
+    capture_stdout
 );
 
 my @PROJECT_MODULES = qw(
@@ -32,6 +33,19 @@ sub test_project_modules {
     }
 
     return @modules;
+}
+
+sub capture_stdout (&) {
+    my ($code) = @_;
+    my $output = '';
+
+    open my $stdout, '>', \$output
+        or die "Could not open scalar stdout handle: $!";
+
+    local *STDOUT = $stdout;
+    $code->();
+
+    return $output;
 }
 
 1;
