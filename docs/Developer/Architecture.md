@@ -112,3 +112,19 @@ Sudoku::Strategy->strategies;
 `Solver` uses this list as the default strategy order.  This keeps strategy
 ordering in one place and prepares the solver for configurable strategy sets,
 strategy statistics, difficulty scoring, and Hint Mode.
+
+## Tiered Strategy Restart Order
+
+The solver preserves the legacy strategy hierarchy. Strategies are ordered from
+easiest to hardest. A solving pass starts with the easiest strategy and climbs
+only when easier strategies fail.
+
+When any strategy makes progress, the solver stops the current pass and starts
+the next pass again from the easiest strategy. This means a successful Hidden
+Pair, X-Wing, or other higher-tier strategy immediately gives Naked Singles and
+other easier strategies the next opportunity to act.
+
+This behavior is intentional because higher-tier deductions often expose simpler
+follow-up deductions. It also keeps the solve log aligned with a human-style
+solving hierarchy and provides a natural basis for future difficulty scoring.
+

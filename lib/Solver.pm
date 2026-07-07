@@ -256,7 +256,14 @@ sub run {
 
     for my $strategy ( $self->strategies ) {
       last if $puzzle->solved > 80;
-      $pass_progress += $self->run_strategy( $puzzle, $strategy );
+
+      my $strategy_progress = $self->run_strategy( $puzzle, $strategy );
+      $pass_progress += $strategy_progress;
+
+      # Preserve the legacy solving hierarchy: after any successful strategy,
+      # restart the next pass from the easiest strategy rather than continuing
+      # on to harder strategies in the same pass.
+      last if $strategy_progress;
     }
 
     print "==== End Pass " . $pass . " (progress is $pass_progress) ====\n";
