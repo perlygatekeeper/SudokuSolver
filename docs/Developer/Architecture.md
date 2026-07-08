@@ -170,3 +170,16 @@ Grid / Cell
 ```
 
 The contract is enforced by `t/39_strategy_contract.t`.
+
+## Step-by-Step Solving
+
+`Solver->step($grid)` performs one logical deduction. It scans the registered
+strategies in canonical order, applies the first deduction that makes progress,
+records it in the solver deduction log, and returns the applied `Sudoku::Deduction`
+object.
+
+If no strategy can make progress, `step` returns undef.
+
+This API is the foundation for Hint Mode, Explain Mode, and interactive
+step-by-step solving. Full `run()` behavior should remain compatible with the
+legacy tiered strategy order, while `step()` exposes one deduction at a time.

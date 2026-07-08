@@ -47,7 +47,8 @@ sub load_from_string {
   $self->columns([[],[],[],[],[],[],[],[],[]]);
   $self->boxes([[],[],[],[],[],[],[],[],[]]);
   foreach ( split(//,$string) ) {
-    s/[^1-9]/0/; # Change any character not 1, 2, 3, 4, 5, 6, 7, 8 OR 9  TO A  '0'  Such as underscores, dashes, periods or spaces
+    # following line was not needed as the Puzzle string should be normalized by the normalize_puzzle_string() function
+    # s/[^1-9]/0/g; # Change any character not 1, 2, 3, 4, 5, 6, 7, 8 OR 9  TO A  '0'  Such as underscores, dashes, periods or spaces
     my($col) = ( $cell  % 9 );
     my($row) = int( $cell / 9 );
     my($box) = int( ( $cell % 9 ) / 3 ) + 3 * int ( int( $cell / 9 ) / 3 );

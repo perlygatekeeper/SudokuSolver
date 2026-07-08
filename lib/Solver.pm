@@ -167,10 +167,10 @@ sub normalize_puzzle_string {
   my ( $self, $puzzle_string ) = @_;
 
   $puzzle_string =~ s/\s+//g;
-  $puzzle_string =~ tr/./0/;
+  $puzzle_string =~ s/[^1-9]/0/g;
 
-  die "Puzzle string must contain exactly 81 digits or dots\n"
-    unless $puzzle_string =~ /^\d{81}$/;
+  die "Puzzle string must contain exactly 81 digits or (0's, dots, dashes, or underscores for empty cells)\n"
+    unless length($puzzle_string) == 81;
 
   return $puzzle_string;
 }
@@ -212,6 +212,28 @@ sub puzzle_string_from_options {
     if $puzzle_index < 1 || $puzzle_index > @puzzle_strings;
 
   return $puzzle_strings[ $puzzle_index - 1 ];
+}
+
+sub step {
+  my ( $self, $grid ) = @_;
+
+  die "step requires a Grid object\n"
+    unless blessed($grid) && $grid->isa('Grid');
+
+  return if $grid->solved > 80;
+
+  for my $strategy ( $self->strategies ) {
+    my @deductions = $strategy->apply($grid);
+
+    for my $deduction (@deductions) {
+      next unless $deduction;
+
+      my $progress = $self->apply_deduction( $grid, $deduction );
+      return $deduction if $progress;
+    }
+  }
+
+  return;
 }
 
 sub run_strategy {
