@@ -24,6 +24,7 @@ can_ok(
         record_deduction
         clear_deductions
         deduction_count
+        statistics
         apply_deductions
         apply_deduction
         run_strategy

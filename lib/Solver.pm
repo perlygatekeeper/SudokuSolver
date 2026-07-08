@@ -12,6 +12,7 @@ use Grid;
 use Scalar::Util qw(blessed);
 use Sudoku::Deduction;
 use Sudoku::Strategy;
+use Sudoku::Statistics;
 
 has 'default_puzzle_file' => (
   isa     => 'Str',
@@ -69,6 +70,12 @@ sub deduction_count {
   my ($self) = @_;
 
   return scalar @{ $self->deductions };
+}
+
+sub statistics {
+  my ($self) = @_;
+
+  return Sudoku::Statistics->from_solver($self);
 }
 
 sub apply_deductions {
