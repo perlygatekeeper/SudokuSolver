@@ -218,3 +218,17 @@ If no strategy can make progress, `step` returns undef.
 This API is the foundation for Hint Mode, Explain Mode, and interactive
 step-by-step solving. Full `run()` behavior should remain compatible with the
 legacy tiered strategy order, while `step()` exposes one deduction at a time.
+
+### Explain Mode
+
+Explain Mode formats a `Sudoku::Deduction` as human-readable text without
+changing the puzzle.  The solver exposes this through:
+
+```perl
+$solver->explain_deduction($deduction);
+$solver->explain_next($grid);
+```
+
+`explain_next()` is intentionally non-mutating.  It uses the same discovery
+path as Hint Mode, but returns text instead of the raw deduction object.
+

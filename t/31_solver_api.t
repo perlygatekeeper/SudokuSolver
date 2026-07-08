@@ -25,6 +25,8 @@ can_ok(
         clear_deductions
         deduction_count
         statistics
+        explain_deduction
+        explain_next
         apply_deductions
         apply_deduction
         hint

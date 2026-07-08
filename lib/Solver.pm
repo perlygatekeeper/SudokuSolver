@@ -14,6 +14,7 @@ use Sudoku::Deduction;
 use Sudoku::Contradiction;
 use Sudoku::Strategy;
 use Sudoku::Statistics;
+use Sudoku::Explain;
 
 has 'default_puzzle_file' => (
   isa     => 'Str',
@@ -180,6 +181,21 @@ sub statistics {
   my ($self) = @_;
 
   return Sudoku::Statistics->from_solver($self);
+}
+
+sub explain_deduction {
+  my ( $self, $deduction ) = @_;
+
+  return Sudoku::Explain->new->explain_deduction($deduction);
+}
+
+sub explain_next {
+  my ( $self, $grid ) = @_;
+
+  my $deduction = $self->hint($grid);
+  return unless $deduction;
+
+  return $self->explain_deduction($deduction);
 }
 
 sub apply_deductions {
