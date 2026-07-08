@@ -42,7 +42,6 @@ my $output = capture_stdout {
 };
 
 is($progress, 6, 'find_pointing_claiming applies Pointing / Claiming and removes six outside-row possibilities');
-like($output, qr/Looking for Pointing \/ Claiming/, 'strategy announces Pointing/Claiming search');
 
 for my $column (0, 1, 2) {
     ok(

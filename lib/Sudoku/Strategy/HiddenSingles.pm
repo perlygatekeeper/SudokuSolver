@@ -18,7 +18,6 @@ sub apply {
     my $possible_value;
     my $possibility_counts;
 
-    print "Looking for Hidden Singles (candidate values present in only one cell of a unit [row, column, or box]):\n";
 
     $possibility_counts = $grid->possibilities_hash;
 
@@ -65,7 +64,6 @@ sub apply {
         push @deductions, $deduction if $deduction;
     }
 
-    print "Found and set " . scalar(@deductions) . " cells this Hidden Singles search pass.\n\n";
     return @deductions;
 }
 

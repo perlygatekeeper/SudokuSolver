@@ -63,8 +63,6 @@ my $output = capture_stdout {
 is(scalar @deductions, 4, 'RemotePairs returns two candidate removals for two intersections');
 isa_ok($deductions[0], 'Sudoku::Deduction');
 is($progress, 4, 'applying RemotePairs deductions removes two candidates from two intersections');
-like($output, qr/Looking for Remote Pairs/, 'strategy announces remote pair search');
-like($output, qr/Remote pair candidate: 25 is in 2 cells/, 'strategy identifies the pair candidate');
 
 ok($first->possibilities->[2],  '2 remains possible in first remote-pair candidate');
 ok($first->possibilities->[5],  '5 remains possible in first remote-pair candidate');

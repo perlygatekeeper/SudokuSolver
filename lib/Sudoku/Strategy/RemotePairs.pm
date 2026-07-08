@@ -12,11 +12,8 @@ sub name {
 sub apply {
   my ($self, $grid) = @_;
   my @deductions;
-  print "Looking for Remote Pairs, any two cells with the same\n";
-  print "pair of possible values that exist in the different clusters [row column or box]):\n";
   my $pairs = $grid->pairs_possible;
   foreach my $key ( grep { scalar( @{ $pairs->{$_} } ) >= 2  } ( keys %{ $pairs } ) ) {
-    printf "Remote pair candidate: %s is in %d cells.\n", $key, scalar ( @{ $pairs->{$key} } ) ;
     foreach my $first ( 0 .. ( $#{$pairs->{$key}} - 1 ) ) {
       foreach my $second ( ( $first + 1 ) .. $#{$pairs->{$key}} ) {
         next if ( $pairs->{$key}[$first]->row    == $pairs->{$key}[$second]->row );
@@ -47,7 +44,6 @@ sub apply {
       }
     }
   }
-  print 'Found and processed ' . scalar(@deductions) . " cells this remote pair search pass.\n\n";
   return @deductions;
 }
 

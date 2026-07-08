@@ -55,8 +55,6 @@ my $output = capture_stdout {
 is(scalar @deductions, 14, 'XWing returns fourteen candidate-removal deductions');
 isa_ok($deductions[0], 'Sudoku::Deduction');
 is($progress, 14, 'applying XWing deductions removes fourteen candidates from two columns');
-like($output, qr/Looking for X-Wing/, 'strategy announces X-Wing search');
-like($output, qr/row-based X-wing/, 'strategy finds the row-based X-Wing');
 
 for my $row (0, 3) {
     for my $column (1, 6) {

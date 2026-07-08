@@ -5,6 +5,15 @@ use warnings;
 
 use Sudoku::Deduction;
 
+
+# Strategy subclasses implement a discovery-only contract:
+#
+#     my @deductions = $strategy->apply($grid);
+#
+# A strategy may inspect the grid and return Sudoku::Deduction objects, but it
+# must not print, set cell values, remove candidates, or otherwise mutate the
+# puzzle directly. Solver is responsible for applying and recording deductions.
+
 sub new {
     my ($class, %args) = @_;
     return bless \%args, $class;

@@ -12,8 +12,6 @@ sub name {
 sub apply {
   my ($self, $grid) = @_;
   my @deductions;
-  print "Looking for Naked Pairs, any two cells with the same\n";
-  print "pair of possible values that exist in the same cluster [row column or box]):\n";
 
   my $pairs = $grid->pairs_possible_by_cluster;
 
@@ -103,7 +101,6 @@ sub apply {
     }
   }
 
-  print 'Found and processed ' . scalar(@deductions) . " naked pairs.\n\n";
   return @deductions;
 }
 

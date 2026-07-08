@@ -58,7 +58,6 @@ my $output = capture_stdout {
 is(scalar @deductions, 14, 'NakedPairs returns two candidate-removal deductions for seven row mates');
 isa_ok($deductions[0], 'Sudoku::Deduction');
 is($progress, 14, 'applying NakedPairs deductions removes two candidates from seven row mates');
-like($output, qr/Looking for Naked Pairs/, 'strategy announces naked pair search');
 
 ok($first->possibilities->[2],  '2 remains possible in first naked-pair cell');
 ok($first->possibilities->[5],  '5 remains possible in first naked-pair cell');

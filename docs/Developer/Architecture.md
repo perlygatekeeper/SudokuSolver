@@ -128,3 +128,45 @@ This behavior is intentional because higher-tier deductions often expose simpler
 follow-up deductions. It also keeps the solve log aligned with a human-style
 solving hierarchy and provides a natural basis for future difficulty scoring.
 
+
+## Strategy Contract Audit
+
+Phase 1 formalizes the strategy contract.
+
+A strategy module is responsible for discovering logical deductions only.  It
+must not apply those deductions directly and it must not produce user-facing
+output.
+
+Current strategy contract:
+
+```perl
+my @deductions = $strategy->apply($grid);
+```
+
+Strategy modules must:
+
+* inspect the `Grid`, `Cell`, and candidate state,
+* return zero or more `Sudoku::Deduction` objects,
+* leave all puzzle mutation to `Solver` or legacy Grid wrapper code,
+* avoid printing directly,
+* avoid setting cell values directly,
+* avoid removing candidates directly,
+* avoid replacing candidate arrays directly.
+
+This keeps the responsibilities separated:
+
+```text
+Strategy
+    finds deductions
+
+Deduction
+    describes logical actions
+
+Solver
+    applies deductions and records the solve log
+
+Grid / Cell
+    represent puzzle state
+```
+
+The contract is enforced by `t/39_strategy_contract.t`.

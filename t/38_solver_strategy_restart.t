@@ -14,6 +14,7 @@ use Sudoku::Test qw(capture_stdout);
 our @CALLS;
 our $HIGHER_SUCCEEDED;
 our $EASIEST_AFTER_HIGHER;
+our $HARDEST_SAW_RESTART;
 
 {
     package Local::Restart::Easiest;
@@ -84,10 +85,7 @@ our $EASIEST_AFTER_HIGHER;
 
         push @main::CALLS, 'hardest';
 
-        ok(
-            $main::EASIEST_AFTER_HIGHER,
-            'solver restarted at the easiest strategy before trying a harder strategy',
-        );
+        $main::HARDEST_SAW_RESTART = $main::EASIEST_AFTER_HIGHER;
 
         return;
     }
@@ -114,6 +112,11 @@ is_deeply(
     \@CALLS,
     [ qw(easiest higher higher easiest higher hardest) ],
     'solver restarts from the easiest strategy after higher-tier progress',
+);
+
+ok(
+    $HARDEST_SAW_RESTART,
+    'solver restarted at the easiest strategy before trying a harder strategy',
 );
 
 like($output, qr/==== Pass 1 ====/, 'first pass is reported');

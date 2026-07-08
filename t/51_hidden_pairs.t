@@ -44,8 +44,6 @@ my $output = capture_stdout {
 is(scalar @deductions, 14, 'HiddenPairs returns candidate-removal deductions for both pair cells');
 isa_ok($deductions[0], 'Sudoku::Deduction');
 is($progress, 14, 'applying HiddenPairs deductions removes all non-pair candidates');
-like($output, qr/Looking for Hidden Pairs/, 'strategy announces hidden pair search');
-like($output, qr/Hidden pair \(row\)/, 'strategy finds the row-based hidden pair');
 
 is_deeply(values_left($first), [ 2, 5 ], 'first hidden-pair cell keeps only the pair values');
 
