@@ -181,19 +181,37 @@ sub puzzle_strings_from_file {
   open my $puzzle_fh, '<', $puzzle_file
       or die "Could not open '$puzzle_file': $!";
 
-  my @puzzle_strings;
+  my @lines;
   while ( my $line = <$puzzle_fh> ) {
-    next if ( $line =~ /^\s*$|^\s*#/ ); # skip white, blank and commented lines.
     chomp $line;
-    $line =~ s/\s+//g;
+    $line =~ s/#.*$//;     # strip end-of-line comments
+    $line =~ s/^\s+//;
+    $line =~ s/\s+$//;
     next unless length $line;
-    push @puzzle_strings, $self->normalize_puzzle_string($line);
+    push @lines, $line;
   }
   close $puzzle_fh;
 
-  die "No puzzle strings found in '$puzzle_file'\n" unless @puzzle_strings;
+  die "No puzzle strings found in '$puzzle_file'\n" unless @lines;
 
-  return @puzzle_strings;
+  if ( @lines == 9 ) {
+    my @normalized_rows = map { $self->normalize_puzzle_row($_) } @lines;
+
+    if ( ! grep { length($_) != 9 } @normalized_rows ) {
+      return join '', @normalized_rows;
+    }
+  }
+
+  return map { $self->normalize_puzzle_string($_) } @lines;
+}
+
+sub normalize_puzzle_row {
+  my ( $self, $row_string ) = @_;
+
+  $row_string =~ s/\s+//g;
+  $row_string =~ s/[^1-9]/0/g;
+
+  return $row_string;
 }
 
 sub puzzle_string_from_options {

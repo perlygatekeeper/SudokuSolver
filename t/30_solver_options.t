@@ -93,4 +93,54 @@ like(
     'puzzle_string_from_options rejects an out-of-range puzzle index',
 );
 
+
+my ( $list_fh, $list_filename ) = tempfile();
+print {$list_fh} "$puzzle_1 # first puzzle comment\n";
+print {$list_fh} "$puzzle_2 # second puzzle comment\n";
+close $list_fh;
+
+is_deeply(
+    [ $solver->puzzle_strings_from_file($list_filename) ],
+    [ $puzzle_1, $puzzle_2 ],
+    'puzzle_strings_from_file strips end-of-line comments from puzzle-list files',
+);
+
+my ( $grid_fh, $grid_filename ) = tempfile();
+print {$grid_fh} "# single grid with comments and blanks\n";
+print {$grid_fh} "003020600  # row 1\n";
+print {$grid_fh} "900305001\n";
+print {$grid_fh} "001806400\n";
+print {$grid_fh} "\n";
+print {$grid_fh} "008102900\n";
+print {$grid_fh} "700000008\n";
+print {$grid_fh} "006708200\n";
+print {$grid_fh} "002609500\n";
+print {$grid_fh} "800203009\n";
+print {$grid_fh} "005010300\n";
+close $grid_fh;
+
+is_deeply(
+    [ $solver->puzzle_strings_from_file($grid_filename) ],
+    [ $puzzle_1 ],
+    'puzzle_strings_from_file recognizes a single puzzle spread across nine rows',
+);
+
+my ( $mixed_fh, $mixed_filename ) = tempfile();
+print {$mixed_fh} "12345678. # row 1\n";
+print {$mixed_fh} "2345678.1\n";
+print {$mixed_fh} "345678.12\n";
+print {$mixed_fh} "45678.123\n";
+print {$mixed_fh} "5678.1234\n";
+print {$mixed_fh} "678.12345\n";
+print {$mixed_fh} "78.123456\n";
+print {$mixed_fh} "8_1234567\n";
+print {$mixed_fh} "-12345678\n";
+close $mixed_fh;
+
+is_deeply(
+    [ $solver->puzzle_strings_from_file($mixed_filename) ],
+    [ '123456780234567801345678012456780123567801234678012345780123456801234567012345678' ],
+    'single-grid files accept dots, underscores, dashes, and comments',
+);
+
 done_testing();

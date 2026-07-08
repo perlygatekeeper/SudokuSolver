@@ -29,6 +29,7 @@ can_ok(
         apply_deduction
         run_strategy
         normalize_puzzle_string
+        normalize_puzzle_row
         puzzle_strings_from_file
         puzzle_string_from_options
         run
