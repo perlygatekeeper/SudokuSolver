@@ -1,8 +1,10 @@
 # SudokuSolver Developer Notes
 
-This directory records design rationale, internal contracts, and development plans.
+This directory records design rationale, internal contracts, and development
+plans.
 
-These notes are not user-facing documentation. They exist so future development can preserve the intent of the codebase while the implementation changes.
+These notes are not user-facing documentation. They exist so future development
+can preserve the intent of the codebase while the implementation changes.
 
 ## Current Documents
 
@@ -13,4 +15,5 @@ These notes are not user-facing documentation. They exist so future development 
 
 ## Guiding Rule
 
-When code structure changes, update these documents if the intent, responsibility boundaries, or contracts change.
+When code structure changes, update these documents if the intent,
+responsibility boundaries, or contracts change.

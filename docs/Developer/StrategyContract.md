@@ -52,4 +52,6 @@ Hidden Single: 5 can only appear once in row 3, so R3C7 must be 5.
 
 ## Transitional Rule
 
-Existing strategy code may remain in `Grid.pm` until tests exist around the behavior. Do not split strategy code out merely for neatness unless the split is protected by tests or is obviously behavior-preserving.
+Existing strategy code may remain in `Grid.pm` until tests exist around the
+behavior. Do not split strategy code out merely for neatness unless the split
+is protected by tests or is obviously behavior-preserving.
