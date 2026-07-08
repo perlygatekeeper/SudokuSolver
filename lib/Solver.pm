@@ -11,6 +11,7 @@ use Cell;
 use Grid;
 use Scalar::Util qw(blessed);
 use Sudoku::Deduction;
+use Sudoku::Contradiction;
 use Sudoku::Strategy;
 use Sudoku::Statistics;
 
@@ -21,6 +22,109 @@ has 'default_puzzle_file' => (
 );
 
 
+
+
+has 'status' => (
+  isa     => 'Str',
+  is      => 'rw',
+  default => 'ready',
+);
+
+has 'contradiction' => (
+  isa       => 'Maybe[Sudoku::Contradiction]',
+  is        => 'rw',
+  predicate => 'has_contradiction',
+  clearer   => 'clear_contradiction',
+);
+
+sub reset_status {
+  my ($self) = @_;
+
+  $self->status('ready');
+  $self->clear_contradiction;
+
+  return $self;
+}
+
+sub check_contradiction {
+  my ( $self, $grid ) = @_;
+
+  die "check_contradiction requires a Grid object\n"
+    unless blessed($grid) && $grid->isa('Grid');
+
+  my $contradiction = $self->_find_contradiction($grid);
+
+  if ($contradiction) {
+    $self->contradiction($contradiction);
+    $self->status('contradiction');
+    return $contradiction;
+  }
+
+  return;
+}
+
+sub _find_contradiction {
+  my ( $self, $grid ) = @_;
+
+  for my $cell ( @{ $grid->cells } ) {
+    next if $cell->value;
+    next if $cell->possibilities->[0] > 0;
+
+    return Sudoku::Contradiction->new(
+      kind        => 'zero_candidates',
+      message     => 'Unsolved cell has no remaining candidates.',
+      cell        => $cell,
+      explanation => sprintf(
+        'Cell R%dC%d has no remaining candidates.',
+        $cell->row + 1,
+        $cell->column + 1,
+      ),
+    );
+  }
+
+  for my $unit_spec (
+    [ row    => $grid->rows ],
+    [ column => $grid->columns ],
+    [ box    => $grid->boxes ],
+  ) {
+    my ( $unit_name, $units ) = @{$unit_spec};
+
+    for my $index ( 0 .. $#{$units} ) {
+      my %seen;
+
+      for my $cell ( @{ $units->[$index] } ) {
+        my $value = $cell->value;
+        next unless $value;
+
+        if ( my $first = $seen{$value} ) {
+          return Sudoku::Contradiction->new(
+            kind        => 'duplicate_value',
+            message     => sprintf(
+              'Duplicate value %d found in %s %d.',
+              $value,
+              $unit_name,
+              $index + 1,
+            ),
+            cell        => $cell,
+            cells       => [ $first, $cell ],
+            unit        => sprintf('%s %d', $unit_name, $index + 1),
+            value       => $value,
+            explanation => sprintf(
+              'Value %d appears more than once in %s %d.',
+              $value,
+              $unit_name,
+              $index + 1,
+            ),
+          );
+        }
+
+        $seen{$value} = $cell;
+      }
+    }
+  }
+
+  return;
+}
 
 has 'strategy_classes' => (
   isa     => 'ArrayRef[Str]',
@@ -137,6 +241,7 @@ sub _apply_set_value_deduction {
   }
 
   $self->record_deduction($deduction);
+  $self->check_contradiction($grid);
 
   return 1;
 }
@@ -158,7 +263,10 @@ sub _apply_remove_candidate_deduction {
 
   print $deduction->reason . "\n" if $removed && $deduction->reason;
 
-  $self->record_deduction($deduction) if $removed;
+  if ($removed) {
+    $self->record_deduction($deduction);
+    $self->check_contradiction($grid);
+  }
 
   return $removed ? 1 : 0;
 }
@@ -239,6 +347,7 @@ sub step {
     unless blessed($grid) && $grid->isa('Grid');
 
   return if $grid->solved > 80;
+  return if $self->check_contradiction($grid);
 
   for my $strategy ( $self->strategies ) {
     my @deductions = $strategy->apply($grid);
@@ -265,7 +374,7 @@ sub run_strategy {
 
   my $total_progress = 0;
 
-  while ( $grid->solved <= 80 ) {
+  while ( $grid->solved <= 80 and not $self->has_contradiction ) {
     my @deductions = $strategy->apply($grid);
     my $progress   = $self->apply_deductions( $grid, @deductions );
 
@@ -293,10 +402,13 @@ sub run {
   my $puzzle = Grid->new;
   $puzzle->load_from_string($puzzle_string);
 
+  $self->reset_status;
+  $self->check_contradiction($puzzle);
+
   my($pass_progress) = 1;
   my($pass) = 0;
 
-  while ( $puzzle->solved <= 80 and $pass_progress ) {
+  while ( $puzzle->solved <= 80 and $pass_progress and not $self->has_contradiction ) {
     print "==== Pass " . ++$pass . " ====\n";
     $pass_progress = 0;
     $puzzle->big_print;
@@ -317,7 +429,9 @@ sub run {
 
   }
 
-  if ( $puzzle->solved == 81 ) {
+  if ( $self->has_contradiction ) {
+    print "Contradiction detected: " . $self->contradiction->summary . "\n";
+  } elsif ( $puzzle->solved == 81 ) {
     print "We have solved this puzzle.  Final solution is:\n";
     print $_->value foreach ( @{$puzzle->cells} );
     print "\n";

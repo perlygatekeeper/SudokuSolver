@@ -20,6 +20,7 @@ my @PROJECT_MODULES = qw(
     Grid
     Solver
     Sudoku::Deduction
+    Sudoku::Contradiction
     Sudoku::Statistics
     Sudoku::Difficulty
     Sudoku::Canonical
