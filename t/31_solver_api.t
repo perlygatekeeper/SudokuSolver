@@ -20,6 +20,8 @@ can_ok(
         strategy_classes
         strategies
         strategy_names
+        debug
+        trace_grid_after_deduction
         deductions
         record_deduction
         clear_deductions
@@ -27,6 +29,7 @@ can_ok(
         statistics
         explain_deduction
         explain_next
+        trace_deduction
         apply_deductions
         apply_deduction
         hint

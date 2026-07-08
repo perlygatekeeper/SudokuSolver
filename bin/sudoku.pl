@@ -18,6 +18,8 @@ my $puzzle_string;
 my $show_help;
 my $show_version;
 my $benchmark_file;
+my $debug;
+my $trace_grid_after_deduction;
 
 GetOptions(
   'file|f=s'   => \$puzzle_file,
@@ -26,6 +28,8 @@ GetOptions(
   'help|h'     => \$show_help,
   'version|v'  => \$show_version,
   'benchmark=s' => \$benchmark_file,
+  'debug'       => \$debug,
+  'trace-grid-after-deduction' => \$trace_grid_after_deduction,
 ) or pod2usage(2);
 
 pod2usage(0) if $show_help;
@@ -65,6 +69,8 @@ $solver->run(
   puzzle_file   => $puzzle_file,
   puzzle_index  => $puzzle_index,
   puzzle_string => $puzzle_string,
+  debug         => $debug,
+  trace_grid_after_deduction => $trace_grid_after_deduction,
 );
 
 1;
@@ -81,6 +87,7 @@ sudoku.pl - solve a Sudoku puzzle
   sudoku.pl --string 003020600900305001001806400008102900700000008006708200002609500800203009005010300
   sudoku.pl --version
   sudoku.pl --benchmark Puzzles/sudoku17-first50.txt
+  sudoku.pl --trace-grid-after-deduction --file Puzzles/Puzzle3.txt
   sudoku.pl --help
 
 For compatibility with the legacy Makefile, a single positional argument is also accepted:
@@ -112,6 +119,14 @@ Print the SudokuSolver version and exit.
 =item B<--benchmark>
 
 Run every puzzle in the given file and print a benchmark summary.
+
+=item B<--trace-grid-after-deduction>
+
+Debugging option. Print the grid after each individual deduction is applied.
+
+=item B<--debug>
+
+Enable debugging behavior. Currently retained for future diagnostic options.
 
 =item B<--help>, B<-h>
 

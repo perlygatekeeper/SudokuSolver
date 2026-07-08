@@ -23,8 +23,17 @@ has 'default_puzzle_file' => (
   default => 'Puzzles/sudoku17-first50.txt',
 );
 
+has 'debug' => (
+  isa     => 'Bool',
+  is      => 'rw',
+  default => 0,
+);
 
-
+has 'trace_grid_after_deduction' => (
+  isa     => 'Bool',
+  is      => 'rw',
+  default => 0,
+);
 
 has 'status' => (
   isa     => 'Str',
@@ -205,6 +214,32 @@ sub explain_next {
   return $self->explain_deduction($deduction);
 }
 
+sub trace_deduction {
+  my ( $self, $grid, $deduction ) = @_;
+
+  return unless $self->trace_grid_after_deduction;
+
+  my $strategy = $deduction->strategy // 'Unknown strategy';
+  my $action   = $deduction->action   // 'unknown action';
+
+  printf "After deduction: %s (%s)\n", $strategy, $action;
+
+  if ( $deduction->has_cell ) {
+    my $cell = $deduction->cell;
+    printf "Cell: R%dC%d, value: %s\n",
+      $cell->row + 1,
+      $cell->column + 1,
+      ( $deduction->has_value ? $deduction->value : '-' );
+  }
+
+  print $deduction->explanation . "\n"
+    if $deduction->can('explanation') && $deduction->explanation;
+
+  $grid->big_print;
+
+  return $deduction;
+}
+
 sub apply_deductions {
   my ( $self, $grid, @deductions ) = @_;
 
@@ -265,6 +300,7 @@ sub _apply_set_value_deduction {
 
   $self->record_deduction($deduction);
   $self->check_contradiction($grid);
+  $self->trace_deduction( $grid, $deduction );
 
   return 1;
 }
@@ -289,6 +325,7 @@ sub _apply_remove_candidate_deduction {
   if ($removed) {
     $self->record_deduction($deduction);
     $self->check_contradiction($grid);
+    $self->trace_deduction( $grid, $deduction );
   }
 
   return $removed ? 1 : 0;
@@ -429,6 +466,13 @@ sub run_strategy {
 
 sub run {
   my ( $self, %options ) = @_;
+
+  $self->debug( $options{debug} ? 1 : 0 )
+    if exists $options{debug};
+
+  $self->trace_grid_after_deduction(
+    $options{trace_grid_after_deduction} ? 1 : 0
+  ) if exists $options{trace_grid_after_deduction};
 
   my $puzzle_string = $self->puzzle_string_from_options(%options);
 
