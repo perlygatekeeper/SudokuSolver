@@ -27,6 +27,7 @@ can_ok(
         statistics
         apply_deductions
         apply_deduction
+        hint
         run_strategy
         normalize_puzzle_string
         normalize_puzzle_row

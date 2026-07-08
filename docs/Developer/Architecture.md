@@ -81,6 +81,27 @@ legacy strategies may continue returning progress counts while they are being
 migrated.  Once the object contract is stable, each strategy can begin returning
 Deduction objects without changing the command-line interface.
 
+
+## Hint Mode
+
+`Solver->hint($grid)` returns the next available `Sudoku::Deduction` without
+applying it to the grid and without recording it in the solver deduction log.
+
+This gives user interfaces a safe way to ask, "What is the next logical move?"
+without changing puzzle state.
+
+Relationship between related APIs:
+
+```perl
+my $deduction = $solver->hint($grid); # inspect next move, no mutation
+my $deduction = $solver->step($grid); # apply and record one move
+$solver->run(...);                   # solve until solved, stalled, or contradicted
+```
+
+Hint Mode follows the same tiered strategy order as the solver. It returns the
+first deduction found by the easiest currently applicable strategy.
+
+
 ## Long-Term Direction
 
 Eventually each solving strategy should be explainable. A strategy should not

@@ -340,10 +340,10 @@ sub puzzle_string_from_options {
   return $puzzle_strings[ $puzzle_index - 1 ];
 }
 
-sub step {
+sub hint {
   my ( $self, $grid ) = @_;
 
-  die "step requires a Grid object\n"
+  die "hint requires a Grid object\n"
     unless blessed($grid) && $grid->isa('Grid');
 
   return if $grid->solved > 80;
@@ -354,13 +354,25 @@ sub step {
 
     for my $deduction (@deductions) {
       next unless $deduction;
-
-      my $progress = $self->apply_deduction( $grid, $deduction );
-      return $deduction if $progress;
+      return $deduction;
     }
   }
 
   return;
+}
+
+sub step {
+  my ( $self, $grid ) = @_;
+
+  die "step requires a Grid object\n"
+    unless blessed($grid) && $grid->isa('Grid');
+
+  my $deduction = $self->hint($grid);
+  return unless $deduction;
+
+  my $progress = $self->apply_deduction( $grid, $deduction );
+
+  return $progress ? $deduction : undef;
 }
 
 sub run_strategy {
