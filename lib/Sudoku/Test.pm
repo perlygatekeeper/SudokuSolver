@@ -21,6 +21,7 @@ my @PROJECT_MODULES = qw(
     Solver
     Sudoku::Deduction
     Sudoku::Contradiction
+    Sudoku::Benchmark
     Sudoku::Statistics
     Sudoku::Difficulty
     Sudoku::Canonical

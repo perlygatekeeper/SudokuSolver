@@ -1,7 +1,7 @@
 .PHONY: \
     all help check syntax test run clean status \
     deps deps-notest version gitadd perl-version \
-    backup tarball report solved echo 17-50
+    backup tarball report solved echo 17-50 benchmark benchmark-first50
 
 PERL          ?= perl5.34
 PROVE         := prove
@@ -66,6 +66,7 @@ help:
 	@echo "  make status   - git status"
 	@echo "  make deps     - install CPAN dependencies from cpanfile"
 	@echo "  make version  - show project version"
+	@echo "  make benchmark - run canonical 17-clue benchmark"
 	@echo ""
 	@echo "Variables:"
 	@echo "  make run PUZZLE=Puzzles/Puzzle.txt"
@@ -91,6 +92,12 @@ deps:
 
 deps-notest:
 	cpanm --notest --installdeps .
+
+benchmark: benchmark-first50
+
+benchmark-first50:
+	@echo "== Canonical 17-Clue Benchmark (First 50) =="
+	@$(PERL) -Ilib $(SCRIPT) --benchmark Puzzles/sudoku17-first50.txt
 
 run:
 	$(PERL) -Ilib $(SCRIPT) $(PUZZLE)

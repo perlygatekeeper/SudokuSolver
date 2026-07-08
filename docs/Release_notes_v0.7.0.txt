@@ -1,0 +1,86 @@
+==============================================================================
+SudokuSolver v0.7.0 Release Notes
+==============================================================================
+
+Release Date: <YYYY-MM-DD>
+
+This release completes Phase 2 of the SudokuSolver modernization effort.
+The project now exposes user-facing deduction features on top of the
+strategy and deduction engine introduced in earlier releases.
+
+Highlights
+==========
+
+User-Facing Solver Features
+---------------------------
+
+* Added solve statistics.
+* Added step-by-step solving.
+* Added Hint Mode.
+* Added Explain Mode.
+* Added versioned difficulty ratings.
+* Added contradiction detection.
+
+Puzzle Loading
+--------------
+
+* Improved puzzle-string normalization.
+* Whitespace is treated as formatting.
+* Dots, underscores, dashes, and zeroes may be used for empty cells.
+* Files may contain one puzzle per line.
+* Files may also contain a single puzzle spread across nine rows.
+* End-of-line comments are supported in puzzle files.
+
+Benchmarking
+------------
+
+* Added Sudoku::Benchmark.
+* Added the --benchmark command-line option.
+* Added make benchmark and make benchmark-first50 targets.
+* Established the first 50 canonical 17-clue puzzles as the primary
+  capability benchmark.
+
+Current Benchmark Goal
+----------------------
+
+Canonical 17-clue benchmark, first 50 puzzles:
+
+    Current known baseline: 41 / 50 solved
+    Goal:                  50 / 50 solved without guessing
+
+Future strategy work should improve this benchmark without introducing
+regressions.
+
+Architecture
+============
+
+The solver now supports the following public engine features:
+
+* run
+* step
+* hint
+* explain
+* difficulty
+* statistics
+* contradiction status
+* benchmark execution
+
+Difficulty ratings are versioned and derived from solve statistics, allowing
+future rating algorithms to re-evaluate old solve data.
+
+Looking Ahead
+=============
+
+The next development phase will focus on strategy expansion and benchmark
+coverage. Likely candidates include:
+
+* Naked Triples
+* Hidden Triples
+* Naked Quads
+* Hidden Quads
+* Swordfish
+* XY-Wing
+* XYZ-Wing
+* Skyscraper
+* Two-String Kite
+* Simple Coloring

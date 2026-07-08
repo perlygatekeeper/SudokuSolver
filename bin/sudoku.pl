@@ -17,6 +17,7 @@ my $puzzle_index;
 my $puzzle_string;
 my $show_help;
 my $show_version;
+my $benchmark_file;
 
 GetOptions(
   'file|f=s'   => \$puzzle_file,
@@ -24,6 +25,7 @@ GetOptions(
   'string|s=s' => \$puzzle_string,
   'help|h'     => \$show_help,
   'version|v'  => \$show_version,
+  'benchmark=s' => \$benchmark_file,
 ) or pod2usage(2);
 
 pod2usage(0) if $show_help;
@@ -31,6 +33,14 @@ pod2usage(0) if $show_help;
 if ($show_version) {
   print "SudokuSolver $Sudoku::VERSION\n";
   exit 0;
+}
+
+if (defined $benchmark_file) {
+  require Sudoku::Benchmark;
+
+  my $benchmark = Sudoku::Benchmark->new(file => $benchmark_file)->run;
+  print $benchmark->summary_text;
+  exit( $benchmark->contradictions ? 1 : 0 );
 }
 
 my $positional_arg = shift @ARGV;
@@ -70,6 +80,7 @@ sudoku.pl - solve a Sudoku puzzle
   sudoku.pl --file Puzzles/sudoku17-first50.txt --puzzle 7
   sudoku.pl --string 003020600900305001001806400008102900700000008006708200002609500800203009005010300
   sudoku.pl --version
+  sudoku.pl --benchmark Puzzles/sudoku17-first50.txt
   sudoku.pl --help
 
 For compatibility with the legacy Makefile, a single positional argument is also accepted:
@@ -97,6 +108,10 @@ Solve the given 81-character puzzle string. Dots are accepted as blanks.
 =item B<--version>, B<-v>
 
 Print the SudokuSolver version and exit.
+
+=item B<--benchmark>
+
+Run every puzzle in the given file and print a benchmark summary.
 
 =item B<--help>, B<-h>
 
