@@ -14,6 +14,7 @@ use Sudoku::Deduction;
 use Sudoku::Contradiction;
 use Sudoku::Strategy;
 use Sudoku::Statistics;
+use Sudoku::Difficulty;
 use Sudoku::Explain;
 
 has 'default_puzzle_file' => (
@@ -181,6 +182,12 @@ sub statistics {
   my ($self) = @_;
 
   return Sudoku::Statistics->from_solver($self);
+}
+
+sub difficulty {
+  my ($self) = @_;
+
+  return Sudoku::Difficulty->from_solver($self);
 }
 
 sub explain_deduction {

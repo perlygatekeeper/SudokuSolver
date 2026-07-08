@@ -8,6 +8,16 @@ use Scalar::Util qw(blessed);
 
 use Sudoku::Deduction;
 
+my %STRATEGY_RANK = (
+    'Naked Singles'       => 1,
+    'Hidden Singles'      => 2,
+    'Pointing / Claiming' => 3,
+    'Naked Pairs'         => 4,
+    'Hidden Pairs'        => 4,
+    'X-Wing'              => 5,
+    'Remote Pairs'        => 6,
+);
+
 =head1 NAME
 
 Sudoku::Statistics - Summary statistics for a SudokuSolver deduction log
@@ -106,15 +116,36 @@ sub actions_used {
     return sort keys %{ $self->count_by_action };
 }
 
+sub highest_strategy {
+    my ($self) = @_;
+
+    my @strategies = $self->strategies_used;
+    return undef unless @strategies;
+
+    my ($highest) = sort {
+        ( $STRATEGY_RANK{$b} // 0 ) <=> ( $STRATEGY_RANK{$a} // 0 )
+            || $a cmp $b
+    } @strategies;
+
+    return $highest;
+}
+
+sub strategy_rank {
+    my ( $self, $strategy ) = @_;
+
+    return $STRATEGY_RANK{$strategy} // 0;
+}
+
 sub as_hash {
     my ($self) = @_;
 
     return {
-        total_deductions  => $self->total_deductions,
-        value_placements  => $self->value_placements,
+        total_deductions   => $self->total_deductions,
+        value_placements   => $self->value_placements,
         candidate_removals => $self->candidate_removals,
-        by_strategy       => $self->count_by_strategy,
-        by_action         => $self->count_by_action,
+        by_strategy        => $self->count_by_strategy,
+        by_action          => $self->count_by_action,
+        highest_strategy   => $self->highest_strategy,
     };
 }
 

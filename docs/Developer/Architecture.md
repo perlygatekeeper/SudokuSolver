@@ -232,3 +232,13 @@ $solver->explain_next($grid);
 `explain_next()` is intentionally non-mutating.  It uses the same discovery
 path as Hint Mode, but returns text instead of the raw deduction object.
 
+
+
+## Difficulty Ratings
+
+Difficulty ratings are versioned interpretations of solve statistics. A
+`Sudoku::Difficulty` object records the rating-method version, label, score,
+highest strategy used, and the statistics snapshot used to derive the rating.
+
+This allows future rating algorithms to re-evaluate old solve logs without
+claiming that a difficulty label is permanent or absolute.
