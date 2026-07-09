@@ -20,6 +20,7 @@ my $show_version;
 my $benchmark_file;
 my $debug;
 my $trace_grid_after_deduction;
+my $output_mode;
 
 GetOptions(
   'file|f=s'   => \$puzzle_file,
@@ -30,6 +31,7 @@ GetOptions(
   'benchmark=s' => \$benchmark_file,
   'debug'       => \$debug,
   'trace-grid-after-deduction' => \$trace_grid_after_deduction,
+  'output=s' => \$output_mode,
 ) or pod2usage(2);
 
 pod2usage(0) if $show_help;
@@ -71,6 +73,7 @@ $solver->run(
   puzzle_string => $puzzle_string,
   debug         => $debug,
   trace_grid_after_deduction => $trace_grid_after_deduction,
+  output_mode  => $output_mode,
 );
 
 1;
@@ -88,6 +91,7 @@ sudoku.pl - solve a Sudoku puzzle
   sudoku.pl --version
   sudoku.pl --benchmark Puzzles/sudoku17-first50.txt
   sudoku.pl --trace-grid-after-deduction --file Puzzles/Puzzle3.txt
+  sudoku.pl --output explain --file Puzzles/Puzzle3.txt
   sudoku.pl --help
 
 For compatibility with the legacy Makefile, a single positional argument is also accepted:
@@ -123,6 +127,10 @@ Run every puzzle in the given file and print a benchmark summary.
 =item B<--trace-grid-after-deduction>
 
 Debugging option. Print the grid after each individual deduction is applied.
+
+=item B<--output MODE>
+
+Select human output style. Current modes are quiet, normal, explain, trace, and debug.
 
 =item B<--debug>
 

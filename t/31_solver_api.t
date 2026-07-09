@@ -22,6 +22,9 @@ can_ok(
         strategy_names
         debug
         trace_grid_after_deduction
+        output_mode
+        renderer
+        emit_deduction
         deductions
         record_deduction
         clear_deductions

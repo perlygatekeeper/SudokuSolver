@@ -16,6 +16,7 @@ use Sudoku::Strategy;
 use Sudoku::Statistics;
 use Sudoku::Difficulty;
 use Sudoku::Explain;
+use Sudoku::Render::Text;
 
 has 'default_puzzle_file' => (
   isa     => 'Str',
@@ -33,6 +34,18 @@ has 'trace_grid_after_deduction' => (
   isa     => 'Bool',
   is      => 'rw',
   default => 0,
+);
+
+has 'output_mode' => (
+  isa     => 'Str',
+  is      => 'rw',
+  default => 'normal',
+);
+
+has 'renderer' => (
+  isa     => 'Sudoku::Render::Text',
+  is      => 'rw',
+  default => sub { Sudoku::Render::Text->new },
 );
 
 has 'status' => (
@@ -240,6 +253,17 @@ sub trace_deduction {
   return $deduction;
 }
 
+sub emit_deduction {
+  my ( $self, $deduction ) = @_;
+
+  return if $self->output_mode eq 'quiet';
+  return unless $self->output_mode =~ /^(normal|explain|trace|debug)$/;
+
+  print $self->renderer->deduction($deduction);
+
+  return $deduction;
+}
+
 sub apply_deductions {
   my ( $self, $grid, @deductions ) = @_;
 
@@ -289,14 +313,7 @@ sub _apply_set_value_deduction {
   $cell->possibilities([ (0) x 10 ]);
   $grid->remove_my_solution_from_my_mates($cell);
 
-  if ( $deduction->reason =~ /^Hidden in / ) {
-    printf "%s Setting cell ( %d, %d, %d ) to %d\n",
-      $deduction->reason,
-      ( $cell->row + 1 ),
-      ( $cell->column + 1 ),
-      ( $cell->box + 1 ),
-      $value;
-  }
+  $self->emit_deduction($deduction);
 
   $self->record_deduction($deduction);
   $self->check_contradiction($grid);
@@ -320,9 +337,8 @@ sub _apply_remove_candidate_deduction {
 
   my $removed = $cell->remove_possibility($value);
 
-  print $deduction->reason . "\n" if $removed && $deduction->reason;
-
   if ($removed) {
+    $self->emit_deduction($deduction);
     $self->record_deduction($deduction);
     $self->check_contradiction($grid);
     $self->trace_deduction( $grid, $deduction );
@@ -452,13 +468,7 @@ sub run_strategy {
 
     last unless $progress;
 
-    print "So far we filled this many cells: " . $grid->solved . "\n";
-    $grid->big_print;
-
     $total_progress += $progress;
-
-    my $name = $strategy->can('name') ? lc $strategy->name : 'strategy';
-    print "---- end $name processing ----\n\n";
   }
 
   return $total_progress;
@@ -474,9 +484,14 @@ sub run {
     $options{trace_grid_after_deduction} ? 1 : 0
   ) if exists $options{trace_grid_after_deduction};
 
+  if ( exists $options{output_mode} && defined $options{output_mode} ) {
+    $self->output_mode( $options{output_mode} );
+    $self->renderer->mode( $options{output_mode} );
+  }
+
   my $puzzle_string = $self->puzzle_string_from_options(%options);
 
-  print "puzzle_string: $puzzle_string\n";
+  print "puzzle_string: $puzzle_string\n" if $self->debug;
 
   my $puzzle = Grid->new;
   $puzzle->load_from_string($puzzle_string);
@@ -488,36 +503,38 @@ sub run {
   my($pass) = 0;
 
   while ( $puzzle->solved <= 80 and $pass_progress and not $self->has_contradiction ) {
-    print "==== Pass " . ++$pass . " ====\n";
+    ++$pass;
+    print $self->renderer->pass_start($pass) unless $self->output_mode eq 'quiet';
     $pass_progress = 0;
-    $puzzle->big_print;
+    $puzzle->big_print if $self->output_mode eq 'debug';
 
     for my $strategy ( $self->strategies ) {
       last if $puzzle->solved > 80;
 
       my $strategy_progress = $self->run_strategy( $puzzle, $strategy );
+      print $self->renderer->strategy_result( $strategy->name, $strategy_progress )
+        unless $self->output_mode eq 'quiet';
       $pass_progress += $strategy_progress;
 
       # Preserve the legacy solving hierarchy: after any successful strategy,
       # restart the next pass from the easiest strategy rather than continuing
       # on to harder strategies in the same pass.
-      last if $strategy_progress;
+      if ($strategy_progress) {
+        print $self->renderer->restart_notice
+          unless $self->output_mode eq 'quiet';
+        last;
+      }
     }
 
-    print "==== End Pass " . $pass . " (progress is $pass_progress) ====\n";
+    print $self->renderer->pass_end( $pass, $pass_progress )
+      unless $self->output_mode eq 'quiet';
 
   }
 
-  if ( $self->has_contradiction ) {
-    print "Contradiction detected: " . $self->contradiction->summary . "\n";
-  } elsif ( $puzzle->solved == 81 ) {
-    print "We have solved this puzzle.  Final solution is:\n";
-    print $_->value foreach ( @{$puzzle->cells} );
-    print "\n";
-  } else {
-    printf "We were able to determine %d cells.\n", $puzzle->solved;
-    $puzzle->big_print;
-  }
+  print $self->renderer->final_status( $self, $puzzle )
+    unless $self->output_mode eq 'quiet';
+
+  $puzzle->big_print if $puzzle->solved != 81 && $self->output_mode eq 'debug';
 
   return $puzzle;
 }

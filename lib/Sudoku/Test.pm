@@ -27,6 +27,7 @@ my @PROJECT_MODULES = qw(
     Sudoku::Canonical
     Sudoku::Explain
     Sudoku::Hint
+    Sudoku::Render::Text
     Sudoku::Strategy
     Sudoku::Strategy::Base
     Sudoku::Strategy::NakedSingles

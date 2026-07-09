@@ -62,7 +62,7 @@ is($progress, 1, 'run_strategy returns the number of applied deductions');
 is($grid->cell_from_row_column(0, 0)->value, 1, 'run_strategy applies set_value deductions');
 is($solver->deduction_count, 1, 'run_strategy records applied deductions');
 is($strategy->calls, 2, 'run_strategy repeats until the strategy makes no further progress');
-like($output, qr/end local test strategy processing/, 'run_strategy reports the strategy processing block');
+unlike($output, qr/end local test strategy processing/, 'run_strategy no longer prints legacy end-of-processing markers');
 
 my $no_progress = $solver->run_strategy( $grid, $strategy );
 is($no_progress, 0, 'run_strategy reports no progress when the strategy has no deductions');

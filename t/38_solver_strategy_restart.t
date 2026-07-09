@@ -119,7 +119,7 @@ ok(
     'solver restarted at the easiest strategy before trying a harder strategy',
 );
 
-like($output, qr/==== Pass 1 ====/, 'first pass is reported');
-like($output, qr/==== Pass 2 ====/, 'second pass is reported after progress');
+like($output, qr/^Pass 1/m, 'first pass is reported');
+like($output, qr/^Pass 2/m, 'second pass is reported after progress');
 
 done_testing();
