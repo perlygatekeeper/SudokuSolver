@@ -42,19 +42,20 @@ Hidden Single in Box 7:
 
 ```text
 quiet
-    Suppress normal solver narration.
+    Suppress solver narration and final status output.
 
 normal
-    Default human-readable pass and deduction output.
+    Default mode. Print only the final solved/stalled/contradiction status.
 
 explain
-    Emphasize deduction explanations.
+    Print each applied deduction in human-readable form, followed by final status.
 
 trace
-    Intended for detailed strategy/deduction tracing.
+    Print pass boundaries, strategy attempts, applied deductions, restart notices,
+    and final status.
 
 debug
-    Include full candidate grids at diagnostic points.
+    Trace mode plus full candidate grids at diagnostic points.
 ```
 
 ## Rendering Boundary
@@ -67,3 +68,16 @@ lib/Sudoku/Render/Text.pm
 
 `Solver` may choose when to render events, but the wording and layout of those
 events should live in the renderer whenever practical.
+
+## Mode Contract
+
+`normal` output should be concise enough for routine command-line use. It should
+not print every pass or every deduction.
+
+`explain` output should show the deduction stream without the strategy-attempt
+noise.
+
+`trace` output should show the solver's control flow: pass start, each strategy
+attempted, the deduction applied, and the restart from the easiest strategy.
+
+`debug` output may be verbose and may include full candidate grids.

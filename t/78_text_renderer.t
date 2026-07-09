@@ -13,6 +13,11 @@ use Sudoku::Render::Text;
 
 my $renderer = Sudoku::Render::Text->new;
 
+my $mode_renderer = Sudoku::Render::Text->new(mode => 'quiet');
+is($mode_renderer->mode, 'quiet', 'renderer accepts an explicit output mode');
+$mode_renderer->mode('trace');
+is($mode_renderer->mode, 'trace', 'renderer mode can be updated');
+
 like($renderer->pass_start(3), qr/^Pass 3/m, 'renderer formats pass start');
 like($renderer->strategy_result('Naked Singles', 0), qr/Naked Singles: no deductions/, 'renderer formats no-deduction strategy result');
 like($renderer->strategy_result('Hidden Singles', 1), qr/Hidden Singles: applied 1 deduction/, 'renderer formats one deduction strategy result');

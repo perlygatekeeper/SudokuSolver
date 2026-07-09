@@ -168,6 +168,31 @@ sub strategy_names {
   return map { $_->name } $self->strategies;
 }
 
+has 'last_strategy_attempts' => (
+  isa     => 'ArrayRef',
+  is      => 'rw',
+  default => sub { [] },
+);
+
+sub clear_strategy_attempts {
+  my ($self) = @_;
+
+  $self->last_strategy_attempts([]);
+
+  return $self;
+}
+
+sub record_strategy_attempt {
+  my ( $self, $strategy_name, $deduction_count ) = @_;
+
+  push @{ $self->last_strategy_attempts }, {
+    strategy => $strategy_name,
+    count    => $deduction_count || 0,
+  };
+
+  return $self;
+}
+
 has 'deductions' => (
   isa     => 'ArrayRef[Sudoku::Deduction]',
   is      => 'rw',
@@ -257,7 +282,7 @@ sub emit_deduction {
   my ( $self, $deduction ) = @_;
 
   return if $self->output_mode eq 'quiet';
-  return unless $self->output_mode =~ /^(normal|explain|trace|debug)$/;
+  return unless $self->output_mode =~ /^(explain|trace|debug)$/;
 
   print $self->renderer->deduction($deduction);
 
@@ -313,11 +338,8 @@ sub _apply_set_value_deduction {
   $cell->possibilities([ (0) x 10 ]);
   $grid->remove_my_solution_from_my_mates($cell);
 
-  $self->emit_deduction($deduction);
-
   $self->record_deduction($deduction);
   $self->check_contradiction($grid);
-  $self->trace_deduction( $grid, $deduction );
 
   return 1;
 }
@@ -338,10 +360,8 @@ sub _apply_remove_candidate_deduction {
   my $removed = $cell->remove_possibility($value);
 
   if ($removed) {
-    $self->emit_deduction($deduction);
     $self->record_deduction($deduction);
     $self->check_contradiction($grid);
-    $self->trace_deduction( $grid, $deduction );
   }
 
   return $removed ? 1 : 0;
@@ -422,16 +442,17 @@ sub hint {
   die "hint requires a Grid object\n"
     unless blessed($grid) && $grid->isa('Grid');
 
+  $self->clear_strategy_attempts;
+
   return if $grid->solved > 80;
   return if $self->check_contradiction($grid);
 
   for my $strategy ( $self->strategies ) {
-    my @deductions = $strategy->apply($grid);
+    my @deductions = grep { $_ } $strategy->apply($grid);
 
-    for my $deduction (@deductions) {
-      next unless $deduction;
-      return $deduction;
-    }
+    $self->record_strategy_attempt( $strategy->name, scalar @deductions );
+
+    return $deductions[0] if @deductions;
   }
 
   return;
@@ -503,19 +524,34 @@ sub run {
 
   while ( $puzzle->solved <= 80 and not $self->has_contradiction ) {
     ++$pass;
-    print $self->renderer->pass_start($pass) unless $self->output_mode eq 'quiet';
-    $puzzle->big_print if $self->output_mode eq 'debug';
+
+    if ( $self->output_mode =~ /^(trace|debug)$/ ) {
+      print $self->renderer->pass_start($pass);
+      $puzzle->big_print if $self->output_mode eq 'debug';
+    }
 
     my $deduction = $self->step($puzzle);
     my $progress  = defined $deduction ? 1 : 0;
 
+    if ( $self->output_mode =~ /^(trace|debug)$/ ) {
+      for my $attempt ( @{ $self->last_strategy_attempts } ) {
+        print $self->renderer->strategy_result(
+          $attempt->{strategy},
+          $attempt->{count},
+        );
+      }
+    }
+
     if ($progress) {
+      $self->emit_deduction($deduction);
+      $self->trace_deduction( $puzzle, $deduction );
+
       print $self->renderer->restart_notice
-        unless $self->output_mode eq 'quiet';
+        if $self->output_mode =~ /^(trace|debug)$/;
     }
 
     print $self->renderer->pass_end( $pass, $progress )
-      unless $self->output_mode eq 'quiet';
+      if $self->output_mode =~ /^(trace|debug)$/;
 
     last unless $progress;
   }

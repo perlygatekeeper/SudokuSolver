@@ -101,7 +101,7 @@ my $solver = Solver->new(
 
 my $grid;
 my $output = capture_stdout {
-    $grid = $solver->run( puzzle_string => '0' x 81 );
+    $grid = $solver->run( puzzle_string => '0' x 81, output_mode => 'trace' );
 };
 
 isa_ok($grid, 'Grid', 'run returns a Grid object');
@@ -119,7 +119,9 @@ ok(
     'solver restarted at the easiest strategy before trying a harder strategy',
 );
 
-like($output, qr/^Pass 1/m, 'first pass is reported');
-like($output, qr/^Pass 2/m, 'second pass is reported after progress');
+like($output, qr/^Pass 1/m, 'first pass is reported in trace mode');
+like($output, qr/^Pass 2/m, 'second pass is reported after progress in trace mode');
+like($output, qr/Easiest Test Strategy: no deductions/, 'trace output reports no-deduction strategy attempts');
+like($output, qr/Higher Test Strategy: applied 1 deduction/, 'trace output reports the applied strategy');
 
 done_testing();
