@@ -110,8 +110,8 @@ is($grid->cell_from_row_column(0, 0)->value, 1, 'higher strategy deduction was a
 
 is_deeply(
     \@CALLS,
-    [ qw(easiest higher higher easiest higher hardest) ],
-    'solver restarts from the easiest strategy after higher-tier progress',
+    [ qw(easiest higher easiest higher hardest) ],
+    'solver applies one deduction per pass and restarts from the easiest strategy after progress',
 );
 
 ok(

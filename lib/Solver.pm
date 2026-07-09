@@ -499,36 +499,25 @@ sub run {
   $self->reset_status;
   $self->check_contradiction($puzzle);
 
-  my($pass_progress) = 1;
-  my($pass) = 0;
+  my $pass = 0;
 
-  while ( $puzzle->solved <= 80 and $pass_progress and not $self->has_contradiction ) {
+  while ( $puzzle->solved <= 80 and not $self->has_contradiction ) {
     ++$pass;
     print $self->renderer->pass_start($pass) unless $self->output_mode eq 'quiet';
-    $pass_progress = 0;
     $puzzle->big_print if $self->output_mode eq 'debug';
 
-    for my $strategy ( $self->strategies ) {
-      last if $puzzle->solved > 80;
+    my $deduction = $self->step($puzzle);
+    my $progress  = defined $deduction ? 1 : 0;
 
-      my $strategy_progress = $self->run_strategy( $puzzle, $strategy );
-      print $self->renderer->strategy_result( $strategy->name, $strategy_progress )
+    if ($progress) {
+      print $self->renderer->restart_notice
         unless $self->output_mode eq 'quiet';
-      $pass_progress += $strategy_progress;
-
-      # Preserve the legacy solving hierarchy: after any successful strategy,
-      # restart the next pass from the easiest strategy rather than continuing
-      # on to harder strategies in the same pass.
-      if ($strategy_progress) {
-        print $self->renderer->restart_notice
-          unless $self->output_mode eq 'quiet';
-        last;
-      }
     }
 
-    print $self->renderer->pass_end( $pass, $pass_progress )
+    print $self->renderer->pass_end( $pass, $progress )
       unless $self->output_mode eq 'quiet';
 
+    last unless $progress;
   }
 
   print $self->renderer->final_status( $self, $puzzle )
