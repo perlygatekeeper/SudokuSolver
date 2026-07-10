@@ -1,0 +1,11 @@
+# Desinged froma solvable puzzle with the 3 in Box 9 moved
+# to bottom left from bottom right of that box
+000000000
+000000001
+000002034
+000005600
+007000080
+080010700
+000800000
+300600000
+905000300
