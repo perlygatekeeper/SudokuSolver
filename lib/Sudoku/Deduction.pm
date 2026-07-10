@@ -57,6 +57,18 @@ has 'box' => (
     predicate => 'has_box',
 );
 
+has 'unit_type' => (
+    is        => 'ro',
+    isa       => 'Maybe[Str]',
+    predicate => 'has_unit_type',
+);
+
+has 'unit_index' => (
+    is        => 'ro',
+    isa       => 'Maybe[Int]',
+    predicate => 'has_unit_index',
+);
+
 has 'value' => (
     is        => 'ro',
     isa       => 'Maybe[Int]',
@@ -86,6 +98,17 @@ has 'explanation' => (
     isa     => 'Str',
     default => '',
 );
+
+sub unit_label {
+    my ($self) = @_;
+
+    return q{} unless $self->has_unit_type;
+
+    my $label = ucfirst lc $self->unit_type;
+    return $label unless $self->has_unit_index;
+
+    return sprintf '%s %d', $label, $self->unit_index + 1;
+}
 
 sub has_cell_location {
     my ($self) = @_;
@@ -119,7 +142,7 @@ sub as_hash {
 
     $deduction{cell} = $self->cell if $self->has_cell;
 
-    for my $field (qw(row column box value candidate)) {
+    for my $field (qw(row column box unit_type unit_index value candidate)) {
         my $predicate = "has_$field";
         $deduction{$field} = $self->$field if $self->$predicate;
     }

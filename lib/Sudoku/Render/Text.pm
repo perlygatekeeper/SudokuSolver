@@ -61,8 +61,13 @@ sub deduction {
         push @lines, sprintf '    Action: %s', $deduction->action // 'unknown';
     }
 
-    my $reason = $deduction->explanation || $deduction->reason;
-    push @lines, "    Reason: $reason" if $reason;
+    push @lines, '    Why: ' . $deduction->reason
+        if length($deduction->reason // q{});
+
+    if (length($deduction->explanation // q{})
+        && $deduction->explanation ne $deduction->reason) {
+        push @lines, '    Detail: ' . $deduction->explanation;
+    }
 
     return join("\n", @lines) . "\n";
 }
@@ -71,22 +76,8 @@ sub deduction_title {
     my ($self, $deduction) = @_;
 
     if (($deduction->strategy // q{}) eq 'Hidden Singles') {
-        if ($deduction->reason =~ /Hidden in Box/) {
-            my $box = $deduction->has_cell ? $deduction->cell->box + 1 : undef;
-            return defined $box ? "Hidden Single in Box $box:" : 'Hidden Single:';
-        }
-
-        if ($deduction->reason =~ /Hidden in Row/) {
-            my $row = $deduction->has_cell ? $deduction->cell->row + 1 : undef;
-            return defined $row ? "Hidden Single in Row $row:" : 'Hidden Single:';
-        }
-
-        if ($deduction->reason =~ /Hidden in Col/) {
-            my $column = $deduction->has_cell ? $deduction->cell->column + 1 : undef;
-            return defined $column ? "Hidden Single in Column $column:" : 'Hidden Single:';
-        }
-
-        return 'Hidden Single:';
+        my $unit = $deduction->can('unit_label') ? $deduction->unit_label : q{};
+        return length($unit) ? "Hidden Single in $unit:" : 'Hidden Single:';
     }
 
     return ($deduction->strategy // 'Deduction') . ':';

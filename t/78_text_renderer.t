@@ -32,26 +32,30 @@ my $hidden = Sudoku::Deduction->new(
     action      => 'set_value',
     cell        => $cell,
     value       => 6,
-    reason      => 'Hidden in Box  ',
-    explanation => 'Candidate 6 appears only once in this box.',
+    unit_type   => 'box',
+    unit_index  => 6,
+    reason      => 'Candidate 6 appears only once in Box 7.',
+    explanation => 'R9C2 must be 6.',
 );
 
 my $hidden_text = $renderer->deduction($hidden);
 like($hidden_text, qr/Hidden Single in Box 7:/, 'renderer includes box number for hidden single in a box');
 like($hidden_text, qr/Set R9C2 = 6/, 'renderer formats set-value deduction');
-like($hidden_text, qr/Reason: Candidate 6 appears only once/, 'renderer includes explanation');
+like($hidden_text, qr/Why: Candidate 6 appears only once/, 'renderer includes explanation');
 
 my $removal = Sudoku::Deduction->new(
     strategy    => 'Pointing / Claiming',
     action      => 'remove_candidate',
     cell        => $grid->cell_from_row_column(3, 7),
     value       => 5,
-    explanation => 'Candidate 5 is confined to row 4 inside box 6.',
+    reason      => 'Candidate 5 is confined to row 4 inside box 6.',
+    explanation => 'Remove candidate 5 from R4C8.',
 );
 
 my $removal_text = $renderer->deduction($removal);
 like($removal_text, qr/Pointing \/ Claiming:/, 'renderer formats strategy title');
 like($removal_text, qr/Remove candidate 5 from R4C8/, 'renderer formats candidate removal');
+like($removal_text, qr/Why: Candidate 5 is confined to row 4 inside box 6/, 'renderer preserves the logical reason');
 
 my $solution = '123456789456789123789123456214365897365897214897214365531642978642978531978531642';
 my $solved = Grid->new;

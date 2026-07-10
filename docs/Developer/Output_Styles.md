@@ -81,3 +81,20 @@ noise.
 attempted, the deduction applied, and the restart from the easiest strategy.
 
 `debug` output may be verbose and may include full candidate grids.
+
+## Deduction Wording
+
+Human-facing deductions should separate the action from its justification:
+
+```text
+Hidden Single in Box 7:
+    Set R9C2 = 6
+    Why: Candidate 6 appears only once in Box 7.
+    Detail: R9C2 must be 6.
+```
+
+Structured unit context (`unit_type` and `unit_index`) should be carried by the
+`Sudoku::Deduction` object rather than inferred from legacy text fragments.
+
+For candidate removals, the renderer should preserve the strategy's logical
+reason instead of repeating the removal action as the reason.

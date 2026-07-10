@@ -29,7 +29,7 @@ sub apply {
             $possibility_counts->{$key}[0],
             $possible_value,
             'box',
-            'Hidden in Box  ',
+            $possibility_counts->{$key}[0]->box,
         );
         push @deductions, $deduction if $deduction;
     }
@@ -44,7 +44,7 @@ sub apply {
             $possibility_counts->{$key}[0],
             $possible_value,
             'row',
-            'Hidden in Row  ',
+            $possibility_counts->{$key}[0]->row,
         );
         push @deductions, $deduction if $deduction;
     }
@@ -59,7 +59,7 @@ sub apply {
             $possibility_counts->{$key}[0],
             $possible_value,
             'column',
-            'Hidden in Col  ',
+            $possibility_counts->{$key}[0]->column,
         );
         push @deductions, $deduction if $deduction;
     }
@@ -68,7 +68,7 @@ sub apply {
 }
 
 sub _hidden_single_deduction {
-    my ($self, $cell, $value, $unit_type, $label) = @_;
+    my ($self, $cell, $value, $unit_type, $unit_index) = @_;
 
     return if $cell->value;
 
@@ -77,11 +77,16 @@ sub _hidden_single_deduction {
         action      => 'set_value',
         cell        => $cell,
         value       => $value,
-        reason      => $label,
-        explanation => sprintf(
-            'Candidate %d appears only once in this %s, so R%dC%d must be %d.',
+        unit_type   => $unit_type,
+        unit_index  => $unit_index,
+        reason      => sprintf(
+            'Candidate %d appears only once in %s %d.',
             $value,
-            $unit_type,
+            ucfirst($unit_type),
+            $unit_index + 1,
+        ),
+        explanation => sprintf(
+            'R%dC%d must be %d.',
             $cell->row + 1,
             $cell->column + 1,
             $value,

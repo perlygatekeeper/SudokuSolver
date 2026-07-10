@@ -109,4 +109,21 @@ like(
 my $cell_hash = $cell_deduction->as_hash;
 is($cell_hash->{cell}, $cell, 'as_hash includes cell when present');
 
+my $unit_deduction = Sudoku::Deduction->new(
+    strategy   => 'Hidden Singles',
+    action     => 'set_value',
+    row        => 8,
+    column     => 1,
+    value      => 6,
+    unit_type  => 'box',
+    unit_index => 6,
+);
+
+is($unit_deduction->unit_label, 'Box 7', 'unit label uses one-based display index');
+ok($unit_deduction->has_unit_type, 'unit type predicate is true');
+ok($unit_deduction->has_unit_index, 'unit index predicate is true');
+my $unit_hash = $unit_deduction->as_hash;
+is($unit_hash->{unit_type}, 'box', 'as_hash includes unit type');
+is($unit_hash->{unit_index}, 6, 'as_hash includes zero-based unit index');
+
 done_testing();
