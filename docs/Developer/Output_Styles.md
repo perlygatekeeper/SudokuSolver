@@ -98,3 +98,29 @@ Structured unit context (`unit_type` and `unit_index`) should be carried by the
 
 For candidate removals, the renderer should preserve the strategy's logical
 reason instead of repeating the removal action as the reason.
+
+## Final Status Wording
+
+Final status output should use explicit headings rather than legacy prose:
+
+```text
+Solved
+------
+Solved all 81 cells in 64 deductions.
+Difficulty: Hard (method v1.0)
+Solution: ...
+```
+
+```text
+Stalled
+-------
+Solved cells: 21 / 81
+Remaining cells: 60
+Deductions applied: 4
+Difficulty so far: Medium (method v1.0)
+No registered strategy can make further progress.
+```
+
+Debug mode should not repeat the same deduction in two different formats.  It
+should print the normal human deduction once, followed by a clearly labeled
+candidate grid such as `Grid after deduction 12:`.

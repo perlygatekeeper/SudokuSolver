@@ -33,7 +33,7 @@ is(
 
 like(
     $output,
-    qr/We have solved this puzzle\.\s+Final solution is:/,
+    qr/^Solved\s+------\s+Solved all 81 cells/m,
     'run reports that an already solved puzzle is solved',
 );
 
@@ -52,7 +52,7 @@ my $second_output = capture_stdout {
 
 isa_ok($second_grid, 'Grid', 'run can be called more than once');
 is($second_grid->solved, 81, 'second run also returns a solved grid');
-like($second_output, qr/We have solved this puzzle/, 'second run reports success');
+like($second_output, qr/^Solved$/m, 'second run reports success');
 
 isnt(
     $second_grid,

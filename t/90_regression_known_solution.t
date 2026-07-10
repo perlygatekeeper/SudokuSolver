@@ -33,7 +33,7 @@ is(
 
 like(
     $output,
-    qr/We have solved this puzzle\./,
+    qr/^Solved$/m,
     'solver reports successful completion',
 );
 

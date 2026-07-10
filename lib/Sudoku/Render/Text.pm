@@ -90,19 +90,50 @@ sub deduction_location {
     return 'unknown cell';
 }
 
+sub debug_grid_header {
+    my ($self, $deduction_number) = @_;
+
+    return sprintf "Grid after deduction %d:\n", $deduction_number;
+}
+
 sub final_status {
     my ($self, $solver, $grid) = @_;
 
+    my $deductions = $solver->deduction_count;
+    my $difficulty = $solver->difficulty;
+
     if ($solver->has_contradiction) {
-        return 'Contradiction detected: ' . $solver->contradiction->summary . "\n";
+        return join q{},
+            "Contradiction\n",
+            "-------------\n",
+            $solver->contradiction->summary . "\n",
+            sprintf("Solved cells: %d / 81\n", $grid->solved),
+            sprintf("Deductions applied: %d\n", $deductions),
+            sprintf("Difficulty so far: %s (method v%s)\n",
+                $difficulty->label, $difficulty->rating_version);
     }
 
     if ($grid->solved == 81) {
         my $solution = join q{}, map { $_->value } @{ $grid->cells };
-        return "We have solved this puzzle.  Final solution is:\n$solution\n";
+        return join q{},
+            "Solved\n",
+            "------\n",
+            sprintf("Solved all 81 cells in %d deduction%s.\n",
+                $deductions, $deductions == 1 ? q{} : 's'),
+            sprintf("Difficulty: %s (method v%s)\n",
+                $difficulty->label, $difficulty->rating_version),
+            "Solution: $solution\n";
     }
 
-    return sprintf "We were able to determine %d cells.\n", $grid->solved;
+    return join q{},
+        "Stalled\n",
+        "-------\n",
+        sprintf("Solved cells: %d / 81\n", $grid->solved),
+        sprintf("Remaining cells: %d\n", 81 - $grid->solved),
+        sprintf("Deductions applied: %d\n", $deductions),
+        sprintf("Difficulty so far: %s (method v%s)\n",
+            $difficulty->label, $difficulty->rating_version),
+        "No registered strategy can make further progress.\n";
 }
 
 1;

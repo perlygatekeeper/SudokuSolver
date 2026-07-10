@@ -113,6 +113,29 @@ Solved: 50 / 50 without guessing
 
 ---
 
+## Version 0.8.x — Improved User Experience: Output Styles
+
+Status: in progress
+
+Completed:
+
+* Added text renderer architecture.
+* Added quiet, normal, explain, trace, and debug output modes.
+* Defined Pass, Strategy Attempt, Deduction, and Restart terminology.
+* Made `run()` use the one-deduction step loop.
+* Added human-readable Action / Why / Detail deduction output.
+* Added structured row, column, and box context to deductions.
+* Replaced legacy final-status prose with Solved, Stalled, and Contradiction summaries.
+* Removed duplicate debug deduction narration.
+
+Remaining before v0.8.0:
+
+* Review real output from representative solved, stalled, and contradiction puzzles.
+* Confirm CLI help and documentation show all output modes clearly.
+* Add release notes and bump the project version.
+
+---
+
 ## Phase 3 — Strategy Expansion
 
 Primary goal:

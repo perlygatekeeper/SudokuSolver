@@ -22,7 +22,8 @@ my $normal_output = capture_stdout {
 
 unlike($normal_output, qr/^Pass 1/m, 'normal mode does not print pass-level trace output');
 unlike($normal_output, qr/Restarting from Naked Singles/, 'normal mode does not print restart notices');
-like($normal_output, qr/We were able to determine/, 'normal mode prints final status');
+like($normal_output, qr/^Stalled$/m, 'normal mode prints final status');
+like($normal_output, qr/Solved cells: 0 \/ 81/, 'normal mode reports solved-cell count');
 
 my $trace_solver = Solver->new;
 my $trace_output = capture_stdout {

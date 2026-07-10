@@ -257,22 +257,7 @@ sub trace_deduction {
 
   return unless $self->trace_grid_after_deduction;
 
-  my $strategy = $deduction->strategy // 'Unknown strategy';
-  my $action   = $deduction->action   // 'unknown action';
-
-  printf "After deduction: %s (%s)\n", $strategy, $action;
-
-  if ( $deduction->has_cell ) {
-    my $cell = $deduction->cell;
-    printf "Cell: R%dC%d, value: %s\n",
-      $cell->row + 1,
-      $cell->column + 1,
-      ( $deduction->has_value ? $deduction->value : '-' );
-  }
-
-  print $deduction->explanation . "\n"
-    if $deduction->can('explanation') && $deduction->explanation;
-
+  print $self->renderer->debug_grid_header( $self->deduction_count );
   $grid->big_print;
 
   return $deduction;
