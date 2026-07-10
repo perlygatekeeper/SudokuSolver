@@ -1,0 +1,14 @@
+# SudokuSolver example puzzle
+# Expected status with the v0.7.0 strategy set: Stalled
+# This is canonical 17-clue benchmark puzzle 09.
+# It requires logical techniques beyond the strategies currently implemented.
+
+000000012
+400090000
+000000050
+070200000
+600000400
+000108000
+018000000
+000030700
+502000000

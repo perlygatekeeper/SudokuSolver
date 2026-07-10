@@ -1,7 +1,7 @@
 .PHONY: \
     all help check syntax test run clean status \
     deps deps-notest version gitadd perl-version \
-    backup tarball report solved echo 17-50 benchmark benchmark-first50
+    backup tarball report solved echo 17-50 benchmark benchmark-first50 examples
 
 PERL          ?= perl5.34
 PROVE         := prove
@@ -67,6 +67,7 @@ help:
 	@echo "  make deps     - install CPAN dependencies from cpanfile"
 	@echo "  make version  - show project version"
 	@echo "  make benchmark - run canonical 17-clue benchmark"
+	@echo "  make examples  - run solved, stalled, and contradiction examples"
 	@echo ""
 	@echo "Variables:"
 	@echo "  make run PUZZLE=Puzzles/Puzzle.txt"
@@ -99,6 +100,16 @@ benchmark-first50:
 	@echo "== Canonical 17-Clue Benchmark (First 50) =="
 	@$(PERL) -Ilib $(SCRIPT) --benchmark Puzzles/sudoku17-first50.txt
 
+examples:
+	@echo "== Solved example =="
+	@$(PERL) -Ilib $(SCRIPT) --file Puzzles/Examples/solved.sdk --output normal
+	@echo ""
+	@echo "== Stalled example =="
+	@$(PERL) -Ilib $(SCRIPT) --file Puzzles/Examples/stalled.sdk --output normal
+	@echo ""
+	@echo "== Contradiction example =="
+	@$(PERL) -Ilib $(SCRIPT) --file Puzzles/Examples/contradiction.sdk --output normal
+
 run:
 	$(PERL) -Ilib $(SCRIPT) $(PUZZLE)
 
@@ -124,13 +135,14 @@ backup:
 		$(TESTDIR)*.t \
 		$(DOCSDIR)*.txt \
 		$(DOCSDIR)Developer/*.md \
+		Puzzles/Examples/*.sdk \
 		$(CPANFILE)
 
 version:
 	@$(PERL) -Ilib -MSudoku -e 'print "SudokuSolver $$Sudoku::VERSION\n"'
 
 gitadd:
-	git add Makefile Readme.md $(SCRIPT) $(MODS) $(VERSION_MOD) $(TESTDIR)*.t $(DOCSDIR)*.txt $(DOCSDIR)Developer/*.md $(CPANFILE)
+	git add Makefile Readme.md $(SCRIPT) $(MODS) $(VERSION_MOD) $(TESTDIR)*.t $(DOCSDIR)*.txt $(DOCSDIR)Developer/*.md Puzzles/Examples/*.sdk $(CPANFILE)
 	git status
 
 perl-version:

@@ -2,7 +2,7 @@
 SudokuSolver v0.7.0 Release Notes
 ==============================================================================
 
-Release Date: <YYYY-MM-DD>
+Release Date: 2026-07-10
 
 This release completes Phase 2 of the SudokuSolver modernization effort.
 The project now exposes user-facing deduction features on top of the
@@ -30,6 +30,21 @@ Puzzle Loading
 * Files may contain one puzzle per line.
 * Files may also contain a single puzzle spread across nine rows.
 * End-of-line comments are supported in puzzle files.
+
+
+Example Puzzles
+---------------
+
+Three documented example puzzles are provided under:
+
+    Puzzles/Examples/solved.sdk
+    Puzzles/Examples/stalled.sdk
+    Puzzles/Examples/contradiction.sdk
+
+They demonstrate the three terminal solver states introduced and clarified in
+this release. Run all three with:
+
+    make examples
 
 Benchmarking
 ------------

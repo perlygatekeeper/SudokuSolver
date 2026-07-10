@@ -1,0 +1,13 @@
+# SudokuSolver example puzzle
+# Expected status: Contradiction
+# This puzzle is intentionally invalid: row 1 contains two given 5s.
+
+550000000
+000000000
+000000000
+000000000
+000000000
+000000000
+000000000
+000000000
+000000000
