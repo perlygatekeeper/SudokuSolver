@@ -14,8 +14,12 @@ my %STRATEGY_RANK = (
     'Pointing / Claiming' => 3,
     'Naked Pairs'         => 4,
     'Hidden Pairs'        => 4,
-    'X-Wing'              => 5,
-    'Remote Pairs'        => 6,
+    'Naked Triples'       => 5,
+    'Hidden Triples'      => 5,
+    'Naked Quads'         => 6,
+    'Hidden Quads'        => 6,
+    'X-Wing'              => 7,
+    'Remote Pairs'        => 8,
 );
 
 =head1 NAME
@@ -104,6 +108,47 @@ sub candidate_removals {
     return $self->action_count('remove_candidate');
 }
 
+
+sub contribution_by_strategy {
+    my ($self) = @_;
+
+    my %contributions;
+
+    for my $deduction ( @{ $self->deductions } ) {
+        my $strategy = $deduction->strategy;
+        my $entry = $contributions{$strategy} ||= {
+            deductions            => 0,
+            cells_solved          => 0,
+            candidates_eliminated => 0,
+        };
+
+        $entry->{deductions}++;
+
+        if ( $deduction->action eq 'set_value' ) {
+            $entry->{cells_solved}++;
+        }
+        elsif ( $deduction->action eq 'remove_candidate' ) {
+            $entry->{candidates_eliminated}++;
+        }
+    }
+
+    return \%contributions;
+}
+
+sub strategy_contribution {
+    my ( $self, $strategy ) = @_;
+
+    my $contribution = $self->contribution_by_strategy->{$strategy};
+
+    return {
+        deductions            => 0,
+        cells_solved          => 0,
+        candidates_eliminated => 0,
+    } unless $contribution;
+
+    return { %{$contribution} };
+}
+
 sub strategies_used {
     my ($self) = @_;
 
@@ -145,6 +190,7 @@ sub as_hash {
         candidate_removals => $self->candidate_removals,
         by_strategy        => $self->count_by_strategy,
         by_action          => $self->count_by_action,
+        by_strategy_action => $self->contribution_by_strategy,
         highest_strategy   => $self->highest_strategy,
     };
 }

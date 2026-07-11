@@ -61,6 +61,7 @@ The benchmark reports:
 - average solve time
 - total solve time
 - highest strategy usage
+- per-strategy contribution totals
 - unsolved puzzle indexes
 
 ---
@@ -83,3 +84,16 @@ Solved: 41 / 50
 
 Future strategies should improve benchmark coverage without introducing
 regressions.
+
+## Strategy Contributions
+
+The benchmark reports every registered strategy, including strategies that made
+no deductions. For each strategy it records:
+
+- puzzles used: puzzles in which the strategy made at least one deduction
+- deductions: total applied deductions
+- cells: `set_value` deductions
+- eliminations: `remove_candidate` deductions
+
+This table shows whether a newly added strategy contributes even when it does
+not change the final solved-puzzle count.

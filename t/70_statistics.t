@@ -49,6 +49,38 @@ is($stats->total_deductions, 4, 'total deductions are counted');
 is($stats->value_placements, 2, 'set_value deductions are counted');
 is($stats->candidate_removals, 2, 'remove_candidate deductions are counted');
 
+
+my $contributions = $stats->contribution_by_strategy;
+is_deeply(
+    $contributions->{'Naked Pairs'},
+    {
+        deductions            => 2,
+        cells_solved          => 0,
+        candidates_eliminated => 2,
+    },
+    'contribution_by_strategy separates deductions by action',
+);
+
+is_deeply(
+    $stats->strategy_contribution('Hidden Singles'),
+    {
+        deductions            => 1,
+        cells_solved          => 1,
+        candidates_eliminated => 0,
+    },
+    'strategy_contribution reports value placements',
+);
+
+is_deeply(
+    $stats->strategy_contribution('Hidden Quads'),
+    {
+        deductions            => 0,
+        cells_solved          => 0,
+        candidates_eliminated => 0,
+    },
+    'strategy_contribution returns zero counts for an unused strategy',
+);
+
 is_deeply(
     $stats->count_by_action,
     {
@@ -91,6 +123,8 @@ is($hash->{value_placements}, 2, 'as_hash includes value placement count');
 is($hash->{candidate_removals}, 2, 'as_hash includes candidate removal count');
 is($hash->{by_strategy}{'Naked Pairs'}, 2, 'as_hash includes strategy counts');
 is($hash->{by_action}{remove_candidate}, 2, 'as_hash includes action counts');
+is($hash->{by_strategy_action}{'Naked Pairs'}{candidates_eliminated}, 2,
+    'as_hash includes per-strategy action contributions');
 
 my $solver = Solver->new;
 $solver->record_deduction($_) for @deductions[0, 2];

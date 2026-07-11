@@ -45,4 +45,53 @@ like($summary, qr/Unsolved puzzles/, 'summary lists unsolved puzzles');
 my $usage = $benchmark->highest_strategy_usage;
 isa_ok($usage, 'HASH', 'highest_strategy_usage returns a hash reference');
 
+my $manual = Sudoku::Benchmark->new( file => $filename );
+$manual->results([
+    {
+        status => 'solved',
+        strategy_contributions => {
+            'Naked Singles' => {
+                deductions            => 3,
+                cells_solved          => 3,
+                candidates_eliminated => 0,
+            },
+            'Naked Triples' => {
+                deductions            => 2,
+                cells_solved          => 0,
+                candidates_eliminated => 2,
+            },
+        },
+    },
+    {
+        status => 'stalled',
+        strategy_contributions => {
+            'Naked Singles' => {
+                deductions            => 1,
+                cells_solved          => 1,
+                candidates_eliminated => 0,
+            },
+        },
+    },
+]);
+
+my $contribution = $manual->strategy_contributions;
+is($contribution->{'Naked Singles'}{puzzles_used}, 2,
+    'strategy contributions count puzzles using a strategy');
+is($contribution->{'Naked Singles'}{deductions}, 4,
+    'strategy contributions total deductions');
+is($contribution->{'Naked Singles'}{cells_solved}, 4,
+    'strategy contributions total solved cells');
+is($contribution->{'Naked Triples'}{candidates_eliminated}, 2,
+    'strategy contributions total candidate eliminations');
+is($contribution->{'Hidden Quads'}{deductions}, 0,
+    'strategy contributions include registered strategies with zero use');
+
+my $manual_summary = $manual->summary_text;
+like($manual_summary, qr/Strategy contributions/,
+    'summary includes strategy contributions section');
+like($manual_summary, qr/Naked Triples\s+1\s+2\s+0\s+2/,
+    'summary reports triple contribution counts');
+like($manual_summary, qr/Hidden Quads\s+0\s+0\s+0\s+0/,
+    'summary displays unused strategies');
+
 done_testing();
