@@ -95,7 +95,7 @@ deps:
 deps-notest:
 	cpanm --notest --installdeps .
 
-benchmark: benchmark-first100
+benchmark: benchmark-first1000
 
 benchmark-first50:
 	@echo "== Canonical 17-Clue Benchmark (First 50) =="
@@ -103,6 +103,10 @@ benchmark-first50:
 benchmark-first100:
 	@echo "== Canonical 17-Clue Benchmark (First 100) =="
 	@$(PERL) -Ilib $(SCRIPT) --benchmark Puzzles/sudoku17-first100.txt
+
+benchmark-first1000:
+	@echo "== Canonical 17-Clue Benchmark (First 1000) =="
+	@$(PERL) -Ilib $(SCRIPT) --benchmark Puzzles/sudoku17-first1000.txt
 
 examples:
 	@echo "== Solved example =="
@@ -147,7 +151,7 @@ version:
 	@$(PERL) -Ilib -MSudoku -e 'print "SudokuSolver $$Sudoku::VERSION\n"'
 
 gitadd:
-	git add Makefile Readme.md $(SCRIPT) $(MODS) $(VERSION_MOD) $(TESTDIR)*.t $(DOCSDIR)*.txt $(DOCSDIR)Developer/*.md Puzzles/Examples/*.sdk $(CPANFILE)
+	git add Makefile Readme.md $(SCRIPT) $(MODS) $(VERSION_MOD) $(TESTDIR)*.t $(DOCSDIR)*.txt $(DOCSDIR)Developer/*.md Puzzles/Examples/*.sdk $(PUZZLESDIR)*.txt $(CPANFILE)
 	git status
 
 perl-version:
