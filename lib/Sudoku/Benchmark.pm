@@ -235,7 +235,7 @@ sub summary_text {
         push @lines, '', 'Unsolved puzzles', '';
         for my $result (@unsolved) {
             push @lines, sprintf(
-                '    %02d  %-13s solved cells: %2d  difficulty: %s',
+                '   %04d  %-13s solved cells: %2d  difficulty: %s',
                 ($result->{index}        // 0),
                 ($result->{status}       // 'unknown'),
                 ($result->{solved_cells} // 0),

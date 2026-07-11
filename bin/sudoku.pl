@@ -23,15 +23,15 @@ my $trace_grid_after_deduction;
 my $output_mode;
 
 GetOptions(
-  'file|f=s'   => \$puzzle_file,
-  'puzzle|p=i' => \$puzzle_index,
-  'string|s=s' => \$puzzle_string,
-  'help|h'     => \$show_help,
-  'version|v'  => \$show_version,
-  'benchmark=s' => \$benchmark_file,
-  'debug'       => \$debug,
+  'file|f=s'     => \$puzzle_file,
+  'puzzle|p=i'   => \$puzzle_index,
+  'string|s=s'   => \$puzzle_string,
+  'help|h'       => \$show_help,
+  'version|v'    => \$show_version,
+  'benchmark=s'  => \$benchmark_file,
+  'debug'        => \$debug,
+  'output=s'     => \$output_mode,
   'trace-grid-after-deduction' => \$trace_grid_after_deduction,
-  'output=s' => \$output_mode,
 ) or pod2usage(2);
 
 pod2usage(0) if $show_help;
