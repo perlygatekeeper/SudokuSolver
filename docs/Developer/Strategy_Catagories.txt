@@ -1,0 +1,41 @@
+Subset Strategies
+    Naked Singles
+    Hidden Singles
+    Naked Pairs
+    Hidden Pairs
+    Naked Triples
+    Hidden Triples
+    Naked Quads
+    Hidden Quads
+
+Intersection Strategies
+    Pointing / Claiming
+
+Fish Strategies
+    X-Wing
+    Swordfish
+    Jellyfish
+
+Wing Strategies
+    XY-Wing
+    XYZ-Wing
+    WXYZ-Wing
+
+Chain Strategies
+    Remote Pairs
+    XY-Chains
+    AIC
+    Forcing Chains
+
+Coloring Strategies
+    Simple Coloring
+    Multi-Coloring
+
+Uniqueness Strategies
+    Unique Rectangle
+
+Pattern Strategies
+    Skyscraper
+    Two-String Kite
+    Empty Rectangle
+    Sue de Coq
