@@ -10,8 +10,8 @@ Solved            : 956
 Stalled           : 44
 Contradictions    : 0
 
-Average solve time: 0.039375 s
-Total time        : 39.375036 s
+Average solve time: 0.038940 s
+Total time        : 38.939754 s
 
 Highest strategy usage
 
@@ -26,10 +26,10 @@ Strategy contributions
 
     Strategy               Puzzles  Deductions  Cells  Eliminations
     ---------------------  -------  ----------  -----  ------------
-    Naked Singles              998       38630  38630             0
-    Hidden Singles            1000       23878  23878             0
-    Pointing / Claiming        535        5613      0          5613
-    Naked Pairs                120         727      0           727
+    Naked Singles              998       38661  38661             0
+    Hidden Singles            1000       23847  23847             0
+    Pointing / Claiming        535        5629      0          5629
+    Naked Pairs                120         760      0           760
     Hidden Pairs                81         471      0           471
     Naked Triples                1           3      0             3
     Hidden Triples               1           6      0             6
@@ -40,47 +40,47 @@ Strategy contributions
 
 Unsolved puzzles
 
-     22  stalled       solved cells: 49  difficulty: Medium
-    116  stalled       solved cells: 47  difficulty: Hard
-    185  stalled       solved cells: 52  difficulty: Hard
-    186  stalled       solved cells: 50  difficulty: Hard
-    188  stalled       solved cells: 52  difficulty: Hard
-    313  stalled       solved cells: 50  difficulty: Hard
-    316  stalled       solved cells: 50  difficulty: Hard
-    317  stalled       solved cells: 50  difficulty: Hard
-    343  stalled       solved cells: 54  difficulty: Hard
-    355  stalled       solved cells: 43  difficulty: Hard
-    375  stalled       solved cells: 41  difficulty: Hard
-    381  stalled       solved cells: 22  difficulty: Hard
-    385  stalled       solved cells: 22  difficulty: Hard
-    389  stalled       solved cells: 52  difficulty: Easy
-    425  stalled       solved cells: 46  difficulty: Hard
-    427  stalled       solved cells: 32  difficulty: Hard
-    488  stalled       solved cells: 46  difficulty: Hard
-    504  stalled       solved cells: 55  difficulty: Hard
-    518  stalled       solved cells: 60  difficulty: Hard
-    529  stalled       solved cells: 54  difficulty: Hard
-    564  stalled       solved cells: 36  difficulty: Medium
-    581  stalled       solved cells: 39  difficulty: Hard
-    596  stalled       solved cells: 52  difficulty: Medium
-    621  stalled       solved cells: 57  difficulty: Medium
-    628  stalled       solved cells: 53  difficulty: Master
-    649  stalled       solved cells: 43  difficulty: Medium
-    696  stalled       solved cells: 54  difficulty: Medium
-    726  stalled       solved cells: 53  difficulty: Easy
-    732  stalled       solved cells: 46  difficulty: Unrated
-    738  stalled       solved cells: 33  difficulty: Hard
-    741  stalled       solved cells: 43  difficulty: Medium
-    777  stalled       solved cells: 41  difficulty: Hard
-    782  stalled       solved cells: 43  difficulty: Medium
-    819  stalled       solved cells: 45  difficulty: Medium
-    822  stalled       solved cells: 60  difficulty: Easy
-    856  stalled       solved cells: 44  difficulty: Hard
-    883  stalled       solved cells: 57  difficulty: Hard
-    886  stalled       solved cells: 57  difficulty: Hard
-    898  stalled       solved cells: 57  difficulty: Hard
-    940  stalled       solved cells: 50  difficulty: Hard
-    941  stalled       solved cells: 43  difficulty: Hard
-    945  stalled       solved cells: 52  difficulty: Hard
-    987  stalled       solved cells: 39  difficulty: Medium
+   0022  stalled       solved cells: 49  difficulty: Medium
+   0116  stalled       solved cells: 47  difficulty: Hard
+   0185  stalled       solved cells: 52  difficulty: Hard
+   0186  stalled       solved cells: 50  difficulty: Hard
+   0188  stalled       solved cells: 52  difficulty: Hard
+   0313  stalled       solved cells: 50  difficulty: Hard
+   0316  stalled       solved cells: 50  difficulty: Hard
+   0317  stalled       solved cells: 50  difficulty: Hard
+   0343  stalled       solved cells: 54  difficulty: Hard
+   0355  stalled       solved cells: 43  difficulty: Hard
+   0375  stalled       solved cells: 41  difficulty: Hard
+   0381  stalled       solved cells: 22  difficulty: Hard
+   0385  stalled       solved cells: 22  difficulty: Hard
+   0389  stalled       solved cells: 52  difficulty: Easy
+   0425  stalled       solved cells: 46  difficulty: Hard
+   0427  stalled       solved cells: 32  difficulty: Hard
+   0488  stalled       solved cells: 46  difficulty: Hard
+   0504  stalled       solved cells: 55  difficulty: Hard
+   0518  stalled       solved cells: 60  difficulty: Hard
+   0529  stalled       solved cells: 54  difficulty: Hard
+   0564  stalled       solved cells: 36  difficulty: Medium
+   0581  stalled       solved cells: 39  difficulty: Hard
+   0596  stalled       solved cells: 52  difficulty: Medium
+   0621  stalled       solved cells: 57  difficulty: Medium
+   0628  stalled       solved cells: 53  difficulty: Expert
+   0649  stalled       solved cells: 43  difficulty: Medium
+   0696  stalled       solved cells: 54  difficulty: Medium
+   0726  stalled       solved cells: 53  difficulty: Easy
+   0732  stalled       solved cells: 46  difficulty: Expert
+   0738  stalled       solved cells: 33  difficulty: Hard
+   0741  stalled       solved cells: 43  difficulty: Medium
+   0777  stalled       solved cells: 41  difficulty: Hard
+   0782  stalled       solved cells: 43  difficulty: Medium
+   0819  stalled       solved cells: 45  difficulty: Medium
+   0822  stalled       solved cells: 60  difficulty: Easy
+   0856  stalled       solved cells: 44  difficulty: Hard
+   0883  stalled       solved cells: 57  difficulty: Hard
+   0886  stalled       solved cells: 57  difficulty: Hard
+   0898  stalled       solved cells: 57  difficulty: Hard
+   0940  stalled       solved cells: 50  difficulty: Hard
+   0941  stalled       solved cells: 43  difficulty: Hard
+   0945  stalled       solved cells: 52  difficulty: Hard
+   0987  stalled       solved cells: 39  difficulty: Medium
    1000  stalled       solved cells: 48  difficulty: Hard

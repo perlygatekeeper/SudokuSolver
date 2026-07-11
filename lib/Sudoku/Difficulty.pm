@@ -21,26 +21,60 @@ old solves without ambiguity.
 
 =cut
 
-our $RATING_VERSION = '1.0';
+our $RATING_VERSION = '1.1';
 
 my %STRATEGY_SCORE = (
     'Naked Singles'       => 1,
     'Hidden Singles'      => 2,
     'Pointing / Claiming' => 3,
+
     'Naked Pairs'         => 4,
     'Hidden Pairs'        => 4,
+
+    'Naked Triples'       => 5,
+    'Hidden Triples'      => 5,
+
+    'Naked Quads'         => 6,
+    'Hidden Quads'        => 6,
+
     'X-Wing'              => 5,
     'Remote Pairs'        => 6,
 );
 
+my %PLANNED_STRATEGY_SCORE = (
+    'Unique Rectangle'    => 6,
+    'XY-Wing'             => 6,
+    'XYZ-Wing'            => 7,
+    'W-Wing'              => 7,
+    'Swordfish'           => 7,
+    'Skyscraper'          => 7,
+    'Two-String Kite'     => 7,
+    'Empty Rectangle'     => 7,
+    'WXYZ-Wing'           => 8,
+    'Jellyfish'           => 8,
+    'Simple Coloring'     => 8,
+    'Multi-Coloring'      => 9,
+    'Sue de Coq'          => 9,
+    'XY-Chains'           => 9,
+    'ALS'                 => 10,
+    'AIC'                 => 10,
+    'Forcing Chains'      => 11,
+);
+
 my %SCORE_LABEL = (
-    0 => 'Unrated',
-    1 => 'Trivial',
-    2 => 'Easy',
-    3 => 'Medium',
-    4 => 'Hard',
-    5 => 'Expert',
-    6 => 'Master',
+     0 => 'Unrated',
+     1 => 'Trivial',
+     2 => 'Easy',
+     3 => 'Medium',
+     4 => 'Hard',
+     5 => 'Expert',
+     6 => 'Expert',
+     7 => 'Expert',  # Naked Triples
+     8 => 'Expert',  # Hidden Triples
+     9 => 'Master',  # Naked Quads
+    10 => 'Master',  # Hidden Quads
+    11 => 'Master',  # X-Wing
+    12 => 'Master',  # Remote Pairs
 );
 
 has 'rating_version' => (
