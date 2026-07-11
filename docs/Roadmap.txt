@@ -143,10 +143,10 @@ Planned work:
 
 * Audit candidate-removal strategies.
 * Improve contradiction diagnostics.
-* Naked Triples.
-* Hidden Triples.
-* Naked Quads.
-* Hidden Quads.
+* [done] Naked Triples.
+* [done] Hidden Triples.
+* [done] Naked Quads.
+* [done] Hidden Quads.
 * Swordfish.
 * XY-Wing.
 * XYZ-Wing.
@@ -180,10 +180,10 @@ Known stalled benchmark puzzles from the current strategy set:
 
 Planned strategy additions:
 
-* Naked Triples
-* Hidden Triples
-* Naked Quads
-* Hidden Quads
+* [done] Naked Triples
+* [done] Hidden Triples
+* [done] Naked Quads
+* [done] Hidden Quads
 * Swordfish
 * XY-Wing
 * XYZ-Wing

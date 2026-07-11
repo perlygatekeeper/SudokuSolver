@@ -1,0 +1,70 @@
+== Canonical 17-Clue Benchmark (First 1000) ==
+Canonical 17-Clue Benchmark
+===========================
+
+Benchmark file:
+    Puzzles/sudoku17-first1000.txt
+
+Puzzles processed : 1000
+Solved            : 956
+Stalled           : 44
+Contradictions    : 0
+
+Average solve time: 0.037065 s
+Total time        : 37.065334 s
+
+Highest strategy usage
+
+    Hidden Pairs            65
+    Hidden Singles         450
+    Naked Pairs             71
+    Pointing / Claiming    386
+    Remote Pairs            28
+
+Unsolved puzzles
+
+    22  stalled       solved cells: 49  difficulty: Medium
+    116  stalled       solved cells: 47  difficulty: Hard
+    185  stalled       solved cells: 52  difficulty: Hard
+    186  stalled       solved cells: 50  difficulty: Hard
+    188  stalled       solved cells: 52  difficulty: Hard
+    313  stalled       solved cells: 50  difficulty: Hard
+    316  stalled       solved cells: 50  difficulty: Hard
+    317  stalled       solved cells: 50  difficulty: Hard
+    343  stalled       solved cells: 54  difficulty: Hard
+    355  stalled       solved cells: 43  difficulty: Hard
+    375  stalled       solved cells: 41  difficulty: Hard
+    381  stalled       solved cells: 22  difficulty: Hard
+    385  stalled       solved cells: 22  difficulty: Hard
+    389  stalled       solved cells: 52  difficulty: Easy
+    425  stalled       solved cells: 46  difficulty: Hard
+    427  stalled       solved cells: 32  difficulty: Hard
+    488  stalled       solved cells: 46  difficulty: Hard
+    504  stalled       solved cells: 55  difficulty: Hard
+    518  stalled       solved cells: 60  difficulty: Hard
+    529  stalled       solved cells: 54  difficulty: Hard
+    564  stalled       solved cells: 36  difficulty: Medium
+    581  stalled       solved cells: 39  difficulty: Hard
+    596  stalled       solved cells: 52  difficulty: Medium
+    621  stalled       solved cells: 57  difficulty: Medium
+    628  stalled       solved cells: 53  difficulty: Master
+    649  stalled       solved cells: 43  difficulty: Medium
+    696  stalled       solved cells: 54  difficulty: Medium
+    726  stalled       solved cells: 53  difficulty: Easy
+    732  stalled       solved cells: 46  difficulty: Medium
+    738  stalled       solved cells: 33  difficulty: Hard
+    741  stalled       solved cells: 43  difficulty: Medium
+    777  stalled       solved cells: 41  difficulty: Hard
+    782  stalled       solved cells: 43  difficulty: Medium
+    819  stalled       solved cells: 45  difficulty: Medium
+    822  stalled       solved cells: 60  difficulty: Easy
+    856  stalled       solved cells: 44  difficulty: Hard
+    883  stalled       solved cells: 57  difficulty: Hard
+    886  stalled       solved cells: 57  difficulty: Hard
+    898  stalled       solved cells: 57  difficulty: Hard
+    940  stalled       solved cells: 50  difficulty: Hard
+    941  stalled       solved cells: 43  difficulty: Hard
+    945  stalled       solved cells: 52  difficulty: Hard
+    987  stalled       solved cells: 39  difficulty: Medium
+   1000  stalled       solved cells: 48  difficulty: Hard
+

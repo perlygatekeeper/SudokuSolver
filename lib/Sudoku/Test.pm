@@ -38,6 +38,8 @@ my @PROJECT_MODULES = qw(
     Sudoku::Subset
     Sudoku::Strategy::NakedTriples
     Sudoku::Strategy::HiddenTriples
+    Sudoku::Strategy::NakedQuads
+    Sudoku::Strategy::HiddenQuads
     Sudoku::Strategy::XWing
     Sudoku::Strategy::RemotePairs
 );
