@@ -113,26 +113,48 @@ Solved: 50 / 50 without guessing
 
 ---
 
-## Version 0.8.x — Improved User Experience: Output Styles
+## Version 0.8.x — Solver Reliability and Advanced Strategies
 
-Status: in progress
+Status: planned
 
-Completed:
+Primary goals:
 
-* Added text renderer architecture.
-* Added quiet, normal, explain, trace, and debug output modes.
-* Defined Pass, Strategy Attempt, Deduction, and Restart terminology.
-* Made `run()` use the one-deduction step loop.
-* Added human-readable Action / Why / Detail deduction output.
-* Added structured row, column, and box context to deductions.
-* Replaced legacy final-status prose with Solved, Stalled, and Contradiction summaries.
-* Removed duplicate debug deduction narration.
+* Eliminate benchmark contradictions.
+* Preserve or improve benchmark coverage.
+* Expand the logical strategy repertoire.
 
-Remaining before v0.8.0:
+Current benchmark:
 
-* Review real output from representative solved, stalled, and contradiction puzzles.
-* Confirm CLI help and documentation show all output modes clearly.
-* Add release notes and bump the project version.
+```text
+Solved:          42
+Stalled:          5
+Contradictions:   3
+```
+
+Targets:
+
+```text
+Solved:          50
+Stalled:          0
+Contradictions:   0
+```
+
+Planned work:
+
+* Audit candidate-removal strategies.
+* Improve contradiction diagnostics.
+* Naked Triples.
+* Hidden Triples.
+* Naked Quads.
+* Hidden Quads.
+* Swordfish.
+* XY-Wing.
+* XYZ-Wing.
+* W-Wing.
+* Skyscraper.
+* Two-String Kite.
+* Empty Rectangle.
+* Simple Coloring.
 
 ---
 
@@ -247,7 +269,7 @@ Formatter / Renderer
 [x] Difficulty engine v1
 [x] Benchmark framework
 [ ] Canonicalization
-[ ] Rendering subsystem
+[x] Rendering subsystem
 [ ] Additional strategy families
 ```
 

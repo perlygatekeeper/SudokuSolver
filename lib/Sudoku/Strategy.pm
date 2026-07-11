@@ -18,12 +18,8 @@ my @ORDERED_STRATEGY_CLASSES = qw(
     Sudoku::Strategy::NakedPairs
     Sudoku::Strategy::HiddenPairs
     Sudoku::Strategy::XWing
+    Sudoku::Strategy::RemotePairs
 );
-#
-# RemotePairs is intentionally disabled.
-# Its current implementation can produce invalid deductions.
-# See docs/Strategies/RemotePairs.md and the canonical benchmark.
-#   Sudoku::Strategy::RemotePairs
 
 sub ordered_strategy_classes {
     return @ORDERED_STRATEGY_CLASSES;
