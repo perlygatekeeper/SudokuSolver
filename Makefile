@@ -8,6 +8,7 @@ PROVE         := prove
 SCRIPT        := bin/sudoku.pl
 MODS          := $(shell find lib -name '*.pm' | sort)
 PUZZLE        := Puzzles/Puzzle3.txt
+PUZZLEDIR     := Puzzles/
 TAR           := gtar
 NAME          := sudoku_solver
 TESTDIR       := t/
@@ -94,11 +95,14 @@ deps:
 deps-notest:
 	cpanm --notest --installdeps .
 
-benchmark: benchmark-first50
+benchmark: benchmark-first100
 
 benchmark-first50:
 	@echo "== Canonical 17-Clue Benchmark (First 50) =="
-	@$(PERL) -Ilib $(SCRIPT) --benchmark Puzzles/sudoku17-first50.txt
+
+benchmark-first100:
+	@echo "== Canonical 17-Clue Benchmark (First 100) =="
+	@$(PERL) -Ilib $(SCRIPT) --benchmark Puzzles/sudoku17-first100.txt
 
 examples:
 	@echo "== Solved example =="
@@ -135,7 +139,8 @@ backup:
 		$(TESTDIR)*.t \
 		$(DOCSDIR)*.txt \
 		$(DOCSDIR)Developer/*.md \
-		Puzzles/Examples/*.sdk \
+		$(PUZZLESDIR)Examples/*.sdk \
+		$(PUZZLESDIR)*.txt \
 		$(CPANFILE)
 
 version:
