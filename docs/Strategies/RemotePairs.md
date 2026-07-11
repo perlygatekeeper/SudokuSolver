@@ -16,9 +16,7 @@ Eliminate candidates seen by both ends of the chain.
 
 ## Example
 
-```
 (Add a worked example from the regression test suite.)
-```
 
 ## Solver Responsibilities
 
@@ -31,9 +29,7 @@ Eliminate candidates seen by both ends of the chain.
 
 Primary test file:
 
-```
 t/61_remote_pairs.t
-```
 
 Tests should include:
 

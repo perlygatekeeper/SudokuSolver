@@ -1,0 +1,24 @@
+Every strategy should:
+
+1. Never modify the grid.
+
+2. Produce Sudoku::Deduction objects.
+
+3. Supply:
+
+    strategy
+    action
+    reason
+    explanation
+
+4. Have:
+
+    positive tests
+    negative tests
+    regression tests
+
+5. Never reduce benchmark coverage.
+
+6. Never introduce contradictions.
+
+7. Be benchmarked before merging.
