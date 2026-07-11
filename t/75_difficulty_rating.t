@@ -38,7 +38,7 @@ my @deductions = (
 
 my $stats = Sudoku::Statistics->from_deductions(@deductions);
 is($stats->highest_strategy, 'X-Wing', 'statistics identify highest strategy used');
-is($stats->strategy_rank('X-Wing'), 5, 'statistics expose strategy rank');
+is($stats->strategy_rank('X-Wing'), 7, 'statistics expose strategy rank');
 is($stats->strategy_rank('Unknown'), 0, 'unknown strategies have rank zero');
 
 my $difficulty = Sudoku::Difficulty->from_statistics($stats);

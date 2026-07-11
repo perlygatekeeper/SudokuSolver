@@ -8,6 +8,7 @@ use Time::HiRes qw(time);
 use File::Spec;
 
 use Solver;
+use Sudoku::Strategy;
 
 =head1 NAME
 
@@ -74,6 +75,7 @@ sub _run_one {
         : ( $grid->solved == 81 ? 'solved' : 'stalled' );
 
     my $difficulty = $solver->difficulty;
+    my $statistics = $solver->statistics;
 
     return {
         index            => $index,
@@ -84,6 +86,7 @@ sub _run_one {
         difficulty       => $difficulty->label,
         difficulty_score => $difficulty->score,
         highest_strategy => $difficulty->highest_strategy,
+        strategy_contributions => $statistics->contribution_by_strategy,
     };
 }
 
@@ -121,7 +124,7 @@ sub total_elapsed {
     my ($self) = @_;
 
     my $total = 0;
-    $total += $_->{elapsed} for @{ $self->results };
+    $total += ($_->{elapsed} // 0) for @{ $self->results };
 
     return $total;
 }
@@ -143,6 +146,41 @@ sub highest_strategy_usage {
     }
 
     return \%counts;
+}
+
+
+sub strategy_contributions {
+    my ($self) = @_;
+
+    my %totals = map {
+        $_ => {
+            puzzles_used          => 0,
+            deductions            => 0,
+            cells_solved          => 0,
+            candidates_eliminated => 0,
+        }
+    } Sudoku::Strategy::ordered_strategy_names();
+
+    for my $result ( @{ $self->results } ) {
+        my $by_strategy = $result->{strategy_contributions} || {};
+
+        for my $strategy ( keys %{$by_strategy} ) {
+            my $source = $by_strategy->{$strategy};
+            my $target = $totals{$strategy} ||= {
+                puzzles_used          => 0,
+                deductions            => 0,
+                cells_solved          => 0,
+                candidates_eliminated => 0,
+            };
+
+            $target->{puzzles_used}++ if $source->{deductions};
+            $target->{deductions}            += $source->{deductions}            || 0;
+            $target->{cells_solved}          += $source->{cells_solved}          || 0;
+            $target->{candidates_eliminated} += $source->{candidates_eliminated} || 0;
+        }
+    }
+
+    return \%totals;
 }
 
 sub summary_text {
@@ -172,16 +210,36 @@ sub summary_text {
         }
     }
 
+    my $contributions = $self->strategy_contributions;
+    push @lines,
+        '',
+        'Strategy contributions',
+        '',
+        '    Strategy               Puzzles  Deductions  Cells  Eliminations',
+        '    ---------------------  -------  ----------  -----  ------------';
+
+    for my $strategy ( Sudoku::Strategy::ordered_strategy_names() ) {
+        my $entry = $contributions->{$strategy};
+        push @lines, sprintf(
+            '    %-21s  %7d  %10d  %5d  %12d',
+            $strategy,
+            $entry->{puzzles_used},
+            $entry->{deductions},
+            $entry->{cells_solved},
+            $entry->{candidates_eliminated},
+        );
+    }
+
     my @unsolved = $self->unsolved_results;
     if (@unsolved) {
         push @lines, '', 'Unsolved puzzles', '';
         for my $result (@unsolved) {
             push @lines, sprintf(
                 '    %02d  %-13s solved cells: %2d  difficulty: %s',
-                $result->{index},
-                $result->{status},
-                $result->{solved_cells},
-                $result->{difficulty},
+                ($result->{index}        // 0),
+                ($result->{status}       // 'unknown'),
+                ($result->{solved_cells} // 0),
+                ($result->{difficulty}   // 'Unrated'),
             );
         }
     }
