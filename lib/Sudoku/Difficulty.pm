@@ -21,35 +21,35 @@ old solves without ambiguity.
 
 =cut
 
-our $RATING_VERSION = '1.4';
+our $RATING_VERSION = '1.5';
 
 my %STRATEGY_SCORE = (
-    'Naked Singles'       => 1,
-    'Hidden Singles'      => 2,
-    'Pointing / Claiming' => 3,
+    'Naked Singles'           => 1,
+    'Hidden Singles'          => 2,
+    'Pointing / Claiming'     => 3,
 
-    'Naked Pairs'         => 4,
-    'Hidden Pairs'        => 4,
+    'Naked Pairs'             => 4,
+    'Hidden Pairs'            => 4,
 
-    'Naked Triples'       => 5,
-    'Hidden Triples'      => 5,
+    'Naked Triples'           => 5,
+    'Hidden Triples'          => 5,
 
-    'Naked Quads'         => 6,
-    'Hidden Quads'        => 6,
-
-    'X-Wing'              => 5,
-    'Swordfish'            => 7,
-    'Remote Pairs'        => 6,
+    'Naked Quads'             => 6,
+    'Hidden Quads'            => 6,
+    'X-Wing'                  => 5,
+    'Remote Pairs'            => 6,
     'Unique Rectangle Type 1' => 6,
     'Unique Rectangle Type 2' => 6,
-    'XY-Wing'             => 6,
-    'XYZ-Wing'            => 7,
-    'WXYZ-Wing'           => 8,
+    'XY-Wing'                 => 6,
+
+    'Swordfish'               => 7,
+    'Skyscraper'              => 7,
+    'XYZ-Wing'                => 7,
+    'WXYZ-Wing'               => 8,
 );
 
 my %PLANNED_STRATEGY_SCORE = (
     'W-Wing'              => 7,
-    'Skyscraper'          => 7,
     'Two-String Kite'     => 7,
     'Empty Rectangle'     => 7,
     'Jellyfish'           => 8,
