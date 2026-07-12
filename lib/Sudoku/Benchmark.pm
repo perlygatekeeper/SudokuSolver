@@ -206,7 +206,7 @@ sub summary_text {
     if ( keys %{$usage} ) {
         push @lines, '', 'Highest strategy usage', '';
         for my $strategy ( sort keys %{$usage} ) {
-            push @lines, sprintf( '    %-20s %5d', $strategy, $usage->{$strategy} );
+            push @lines, sprintf( '    %-24s %5d', $strategy, $usage->{$strategy} );
         }
     }
 
