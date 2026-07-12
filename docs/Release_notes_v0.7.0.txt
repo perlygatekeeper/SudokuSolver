@@ -147,3 +147,14 @@ color-wing eliminations, shares component coloring with Simple Coloring, emits
 structured human-readable deductions, and includes focused positive and
 negative tests plus strategy and algorithm documentation. Difficulty rating
 method version is now 2.0.
+
+
+XY-Chains
+=========
+
+Added the XY-Chains strategy for alternating implications through visible
+bivalue cells. The implementation searches bounded non-repeating paths,
+removes the shared endpoint candidate from common peers, emits structured
+human-readable deductions, and includes focused positive and negative tests
+plus strategy and algorithm documentation. Difficulty rating method version
+is now 2.1.

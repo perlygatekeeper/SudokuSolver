@@ -354,3 +354,16 @@ component-coloring infrastructure. The strategy compares separate colored
 components for the same digit, emits structured candidate-removal deductions,
 and includes focused positive and negative tests plus strategy and algorithm
 documentation.
+
+
+XY-Chains
+---------
+
+    [x] Bivalue alternating-candidate chain search
+    [x] Common-peer endpoint eliminations
+
+Added XY-Chains as the generalization of XY-Wing. The strategy searches bounded
+chains of visible bivalue cells, follows alternating candidates, removes the
+shared endpoint candidate from cells that see both endpoints, and emits
+structured human-readable deductions. Focused positive and negative tests and
+strategy and algorithm documentation are included.

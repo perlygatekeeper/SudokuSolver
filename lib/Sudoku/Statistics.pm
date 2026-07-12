@@ -30,8 +30,9 @@ my %STRATEGY_RANK = (
     'XY-Wing'                  => 16,
     'XYZ-Wing'                 => 17,
     'WXYZ-Wing'                => 18,
-    'Unique Rectangle Type 1'  => 19,
-    'Unique Rectangle Type 2'  => 20,
+    'XY-Chains'                 => 19,
+    'Unique Rectangle Type 1'  => 20,
+    'Unique Rectangle Type 2'  => 21,
 );
 
 =head1 NAME
