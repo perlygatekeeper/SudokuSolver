@@ -29,6 +29,8 @@ is_deeply(
         'Sudoku::Strategy::XYWing',
         'Sudoku::Strategy::XYZWing',
         'Sudoku::Strategy::WXYZWing',
+        'Sudoku::Strategy::UniqueRectangleType1',
+        'Sudoku::Strategy::UniqueRectangleType2',
     ],
     'registry returns strategies in canonical solving order',
 );
@@ -59,6 +61,8 @@ is_deeply(
         'XY-Wing',
         'XYZ-Wing',
         'WXYZ-Wing',
+        'Unique Rectangle Type 1',
+        'Unique Rectangle Type 2',
     ],
     'registry exposes canonical strategy names',
 );

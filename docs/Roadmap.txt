@@ -295,3 +295,14 @@ make PERL=perl check
 git diff --check
 make PERL=perl benchmark
 ```
+
+
+Uniqueness Strategies
+---------------------
+
+    [x] Unique Rectangle Type 1
+    [x] Unique Rectangle Type 2
+
+These strategies rely on the puzzle having a unique solution. Additional
+Unique Rectangle forms should be added individually with focused positive and
+negative tests.

@@ -9,20 +9,22 @@ use Scalar::Util qw(blessed);
 use Sudoku::Deduction;
 
 my %STRATEGY_RANK = (
-    'Naked Singles'       => 1,
-    'Hidden Singles'      => 2,
-    'Pointing / Claiming' => 3,
-    'Naked Pairs'         => 4,
-    'Hidden Pairs'        => 4,
-    'Naked Triples'       => 5,
-    'Hidden Triples'      => 5,
-    'Naked Quads'         => 6,
-    'Hidden Quads'        => 6,
-    'X-Wing'              => 7,
-    'Remote Pairs'        => 8,
-    'XY-Wing'             => 9,
-    'XYZ-Wing'            => 10,
-    'WXYZ-Wing'           => 11,
+    'Naked Singles'            => 1,
+    'Hidden Singles'           => 2,
+    'Pointing / Claiming'      => 3,
+    'Naked Pairs'              => 4,
+    'Hidden Pairs'             => 4,
+    'Naked Triples'            => 5,
+    'Hidden Triples'           => 5,
+    'Naked Quads'              => 6,
+    'Hidden Quads'             => 6,
+    'X-Wing'                   => 7,
+    'Remote Pairs'             => 8,
+    'XY-Wing'                  => 9,
+    'XYZ-Wing'                 => 10,
+    'WXYZ-Wing'                => 11,
+    'Unique Rectangle Type 1'  => 12,
+    'Unique Rectangle Type 2'  => 13,
 );
 
 =head1 NAME

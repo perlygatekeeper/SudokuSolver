@@ -63,6 +63,8 @@ is_deeply(
         'XY-Wing',
         'XYZ-Wing',
         'WXYZ-Wing',
+        'Unique Rectangle Type 1',
+        'Unique Rectangle Type 2',
     ],
     'Solver exposes canonical strategy order',
 );
@@ -92,6 +94,8 @@ is_deeply(
         'XY-Wing',
         'XYZ-Wing',
         'WXYZ-Wing',
+        'Unique Rectangle Type 1',
+        'Unique Rectangle Type 2',
     ],
     'Solver exposes canonical strategy order',
 );

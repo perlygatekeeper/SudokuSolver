@@ -215,13 +215,13 @@ sub summary_text {
         '',
         'Strategy contributions',
         '',
-        '    Strategy               Puzzles  Deductions  Cells  Eliminations',
-        '    ---------------------  -------  ----------  -----  ------------';
+        '    Strategy                     Puzzles  Deductions  Cells  Eliminations',
+        '    ---------------------------  -------  ----------  -----  ------------';
 
     for my $strategy ( Sudoku::Strategy::ordered_strategy_names() ) {
         my $entry = $contributions->{$strategy};
         push @lines, sprintf(
-            '    %-21s  %7d  %10d  %5d  %12d',
+            '    %-23s  %7d  %10d  %5d  %12d',
             $strategy,
             $entry->{puzzles_used},
             $entry->{deductions},
@@ -235,7 +235,7 @@ sub summary_text {
         push @lines, '', 'Unsolved puzzles', '';
         for my $result (@unsolved) {
             push @lines, sprintf(
-                '   %04d  %-13s solved cells: %2d  difficulty: %s',
+                '   %04d  %-17s solved cells: %2d  difficulty: %s',
                 ($result->{index}        // 0),
                 ($result->{status}       // 'unknown'),
                 ($result->{solved_cells} // 0),
