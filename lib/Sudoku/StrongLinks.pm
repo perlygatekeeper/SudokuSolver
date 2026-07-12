@@ -9,6 +9,7 @@ our @EXPORT_OK = qw(
     strong_links_for_digit
     candidate_graph_for_digit
     connected_components
+    color_component
     cell_key
     cells_see_each_other
 );
@@ -110,6 +111,33 @@ sub connected_components {
     }
 
     return @components;
+}
+
+sub color_component {
+    my ( $graph, $component ) = @_;
+
+    my %color;
+    my @queue = ( $component->{keys}[0] );
+    $color{ $component->{keys}[0] } = 0;
+    my $conflicted = 0;
+
+    while (@queue) {
+        my $key = shift @queue;
+
+        for my $neighbor (keys %{ $graph->{neighbors}{$key} || {} }) {
+            my $expected = 1 - $color{$key};
+
+            if (exists $color{$neighbor}) {
+                $conflicted = 1 if $color{$neighbor} != $expected;
+                next;
+            }
+
+            $color{$neighbor} = $expected;
+            push @queue, $neighbor;
+        }
+    }
+
+    return ( \%color, $conflicted );
 }
 
 sub _add_unit_link {

@@ -19,6 +19,7 @@ use Sudoku::Strategy::TwoStringKite;
 use Sudoku::Strategy::EmptyRectangle;
 use Sudoku::Strategy::SimpleColoring;
 use Sudoku::Strategy::XChains;
+use Sudoku::Strategy::MultiColoring;
 use Sudoku::Strategy::RemotePairs;
 use Sudoku::Strategy::UniqueRectangleType1;
 use Sudoku::Strategy::UniqueRectangleType2;
@@ -43,6 +44,7 @@ my @ORDERED_STRATEGY_CLASSES = qw(
     Sudoku::Strategy::EmptyRectangle
     Sudoku::Strategy::SimpleColoring
     Sudoku::Strategy::XChains
+    Sudoku::Strategy::MultiColoring
     Sudoku::Strategy::RemotePairs
     Sudoku::Strategy::XYWing
     Sudoku::Strategy::XYZWing
