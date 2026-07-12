@@ -42,6 +42,10 @@ my @PROJECT_MODULES = qw(
     Sudoku::Strategy::HiddenQuads
     Sudoku::Strategy::XWing
     Sudoku::Strategy::RemotePairs
+    Sudoku::Wing
+    Sudoku::Strategy::XYWing
+    Sudoku::Strategy::XYZWing
+    Sudoku::Strategy::WXYZWing
 );
 
 sub project_modules {

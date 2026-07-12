@@ -43,22 +43,27 @@ is($stats->strategy_rank('Unknown'), 0, 'unknown strategies have rank zero');
 
 my $difficulty = Sudoku::Difficulty->from_statistics($stats);
 isa_ok($difficulty, 'Sudoku::Difficulty');
-is($difficulty->rating_version, '1.1', 'difficulty rating records method version');
+is($difficulty->rating_version, '1.2', 'difficulty rating records method version');
 is($difficulty->label, 'Expert', 'difficulty label comes from highest strategy');
 is($difficulty->score, 5, 'difficulty score comes from highest strategy');
 is($difficulty->highest_strategy, 'X-Wing', 'difficulty records highest strategy');
 is($difficulty->statistics_snapshot->{total_deductions}, 3, 'difficulty keeps statistics snapshot');
 is($difficulty->statistics_snapshot->{highest_strategy}, 'X-Wing', 'snapshot records highest strategy');
 like($difficulty->summary, qr/Expert/, 'summary includes label');
-like($difficulty->summary, qr/v1\.1/, 'summary includes rating version');
+like($difficulty->summary, qr/v1\.2/, 'summary includes rating version');
 like($difficulty->summary, qr/X-Wing/, 'summary includes highest strategy');
 
 my $hash = $difficulty->as_hash;
-is($hash->{rating_version}, '1.1', 'as_hash includes rating version');
+is($hash->{rating_version}, '1.2', 'as_hash includes rating version');
 is($hash->{label}, 'Expert', 'as_hash includes label');
 is($hash->{score}, 5, 'as_hash includes score');
 is($hash->{highest_strategy}, 'X-Wing', 'as_hash includes highest strategy');
 is($hash->{statistics_snapshot}{by_strategy}{'X-Wing'}, 1, 'as_hash includes statistics snapshot');
+
+
+is(Sudoku::Difficulty->new(label => 'x', score => 0, statistics_snapshot => {})->strategy_score('XY-Wing'), 6, 'XY-Wing has an active difficulty score');
+is(Sudoku::Difficulty->new(label => 'x', score => 0, statistics_snapshot => {})->strategy_score('XYZ-Wing'), 7, 'XYZ-Wing has an active difficulty score');
+is(Sudoku::Difficulty->new(label => 'x', score => 0, statistics_snapshot => {})->strategy_score('WXYZ-Wing'), 8, 'WXYZ-Wing has an active difficulty score');
 
 my $empty_stats = Sudoku::Statistics->new;
 my $empty_difficulty = Sudoku::Difficulty->from_statistics($empty_stats);

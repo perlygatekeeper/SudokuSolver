@@ -14,6 +14,9 @@ use Sudoku::Strategy::NakedQuads;
 use Sudoku::Strategy::HiddenQuads;
 use Sudoku::Strategy::XWing;
 use Sudoku::Strategy::RemotePairs;
+use Sudoku::Strategy::XYWing;
+use Sudoku::Strategy::XYZWing;
+use Sudoku::Strategy::WXYZWing;
 
 my @ORDERED_STRATEGY_CLASSES = qw(
     Sudoku::Strategy::NakedSingles
@@ -27,6 +30,9 @@ my @ORDERED_STRATEGY_CLASSES = qw(
     Sudoku::Strategy::HiddenQuads
     Sudoku::Strategy::XWing
     Sudoku::Strategy::RemotePairs
+    Sudoku::Strategy::XYWing
+    Sudoku::Strategy::XYZWing
+    Sudoku::Strategy::WXYZWing
 );
 
 sub ordered_strategy_classes {
