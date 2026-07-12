@@ -14,6 +14,8 @@ use Sudoku::Strategy::NakedQuads;
 use Sudoku::Strategy::HiddenQuads;
 use Sudoku::Strategy::XWing;
 use Sudoku::Strategy::RemotePairs;
+use Sudoku::Strategy::UniqueRectangleType1;
+use Sudoku::Strategy::UniqueRectangleType2;
 use Sudoku::Strategy::XYWing;
 use Sudoku::Strategy::XYZWing;
 use Sudoku::Strategy::WXYZWing;
@@ -33,6 +35,8 @@ my @ORDERED_STRATEGY_CLASSES = qw(
     Sudoku::Strategy::XYWing
     Sudoku::Strategy::XYZWing
     Sudoku::Strategy::WXYZWing
+    Sudoku::Strategy::UniqueRectangleType1
+    Sudoku::Strategy::UniqueRectangleType2
 );
 
 sub ordered_strategy_classes {
