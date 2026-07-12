@@ -22,12 +22,13 @@ my %STRATEGY_RANK = (
     'Swordfish'                 => 8,
     'Skyscraper'               => 9,
     'Two-String Kite'           => 10,
-    'Remote Pairs'             => 11,
-    'XY-Wing'                  => 12,
-    'XYZ-Wing'                 => 13,
-    'WXYZ-Wing'                => 14,
-    'Unique Rectangle Type 1'  => 15,
-    'Unique Rectangle Type 2'  => 16,
+    'Empty Rectangle'           => 11,
+    'Remote Pairs'             => 12,
+    'XY-Wing'                  => 13,
+    'XYZ-Wing'                 => 14,
+    'WXYZ-Wing'                => 15,
+    'Unique Rectangle Type 1'  => 16,
+    'Unique Rectangle Type 2'  => 17,
 );
 
 =head1 NAME
