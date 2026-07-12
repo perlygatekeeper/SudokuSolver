@@ -1,0 +1,20 @@
+Strategy
+========
+
+Human intuition
+
+Recognition
+
+Necessary conditions
+
+Proof of correctness
+
+Algorithm
+
+Complexity
+
+Common implementation pitfalls
+
+Benchmark contribution
+
+Example puzzle
