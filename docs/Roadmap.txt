@@ -306,3 +306,13 @@ Uniqueness Strategies
 These strategies rely on the puzzle having a unique solution. Additional
 Unique Rectangle forms should be added individually with focused positive and
 negative tests.
+
+
+Empty Rectangle
+---------------
+
+    [x] Empty Rectangle
+
+Implemented the box-based Empty Rectangle pattern with external row and column
+strong links, structured deductions, human-readable explanations, positive and
+negative tests, and benchmark contribution reporting.
