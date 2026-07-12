@@ -60,6 +60,9 @@ is_deeply(
         'Hidden Quads',
         'X-Wing',
         'Remote Pairs',
+        'XY-Wing',
+        'XYZ-Wing',
+        'WXYZ-Wing',
     ],
     'Solver exposes canonical strategy order',
 );
@@ -86,6 +89,9 @@ is_deeply(
         'Hidden Quads',
         'X-Wing',
         'Remote Pairs',
+        'XY-Wing',
+        'XYZ-Wing',
+        'WXYZ-Wing',
     ],
     'Solver exposes canonical strategy order',
 );

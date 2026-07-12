@@ -26,6 +26,9 @@ is_deeply(
         'Sudoku::Strategy::HiddenQuads',
         'Sudoku::Strategy::XWing',
         'Sudoku::Strategy::RemotePairs',
+        'Sudoku::Strategy::XYWing',
+        'Sudoku::Strategy::XYZWing',
+        'Sudoku::Strategy::WXYZWing',
     ],
     'registry returns strategies in canonical solving order',
 );
@@ -53,6 +56,9 @@ is_deeply(
         'Hidden Quads',
         'X-Wing',
         'Remote Pairs',
+        'XY-Wing',
+        'XYZ-Wing',
+        'WXYZ-Wing',
     ],
     'registry exposes canonical strategy names',
 );

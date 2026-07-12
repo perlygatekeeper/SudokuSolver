@@ -148,8 +148,9 @@ Planned work:
 * [done] Naked Quads.
 * [done] Hidden Quads.
 * Swordfish.
-* XY-Wing.
-* XYZ-Wing.
+* [done] XY-Wing.
+* [done] XYZ-Wing.
+* [done] WXYZ-Wing.
 * W-Wing.
 * Skyscraper.
 * Two-String Kite.
@@ -185,8 +186,9 @@ Planned strategy additions:
 * [done] Naked Quads
 * [done] Hidden Quads
 * Swordfish
-* XY-Wing
-* XYZ-Wing
+* [done] XY-Wing
+* [done] XYZ-Wing
+* [done] WXYZ-Wing
 * Skyscraper
 * Two-String Kite
 * Simple Coloring

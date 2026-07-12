@@ -1,0 +1,85 @@
+== Canonical 17-Clue Benchmark (First 1000) ==
+Canonical 17-Clue Benchmark
+===========================
+
+Benchmark file:
+    Puzzles/sudoku17-first1000.txt
+
+Puzzles processed : 1000
+Solved            : 961
+Stalled           : 39
+Contradictions    : 0
+
+Average solve time: 0.036765 s
+Total time        : 36.764791 s
+
+Highest strategy usage
+
+    Hidden Pairs            60
+    Hidden Singles         449
+    Naked Pairs             68
+    Pointing / Claiming    383
+    Remote Pairs            27
+    XY-Wing                 10
+    XYZ-Wing                 3
+
+Strategy contributions
+
+    Strategy               Puzzles  Deductions  Cells  Eliminations
+    ---------------------  -------  ----------  -----  ------------
+    Naked Singles              998       38743  38743             0
+    Hidden Singles            1000       23928  23928             0
+    Pointing / Claiming        535        5623      0          5623
+    Naked Pairs                120         717      0           717
+    Hidden Pairs                81         471      0           471
+    Naked Triples                1           3      0             3
+    Hidden Triples               1           6      0             6
+    Naked Quads                  0           0      0             0
+    Hidden Quads                 0           0      0             0
+    X-Wing                       1           1      0             1
+    Remote Pairs                28          59      0            59
+    XY-Wing                     10          14      0            14
+    XYZ-Wing                     3           6      0             6
+    WXYZ-Wing                    0           0      0             0
+
+Unsolved puzzles
+
+   0022  stalled       solved cells: 49  difficulty: Medium
+   0116  stalled       solved cells: 47  difficulty: Hard
+   0185  stalled       solved cells: 52  difficulty: Hard
+   0186  stalled       solved cells: 50  difficulty: Hard
+   0188  stalled       solved cells: 52  difficulty: Expert
+   0316  stalled       solved cells: 50  difficulty: Hard
+   0317  stalled       solved cells: 50  difficulty: Hard
+   0343  stalled       solved cells: 54  difficulty: Hard
+   0355  stalled       solved cells: 43  difficulty: Expert
+   0375  stalled       solved cells: 41  difficulty: Hard
+   0381  stalled       solved cells: 22  difficulty: Hard
+   0385  stalled       solved cells: 22  difficulty: Hard
+   0389  stalled       solved cells: 52  difficulty: Expert
+   0425  stalled       solved cells: 46  difficulty: Hard
+   0427  stalled       solved cells: 32  difficulty: Hard
+   0488  stalled       solved cells: 46  difficulty: Hard
+   0504  stalled       solved cells: 55  difficulty: Hard
+   0518  stalled       solved cells: 60  difficulty: Hard
+   0529  stalled       solved cells: 54  difficulty: Hard
+   0564  stalled       solved cells: 36  difficulty: Medium
+   0581  stalled       solved cells: 44  difficulty: Expert
+   0596  stalled       solved cells: 52  difficulty: Medium
+   0621  stalled       solved cells: 57  difficulty: Medium
+   0628  stalled       solved cells: 53  difficulty: Expert
+   0649  stalled       solved cells: 43  difficulty: Expert
+   0696  stalled       solved cells: 54  difficulty: Medium
+   0726  stalled       solved cells: 53  difficulty: Easy
+   0738  stalled       solved cells: 33  difficulty: Hard
+   0741  stalled       solved cells: 43  difficulty: Medium
+   0777  stalled       solved cells: 42  difficulty: Expert
+   0782  stalled       solved cells: 43  difficulty: Medium
+   0819  stalled       solved cells: 45  difficulty: Medium
+   0822  stalled       solved cells: 60  difficulty: Easy
+   0856  stalled       solved cells: 44  difficulty: Hard
+   0883  stalled       solved cells: 57  difficulty: Hard
+   0898  stalled       solved cells: 57  difficulty: Hard
+   0940  stalled       solved cells: 50  difficulty: Hard
+   0987  stalled       solved cells: 39  difficulty: Expert
+   1000  stalled       solved cells: 48  difficulty: Hard
