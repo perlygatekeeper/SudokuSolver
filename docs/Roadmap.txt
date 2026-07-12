@@ -329,3 +329,16 @@ build candidate graphs, and return connected components. Added Simple Coloring
 with alternating two-color assignment, color-trap eliminations, color-wrap
 eliminations, structured deductions, human-readable explanations, positive and
 negative tests, and strategy and algorithm documentation.
+
+
+X-Chains
+--------
+
+    [x] Alternating strong/weak same-digit chain search
+    [x] Common-peer endpoint eliminations
+
+Added X-Chains using the shared Sudoku::StrongLinks graph infrastructure.
+The strategy searches bounded alternating paths that begin and end with strong
+links, emits structured deductions with human-readable chain notation, and
+includes focused positive and negative tests plus strategy and algorithm
+documentation.
