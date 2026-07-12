@@ -48,6 +48,8 @@ my @PROJECT_MODULES = qw(
     Sudoku::Strategy::TwoStringKite
     Sudoku::Strategy::EmptyRectangle
     Sudoku::Strategy::SimpleColoring
+    Sudoku::Strategy::XChains
+    Sudoku::Strategy::MultiColoring
     Sudoku::Strategy::RemotePairs
     Sudoku::Uniqueness
     Sudoku::Strategy::UniqueRectangleType1

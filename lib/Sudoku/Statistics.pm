@@ -25,12 +25,13 @@ my %STRATEGY_RANK = (
     'Empty Rectangle'           => 11,
     'Simple Coloring'           => 12,
     'X-Chains'                 => 13,
-    'Remote Pairs'             => 14,
-    'XY-Wing'                  => 15,
-    'XYZ-Wing'                 => 16,
-    'WXYZ-Wing'                => 17,
-    'Unique Rectangle Type 1'  => 18,
-    'Unique Rectangle Type 2'  => 19,
+    'Multi-Coloring'           => 14,
+    'Remote Pairs'             => 15,
+    'XY-Wing'                  => 16,
+    'XYZ-Wing'                 => 17,
+    'WXYZ-Wing'                => 18,
+    'Unique Rectangle Type 1'  => 19,
+    'Unique Rectangle Type 2'  => 20,
 );
 
 =head1 NAME

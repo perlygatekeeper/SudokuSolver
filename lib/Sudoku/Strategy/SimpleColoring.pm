@@ -10,6 +10,7 @@ use Sudoku::Fish qw(cell_label);
 use Sudoku::StrongLinks qw(
     candidate_graph_for_digit
     connected_components
+    color_component
     cell_key
     cells_see_each_other
 );
@@ -30,7 +31,7 @@ sub apply {
         for my $component (connected_components($graph)) {
             next unless @{ $component->{keys} } >= 2;
 
-            my ( $colors, $conflicted ) = _color_component($graph, $component);
+            my ( $colors, $conflicted ) = color_component($graph, $component);
             next if $conflicted;
 
             _add_color_wrap_deductions(
@@ -45,33 +46,6 @@ sub apply {
     }
 
     return @deductions;
-}
-
-sub _color_component {
-    my ( $graph, $component ) = @_;
-
-    my %color;
-    my @queue = ( $component->{keys}[0] );
-    $color{ $component->{keys}[0] } = 0;
-    my $conflicted = 0;
-
-    while (@queue) {
-        my $key = shift @queue;
-
-        for my $neighbor (keys %{ $graph->{neighbors}{$key} || {} }) {
-            my $expected = 1 - $color{$key};
-
-            if (exists $color{$neighbor}) {
-                $conflicted = 1 if $color{$neighbor} != $expected;
-                next;
-            }
-
-            $color{$neighbor} = $expected;
-            push @queue, $neighbor;
-        }
-    }
-
-    return ( \%color, $conflicted );
 }
 
 sub _add_color_wrap_deductions {
