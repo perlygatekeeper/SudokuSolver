@@ -126,3 +126,14 @@ conjugate pairs, candidate graphs, and connected components. Added the Simple
 Coloring strategy with Color Trap and Color Wrap deductions, structured and
 human-readable explanations, positive and negative tests, and strategy and
 algorithm documentation. Difficulty rating method version is now 1.8.
+
+
+X-Chains
+========
+
+Added the X-Chains strategy for same-digit alternating inference paths. The
+implementation reuses Sudoku::StrongLinks, alternates strong and weak links,
+removes candidates that see both chain endpoints, records structured and
+human-readable explanations, and includes positive and negative tests plus
+strategy and algorithm documentation. Difficulty rating method version is now
+1.9.
