@@ -367,3 +367,10 @@ chains of visible bivalue cells, follows alternating candidates, removes the
 shared endpoint candidate from cells that see both endpoints, and emits
 structured human-readable deductions. Focused positive and negative tests and
 strategy and algorithm documentation are included.
+
+Patch 0063 — Unique Rectangle Types 3 and 4
+-------------------------------------------
+
+* Add generalized Type 3 virtual-cell naked-subset detection.
+* Add Type 4 roof strong-link detection.
+* Keep separate strategy names, explanations, tests, and benchmark counts.

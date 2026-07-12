@@ -73,6 +73,8 @@ is_deeply(
         'XY-Chains',
         'Unique Rectangle Type 1',
         'Unique Rectangle Type 2',
+        'Unique Rectangle Type 3',
+        'Unique Rectangle Type 4',
     ],
     'Solver exposes canonical strategy order',
 );
@@ -112,6 +114,8 @@ is_deeply(
         'XY-Chains',
         'Unique Rectangle Type 1',
         'Unique Rectangle Type 2',
+        'Unique Rectangle Type 3',
+        'Unique Rectangle Type 4',
     ],
     'Solver exposes canonical strategy order',
 );

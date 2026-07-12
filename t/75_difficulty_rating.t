@@ -43,18 +43,18 @@ is($stats->strategy_rank('Unknown'), 0, 'unknown strategies have rank zero');
 
 my $difficulty = Sudoku::Difficulty->from_statistics($stats);
 isa_ok($difficulty, 'Sudoku::Difficulty');
-is($difficulty->rating_version, '2.1', 'difficulty rating records method version');
+is($difficulty->rating_version, '2.2', 'difficulty rating records method version');
 is($difficulty->label, 'Expert', 'difficulty label comes from highest strategy');
 is($difficulty->score, 5, 'difficulty score comes from highest strategy');
 is($difficulty->highest_strategy, 'X-Wing', 'difficulty records highest strategy');
 is($difficulty->statistics_snapshot->{total_deductions}, 3, 'difficulty keeps statistics snapshot');
 is($difficulty->statistics_snapshot->{highest_strategy}, 'X-Wing', 'snapshot records highest strategy');
 like($difficulty->summary, qr/Expert/, 'summary includes label');
-like($difficulty->summary, qr/v2\.1/, 'summary includes rating version');
+like($difficulty->summary, qr/v2\.2/, 'summary includes rating version');
 like($difficulty->summary, qr/X-Wing/, 'summary includes highest strategy');
 
 my $hash = $difficulty->as_hash;
-is($hash->{rating_version}, '2.1', 'as_hash includes rating version');
+is($hash->{rating_version}, '2.2', 'as_hash includes rating version');
 is($hash->{label}, 'Expert', 'as_hash includes label');
 is($hash->{score}, 5, 'as_hash includes score');
 is($hash->{highest_strategy}, 'X-Wing', 'as_hash includes highest strategy');
@@ -97,6 +97,20 @@ is(
     $difficulty->strategy_score('Unique Rectangle Type 2'),
     6,
     'Unique Rectangle Type 2 has a provisional difficulty score',
+);
+
+
+
+is(
+    $difficulty->strategy_score('Unique Rectangle Type 3'),
+    7,
+    'Unique Rectangle Type 3 has an active difficulty score',
+);
+
+is(
+    $difficulty->strategy_score('Unique Rectangle Type 4'),
+    7,
+    'Unique Rectangle Type 4 has an active difficulty score',
 );
 
 is(

@@ -33,6 +33,8 @@ my %STRATEGY_RANK = (
     'XY-Chains'                 => 19,
     'Unique Rectangle Type 1'  => 20,
     'Unique Rectangle Type 2'  => 21,
+    'Unique Rectangle Type 3'  => 22,
+    'Unique Rectangle Type 4'  => 23,
 );
 
 =head1 NAME

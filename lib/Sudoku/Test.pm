@@ -54,6 +54,8 @@ my @PROJECT_MODULES = qw(
     Sudoku::Uniqueness
     Sudoku::Strategy::UniqueRectangleType1
     Sudoku::Strategy::UniqueRectangleType2
+    Sudoku::Strategy::UniqueRectangleType3
+    Sudoku::Strategy::UniqueRectangleType4
     Sudoku::Wing
     Sudoku::Strategy::XYWing
     Sudoku::Strategy::XYZWing
