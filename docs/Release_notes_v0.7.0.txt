@@ -83,6 +83,13 @@ The solver now supports the following public engine features:
 Difficulty ratings are versioned and derived from solve statistics, allowing
 future rating algorithms to re-evaluate old solve data.
 
+Two-String Kite
+===============
+
+Added the Two-String Kite strategy, including row/column strong-link detection,
+box-connected string validation, structured deductions, human-readable
+explanations, positive and negative tests, and strategy documentation.
+
 Looking Ahead
 =============
 
