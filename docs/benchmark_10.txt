@@ -1,0 +1,71 @@
+== Canonical 17-Clue Benchmark (First 1000) ==
+Canonical 17-Clue Benchmark
+===========================
+
+Benchmark file:
+    Puzzles/sudoku17-first1000.txt
+
+Puzzles processed : 1000
+Solved            : 986
+Stalled           : 14
+Contradictions    : 0
+
+Average solve time: 0.041485 s
+Total time        : 41.485114 s
+
+Highest strategy usage
+
+    Empty Rectangle              4
+    Hidden Pairs                50
+    Hidden Singles             447
+    Naked Pairs                 59
+    Pointing / Claiming        377
+    Simple Coloring              4
+    Skyscraper                  43
+    Two-String Kite              2
+    Unique Rectangle Type 1      3
+    XY-Wing                      9
+    XYZ-Wing                     2
+
+Strategy contributions
+
+    Strategy                     Puzzles  Deductions  Cells  Eliminations
+    ---------------------------  -------  ----------  -----  ------------
+    Naked Singles                998       39500  39500             0
+    Hidden Singles              1000       23987  23987             0
+    Pointing / Claiming          539        5651      0          5651
+    Naked Pairs                  120         702      0           702
+    Hidden Pairs                  81         471      0           471
+    Naked Triples                  1           3      0             3
+    Hidden Triples                 1           6      0             6
+    Naked Quads                    0           0      0             0
+    Hidden Quads                   0           0      0             0
+    X-Wing                         0           0      0             0
+    Swordfish                      3           3      0             3
+    Skyscraper                    50          94      0            94
+    Two-String Kite                5           6      0             6
+    Empty Rectangle                7          11      0            11
+    Simple Coloring                4           5      0             5
+    Remote Pairs                   0           0      0             0
+    XY-Wing                       10          13      0            13
+    XYZ-Wing                       3           6      0             6
+    WXYZ-Wing                      0           0      0             0
+    Unique Rectangle Type 1        3           3      0             3
+    Unique Rectangle Type 2        0           0      0             0
+
+Unsolved puzzles
+
+   0022  stalled           solved cells: 49  difficulty: Expert
+   0116  stalled           solved cells: 47  difficulty: Hard
+   0188  stalled           solved cells: 52  difficulty: Expert
+   0343  stalled           solved cells: 55  difficulty: Expert
+   0355  stalled           solved cells: 43  difficulty: Expert
+   0375  stalled           solved cells: 41  difficulty: Hard
+   0425  stalled           solved cells: 46  difficulty: Expert
+   0427  stalled           solved cells: 32  difficulty: Expert
+   0596  stalled           solved cells: 52  difficulty: Medium
+   0649  stalled           solved cells: 43  difficulty: Expert
+   0738  stalled           solved cells: 34  difficulty: Expert
+   0782  stalled           solved cells: 43  difficulty: Medium
+   0819  stalled           solved cells: 45  difficulty: Expert
+   0987  stalled           solved cells: 39  difficulty: Expert

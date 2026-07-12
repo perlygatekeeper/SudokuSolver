@@ -154,8 +154,8 @@ Planned work:
 * W-Wing.
 * Skyscraper.
 * [done] Two-String Kite.
-* Empty Rectangle.
-* Simple Coloring.
+* [done] Empty Rectangle.
+* [done] Simple Coloring.
 
 ---
 
@@ -191,7 +191,7 @@ Planned strategy additions:
 * [done] WXYZ-Wing
 * Skyscraper
 * Two-String Kite
-* Simple Coloring
+* [done] Simple Coloring
 
 Guiding rule:
 
@@ -316,3 +316,16 @@ Empty Rectangle
 Implemented the box-based Empty Rectangle pattern with external row and column
 strong links, structured deductions, human-readable explanations, positive and
 negative tests, and benchmark contribution reporting.
+
+Simple Coloring
+---------------
+
+    [x] Shared strong-link graph infrastructure
+    [x] Color Trap
+    [x] Color Wrap
+
+Added Sudoku::StrongLinks to discover row, column, and box conjugate pairs,
+build candidate graphs, and return connected components. Added Simple Coloring
+with alternating two-color assignment, color-trap eliminations, color-wrap
+eliminations, structured deductions, human-readable explanations, positive and
+negative tests, and strategy and algorithm documentation.

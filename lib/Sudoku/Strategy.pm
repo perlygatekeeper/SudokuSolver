@@ -17,6 +17,7 @@ use Sudoku::Strategy::Swordfish;
 use Sudoku::Strategy::Skyscraper;
 use Sudoku::Strategy::TwoStringKite;
 use Sudoku::Strategy::EmptyRectangle;
+use Sudoku::Strategy::SimpleColoring;
 use Sudoku::Strategy::RemotePairs;
 use Sudoku::Strategy::UniqueRectangleType1;
 use Sudoku::Strategy::UniqueRectangleType2;
@@ -39,6 +40,7 @@ my @ORDERED_STRATEGY_CLASSES = qw(
     Sudoku::Strategy::Skyscraper
     Sudoku::Strategy::TwoStringKite
     Sudoku::Strategy::EmptyRectangle
+    Sudoku::Strategy::SimpleColoring
     Sudoku::Strategy::RemotePairs
     Sudoku::Strategy::XYWing
     Sudoku::Strategy::XYZWing
