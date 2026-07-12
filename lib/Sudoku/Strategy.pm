@@ -23,6 +23,8 @@ use Sudoku::Strategy::MultiColoring;
 use Sudoku::Strategy::RemotePairs;
 use Sudoku::Strategy::UniqueRectangleType1;
 use Sudoku::Strategy::UniqueRectangleType2;
+use Sudoku::Strategy::UniqueRectangleType3;
+use Sudoku::Strategy::UniqueRectangleType4;
 use Sudoku::Strategy::XYWing;
 use Sudoku::Strategy::XYZWing;
 use Sudoku::Strategy::WXYZWing;
@@ -53,6 +55,8 @@ my @ORDERED_STRATEGY_CLASSES = qw(
     Sudoku::Strategy::XYChains
     Sudoku::Strategy::UniqueRectangleType1
     Sudoku::Strategy::UniqueRectangleType2
+    Sudoku::Strategy::UniqueRectangleType3
+    Sudoku::Strategy::UniqueRectangleType4
 );
 
 sub ordered_strategy_classes {
