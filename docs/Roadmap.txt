@@ -147,7 +147,7 @@ Planned work:
 * [done] Hidden Triples.
 * [done] Naked Quads.
 * [done] Hidden Quads.
-* Swordfish.
+* [done] Swordfish.
 * [done] XY-Wing.
 * [done] XYZ-Wing.
 * [done] WXYZ-Wing.
@@ -185,7 +185,7 @@ Planned strategy additions:
 * [done] Hidden Triples
 * [done] Naked Quads
 * [done] Hidden Quads
-* Swordfish
+* [done] Swordfish
 * [done] XY-Wing
 * [done] XYZ-Wing
 * [done] WXYZ-Wing
