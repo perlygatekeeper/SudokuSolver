@@ -29,6 +29,7 @@ use Sudoku::Strategy::XYWing;
 use Sudoku::Strategy::XYZWing;
 use Sudoku::Strategy::WXYZWing;
 use Sudoku::Strategy::XYChains;
+use Sudoku::Strategy::AIC;
 
 my @ORDERED_STRATEGY_CLASSES = qw(
     Sudoku::Strategy::NakedSingles
@@ -57,6 +58,7 @@ my @ORDERED_STRATEGY_CLASSES = qw(
     Sudoku::Strategy::UniqueRectangleType2
     Sudoku::Strategy::UniqueRectangleType3
     Sudoku::Strategy::UniqueRectangleType4
+    Sudoku::Strategy::AIC
 );
 
 sub ordered_strategy_classes {

@@ -164,3 +164,9 @@ extras as a virtual naked-subset cell; Type 4 uses a roof strong link to remove
 the other deadly-pair candidate. Both strategies include human-readable
 explanations and separate benchmark accounting. Difficulty rating method 2.2
 adds active scores for the new strategies.
+
+Advanced strategies
+-------------------
+
+* Added Alternating Inference Chains (AIC) with candidate-node strong/weak links.
+* Stalled command-line output now includes an 81-character puzzle-state string.

@@ -38,6 +38,12 @@ has 'cells'       => (isa => 'ArrayRef',   is => 'rw');
 # COLUMN = 1 + mod(CELL/9) -> 1..9
 # BOX    = 1 + ( mod(CELL/9) / 3 ) + int(CELL/9) / 3 -> 1..9
 
+sub as_puzzle_string {
+  my ($self) = @_;
+
+  return join q{}, map { $_->value || 0 } @{ $self->cells };
+}
+
 sub load_from_string {
   my($self,$string) = @_;
   my($cell) = 0;

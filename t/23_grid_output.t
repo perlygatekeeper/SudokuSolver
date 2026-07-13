@@ -33,6 +33,14 @@ like($multi_column_status, qr/Showing status of all cells:/, 'multi_column_statu
 like($multi_column_status, qr/\( 1, 1, 1 \) Given:\s+1/, 'multi_column_status reports given cells');
 like($multi_column_status, qr/\( 1, 2, 1 \) \d left ->/, 'multi_column_status reports unsolved cells');
 
+my $puzzle_string = '1' . ('0' x 80);
+
+is(
+    $grid->as_puzzle_string,
+    $puzzle_string,
+    'as_puzzle_string returns an 81-character zero-filled puzzle string',
+);
+
 my $big_print = capture_stdout { $grid->big_print };
 like($big_print, qr/^\s+1\s+2\s+3\s+4\s+5\s+6\s+7\s+8\s+9/m, 'big_print includes column headers');
 like($big_print, qr/\+-------\+-------\+-------\+/, 'big_print includes wide grid borders');

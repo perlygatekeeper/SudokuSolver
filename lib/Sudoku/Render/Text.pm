@@ -133,6 +133,7 @@ sub final_status {
         sprintf("Deductions applied: %d\n", $deductions),
         sprintf("Difficulty so far: %s (method v%s)\n",
             $difficulty->label, $difficulty->rating_version),
+        "Puzzle state: " . $grid->as_puzzle_string . "\n",
         "No registered strategy can make further progress.\n";
 }
 
