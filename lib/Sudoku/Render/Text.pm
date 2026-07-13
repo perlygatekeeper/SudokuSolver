@@ -3,10 +3,36 @@ package Sudoku::Render::Text;
 use strict;
 use warnings;
 
+use Sudoku::Render::GridCharacters;
+
 sub new {
     my ($class, %args) = @_;
     $args{mode} //= 'normal';
+    $args{character_set} = Sudoku::Render::GridCharacters->canonical_name(
+        $args{character_set},
+    );
+    $args{grid_characters} = Sudoku::Render::GridCharacters->character_set(
+        $args{character_set},
+    );
+
     return bless \%args, $class;
+}
+
+
+sub character_set {
+    my ($self) = @_;
+    return $self->{character_set};
+}
+
+sub grid_characters {
+    my ($self) = @_;
+
+    my %copy = %{ $self->{grid_characters} };
+    return \%copy;
+}
+
+sub available_character_sets {
+    return Sudoku::Render::GridCharacters->names;
 }
 
 sub mode {
