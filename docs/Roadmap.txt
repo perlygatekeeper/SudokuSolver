@@ -148,6 +148,7 @@ Planned work:
 * [done] Naked Quads.
 * [done] Hidden Quads.
 * [done] Swordfish.
+* [done] Jellyfish.
 * [done] XY-Wing.
 * [done] XYZ-Wing.
 * [done] WXYZ-Wing.

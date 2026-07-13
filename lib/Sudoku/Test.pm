@@ -45,6 +45,7 @@ my @PROJECT_MODULES = qw(
     Sudoku::StrongLinks
     Sudoku::Strategy::XWing
     Sudoku::Strategy::Swordfish
+    Sudoku::Strategy::Jellyfish
     Sudoku::Strategy::Skyscraper
     Sudoku::Strategy::TwoStringKite
     Sudoku::Strategy::EmptyRectangle

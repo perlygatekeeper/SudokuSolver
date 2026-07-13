@@ -14,6 +14,7 @@ use Sudoku::Strategy::NakedQuads;
 use Sudoku::Strategy::HiddenQuads;
 use Sudoku::Strategy::XWing;
 use Sudoku::Strategy::Swordfish;
+use Sudoku::Strategy::Jellyfish;
 use Sudoku::Strategy::Skyscraper;
 use Sudoku::Strategy::TwoStringKite;
 use Sudoku::Strategy::EmptyRectangle;
@@ -44,6 +45,7 @@ my @ORDERED_STRATEGY_CLASSES = qw(
     Sudoku::Strategy::HiddenQuads
     Sudoku::Strategy::XWing
     Sudoku::Strategy::Swordfish
+    Sudoku::Strategy::Jellyfish
     Sudoku::Strategy::Skyscraper
     Sudoku::Strategy::TwoStringKite
     Sudoku::Strategy::EmptyRectangle

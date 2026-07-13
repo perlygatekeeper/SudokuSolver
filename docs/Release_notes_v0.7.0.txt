@@ -180,3 +180,11 @@ bounded same-digit strong-weak-strong inference pattern with grouped nodes,
 structured deductions, human-readable explanations, focused positive and
 negative tests, and benchmark contribution reporting. Difficulty rating method
 version is now 2.4.
+
+Patch 0066
+----------
+
+* Added Jellyfish using the reusable fish framework.
+* Added row-based, column-based, and negative tests.
+* Added strategy and algorithm documentation.
+* Difficulty rating method updated to v2.5.
