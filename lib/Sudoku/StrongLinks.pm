@@ -5,6 +5,8 @@ use warnings;
 
 use Exporter 'import';
 
+use Sudoku::InferenceNode;
+
 our @EXPORT_OK = qw(
     strong_links_for_digit
     candidate_graph_for_digit
@@ -12,6 +14,9 @@ our @EXPORT_OK = qw(
     color_component
     cell_key
     cells_see_each_other
+    grouped_strong_links_for_digit
+    nodes_are_weakly_linked
+    cell_sees_node
 );
 
 sub cell_key {
@@ -53,6 +58,106 @@ sub strong_links_for_digit {
     }
 
     return @links;
+}
+
+
+sub grouped_strong_links_for_digit {
+    my ( $grid, $digit ) = @_;
+
+    my @links;
+    my %seen;
+
+    for my $box (0 .. 8) {
+        my @cells = grep {
+            !$_->value && $_->possibilities->[$digit]
+        } @{ $grid->boxes->[$box] };
+
+        _add_partitioned_group_link(
+            \@links, \%seen, 'box-row', $box, \@cells,
+            sub { $_[0]->row }, $digit,
+        );
+        _add_partitioned_group_link(
+            \@links, \%seen, 'box-column', $box, \@cells,
+            sub { $_[0]->column }, $digit,
+        );
+    }
+
+    for my $row (0 .. 8) {
+        my @cells = grep {
+            !$_->value && $_->possibilities->[$digit]
+        } map { $grid->cell_from_row_column($row, $_) } 0 .. 8;
+
+        _add_partitioned_group_link(
+            \@links, \%seen, 'row-box', $row, \@cells,
+            sub { $_[0]->box }, $digit,
+        );
+    }
+
+    for my $column (0 .. 8) {
+        my @cells = grep {
+            !$_->value && $_->possibilities->[$digit]
+        } map { $grid->cell_from_row_column($_, $column) } 0 .. 8;
+
+        _add_partitioned_group_link(
+            \@links, \%seen, 'column-box', $column, \@cells,
+            sub { $_[0]->box }, $digit,
+        );
+    }
+
+    return @links;
+}
+
+sub nodes_are_weakly_linked {
+    my ( $first, $second ) = @_;
+
+    return 0 unless $first->digit == $second->digit;
+    return 0 if $first->overlaps($second);
+
+    for my $first_cell ( @{ $first->cells } ) {
+        for my $second_cell ( @{ $second->cells } ) {
+            return 0 unless cells_see_each_other($first_cell, $second_cell);
+        }
+    }
+
+    return 1;
+}
+
+sub cell_sees_node {
+    my ( $cell, $node ) = @_;
+
+    for my $node_cell ( @{ $node->cells } ) {
+        return 0 unless cells_see_each_other($cell, $node_cell);
+    }
+
+    return 1;
+}
+
+sub _add_partitioned_group_link {
+    my ( $links, $seen, $type, $index, $cells, $group_key, $digit ) = @_;
+
+    return unless @{$cells} >= 2;
+
+    my %groups;
+    push @{ $groups{ $group_key->($_) } }, $_ for @{$cells};
+    return unless keys(%groups) == 2;
+
+    my @nodes = map {
+        Sudoku::InferenceNode->new(
+            digit => $digit,
+            cells => $groups{$_},
+        )
+    } sort { $a <=> $b } keys %groups;
+
+    return unless grep { $_->is_group } @nodes;
+
+    my $link_key = join q{|}, sort map { $_->key } @nodes;
+    return if $seen->{$link_key}++;
+
+    push @{$links}, {
+        type  => $type,
+        index => $index,
+        nodes => \@nodes,
+    };
 }
 
 sub candidate_graph_for_digit {

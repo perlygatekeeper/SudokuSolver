@@ -170,3 +170,13 @@ Advanced strategies
 
 * Added Alternating Inference Chains (AIC) with candidate-node strong/weak links.
 * Stalled command-line output now includes an 81-character puzzle-state string.
+
+Grouped Strong Links and Grouped L1-Wing
+========================================
+
+Added `Sudoku::InferenceNode` and grouped strong-link discovery for candidate
+segments at row/box and column/box intersections. Added Grouped L1-Wing, a
+bounded same-digit strong-weak-strong inference pattern with grouped nodes,
+structured deductions, human-readable explanations, focused positive and
+negative tests, and benchmark contribution reporting. Difficulty rating method
+version is now 2.4.
