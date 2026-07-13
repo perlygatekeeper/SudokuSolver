@@ -108,6 +108,10 @@ benchmark-first1000:
 	@echo "== Canonical 17-Clue Benchmark (First 1000) =="
 	@$(PERL) -Ilib $(SCRIPT) --benchmark Puzzles/sudoku17-first1000.txt
 
+benchmark-final4:
+	@echo "== Canonical 17-Clue Benchmark (Final 4 Stalled Puzzles) =="
+	@$(PERL) -Ilib $(SCRIPT) --benchmark Puzzles/sudoku17-final4.txt
+
 examples:
 	@echo "== Solved example =="
 	@$(PERL) -Ilib $(SCRIPT) --file Puzzles/Examples/solved.sdk --output normal
