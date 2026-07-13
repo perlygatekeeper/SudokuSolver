@@ -41,12 +41,14 @@ my @PROJECT_MODULES = qw(
     Sudoku::Strategy::NakedQuads
     Sudoku::Strategy::HiddenQuads
     Sudoku::Fish
+    Sudoku::InferenceNode
     Sudoku::StrongLinks
     Sudoku::Strategy::XWing
     Sudoku::Strategy::Swordfish
     Sudoku::Strategy::Skyscraper
     Sudoku::Strategy::TwoStringKite
     Sudoku::Strategy::EmptyRectangle
+    Sudoku::Strategy::GroupedL1Wing
     Sudoku::Strategy::SimpleColoring
     Sudoku::Strategy::XChains
     Sudoku::Strategy::MultiColoring

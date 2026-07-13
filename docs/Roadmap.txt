@@ -375,3 +375,12 @@ Patch 0063 — Unique Rectangle Types 3 and 4
 * Add generalized Type 3 virtual-cell naked-subset detection.
 * Add Type 4 roof strong-link detection.
 * Keep separate strategy names, explanations, tests, and benchmark counts.
+
+Patch 0065 — Grouped Strong Links and Grouped L1-Wing
+-----------------------------------------------------
+
+* Add singleton and grouped candidate inference nodes.
+* Discover natural grouped strong links at line/box intersections.
+* Add a bounded strong-weak-strong Grouped L1-Wing strategy.
+* Preserve all-to-all visibility rules for grouped weak links and targets.
+* Establish infrastructure for future Grouped X-Chains and Grouped AIC.
