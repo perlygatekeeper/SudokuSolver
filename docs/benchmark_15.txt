@@ -1,0 +1,70 @@
+== Canonical 17-Clue Benchmark (First 1000) ==
+Canonical 17-Clue Benchmark
+===========================
+
+Benchmark file:
+    Puzzles/sudoku17-first1000.txt
+
+Puzzles processed : 1000
+Solved            : 995
+Stalled           : 5
+Contradictions    : 0
+
+Average solve time: 0.041409 s
+Total time        : 41.409485 s
+
+Highest strategy usage
+
+    AIC                          4
+    Empty Rectangle              3
+    Hidden Pairs                48
+    Hidden Singles             447
+    Naked Pairs                 59
+    Pointing / Claiming        377
+    Simple Coloring              3
+    Skyscraper                  43
+    Unique Rectangle Type 1      1
+    Unique Rectangle Type 4      2
+    X-Chains                     2
+    XY-Chains                    4
+    XY-Wing                      7
+
+Strategy contributions
+
+    Strategy                     Puzzles  Deductions  Cells  Eliminations
+    ---------------------------  -------  ----------  -----  ------------
+    Naked Singles                999       39815  39815             0
+    Hidden Singles              1000       23998  23998             0
+    Pointing / Claiming          539        5661      0          5661
+    Naked Pairs                  120         748      0           748
+    Hidden Pairs                  81         477      0           477
+    Naked Triples                  1           3      0             3
+    Hidden Triples                 1           6      0             6
+    Naked Quads                    0           0      0             0
+    Hidden Quads                   0           0      0             0
+    X-Wing                         0           0      0             0
+    Swordfish                      3           3      0             3
+    Skyscraper                    51          96      0            96
+    Two-String Kite                5           6      0             6
+    Empty Rectangle                7          11      0            11
+    Simple Coloring                4           5      0             5
+    X-Chains                       2           4      0             4
+    Multi-Coloring                 0           0      0             0
+    Remote Pairs                   0           0      0             0
+    XY-Wing                       10          13      0            13
+    XYZ-Wing                       3           6      0             6
+    WXYZ-Wing                      0           0      0             0
+    XY-Chains                      5          15      0            15
+    Unique Rectangle Type 1        3           3      0             3
+    Unique Rectangle Type 2        0           0      0             0
+    Unique Rectangle Type 3        1           2      0             2
+    Unique Rectangle Type 4        2           3      0             3
+    AIC                            4          14      0            14
+
+Unsolved puzzles
+
+   0355  stalled           solved cells: 43  difficulty: Expert
+   0375  stalled           solved cells: 41  difficulty: Master
+   0596  stalled           solved cells: 52  difficulty: Medium
+   0782  stalled           solved cells: 43  difficulty: Medium
+   0987  stalled           solved cells: 39  difficulty: Expert

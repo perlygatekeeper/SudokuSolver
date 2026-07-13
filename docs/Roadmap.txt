@@ -156,6 +156,7 @@ Planned work:
 * [done] Two-String Kite.
 * [done] Empty Rectangle.
 * [done] Simple Coloring.
+* [done] Alternating Inference Chains (AIC).
 
 ---
 

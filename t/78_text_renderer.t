@@ -360,6 +360,12 @@ qr/Difficulty so far: Medium \(method v1.0\)/,
 );
 
 like(
+    $stalled_status,
+    qr/Puzzle state: [0-9]{81}/,
+    'renderer includes an 81-character stalled puzzle state',
+);
+
+like(
 $stalled_status,
 qr/No registered strategy can make further progress./,
 'renderer explains why solving stopped',
