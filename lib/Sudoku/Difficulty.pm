@@ -21,7 +21,7 @@ old solves without ambiguity.
 
 =cut
 
-our $RATING_VERSION = '2.5';
+our $RATING_VERSION = '2.6';
 
 my %STRATEGY_SCORE = (
     'Naked Singles'           => 1,
@@ -57,6 +57,7 @@ my %STRATEGY_SCORE = (
     'WXYZ-Wing'               => 8,
     'XY-Chains'                => 9,
     'AIC'                      => 10,
+    'Grouped AIC'              => 10,
 );
 
 my %PLANNED_STRATEGY_SCORE = (

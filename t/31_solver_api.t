@@ -78,6 +78,7 @@ is_deeply(
         'Unique Rectangle Type 3',
         'Unique Rectangle Type 4',
         'AIC',
+        'Grouped AIC',
     ],
     'Solver exposes canonical strategy order',
 );
@@ -122,6 +123,7 @@ is_deeply(
         'Unique Rectangle Type 3',
         'Unique Rectangle Type 4',
         'AIC',
+        'Grouped AIC',
     ],
     'Solver exposes canonical strategy order',
 );

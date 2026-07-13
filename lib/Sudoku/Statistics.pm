@@ -38,6 +38,7 @@ my %STRATEGY_RANK = (
     'Unique Rectangle Type 3'   => 24,
     'Unique Rectangle Type 4'   => 25,
     'AIC'                       => 26,
+    'Grouped AIC'               => 27,
 );
 
 =head1 NAME

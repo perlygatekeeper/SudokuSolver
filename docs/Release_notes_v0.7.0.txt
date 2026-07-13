@@ -188,3 +188,11 @@ Patch 0066
 * Added row-based, column-based, and negative tests.
 * Added strategy and algorithm documentation.
 * Difficulty rating method updated to v2.5.
+
+
+Grouped AIC
+-----------
+
+Added Grouped Alternating Inference Chains. The strategy combines singleton and
+grouped candidate nodes, alternates strong and weak links, and eliminates a
+candidate only when it sees every possible location in both same-digit endpoints.
