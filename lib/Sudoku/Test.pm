@@ -65,6 +65,7 @@ my @PROJECT_MODULES = qw(
     Sudoku::Strategy::WXYZWing
     Sudoku::Strategy::XYChains
     Sudoku::Strategy::AIC
+    Sudoku::Strategy::GroupedAIC
 );
 
 sub project_modules {

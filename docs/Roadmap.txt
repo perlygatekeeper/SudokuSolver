@@ -385,3 +385,12 @@ Patch 0065 — Grouped Strong Links and Grouped L1-Wing
 * Add a bounded strong-weak-strong Grouped L1-Wing strategy.
 * Preserve all-to-all visibility rules for grouped weak links and targets.
 * Establish infrastructure for future Grouped X-Chains and Grouped AIC.
+
+
+Patch 0067 — Grouped AIC
+------------------------
+
+* Add grouped candidate nodes to the general AIC search.
+* Reuse ordinary and grouped strong links through Sudoku::StrongLinks.
+* Preserve ordinary AIC and Grouped L1-Wing as earlier, more specific strategies.
+* Add grouped endpoint visibility checks, tests, documentation, and benchmark reporting.
