@@ -2,13 +2,16 @@
 
 ## Phase 1
 
-- [ ] Convert renderer methods to return strings.
-- [ ] Preserve existing output compatibility.
+- [x] Add an extensible grid-character registry.
+- [x] Add a reusable grid builder.
+- [x] Preserve existing output compatibility while migrating grid renderers.
 
 ## Phase 2
 
-- [ ] Compact grid renderer (configurable empty-cell character).
-- [ ] Pretty grid renderer (string-returning).
+- [x] Compact grid renderer (configurable empty-cell character).
+- [x] Pretty grid renderer (string-returning).
+- [x] Named grid-format registry and dispatcher.
+- [ ] Expose grid-format discovery through the command line.
 
 ## Phase 3
 
@@ -25,7 +28,7 @@
 
 ## Phase 5
 
-- [ ] Unicode rendering
+- [x] Unicode light, double-line, and heavy grid rendering
 - [ ] Output to files
 - [ ] Stable renderer events
 - [ ] Optional color layer

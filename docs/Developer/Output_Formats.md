@@ -11,9 +11,46 @@ Grid representation and solver narration are independent concepts. A grid may be
 
 ## Grid Representations
 
+## Grid Format Discovery
+
+The text renderer provides a stable, discoverable entry point for named grid
+formats:
+
+```perl
+my @formats = $renderer->available_grid_formats;
+my $default = $renderer->default_grid_format;
+my $known   = $renderer->supports_grid_format('compact');
+
+my $text = $renderer->render_grid(
+    $grid,
+    format => 'pretty',
+);
+```
+
+The currently available formats are, in discovery order:
+
+```text
+pretty
+compact
+```
+
+When `format` is omitted, `render_grid` uses `pretty`. This renderer default does
+not by itself change the command-line program's existing output behavior.
+
+Format-specific options are forwarded to the selected renderer. For example:
+
+```perl
+my $text = $renderer->render_grid(
+    $grid,
+    format               => 'compact',
+    empty_cell_character => '_',
+);
+```
+
+
 ### Compact Grid
 
-**Status:** Planned
+**Status:** Implemented as `Sudoku::Render::Text::compact_grid`
 
 The compact grid consists of nine lines of nine characters. Solved cells are shown as digits. Empty cells use a configurable character, which defaults to a period.
 
@@ -134,7 +171,7 @@ This format may become unnecessary after the compact-grid formatter is available
 
 ### Pretty Grid
 
-**Status:** Implemented as `Grid::pretty_print`
+**Status:** Implemented as `Sudoku::Render::Text::pretty_grid`; legacy wrapper retained as `Grid::pretty_print`
 
 The pretty grid includes row and column coordinates, cell boundaries, and emphasized 3×3 box boundaries.
 
@@ -167,7 +204,7 @@ $grid->pretty_print;
 
 The existing visual design should be retained. The implementation should be moved or adapted so that it returns a string rather than printing directly.
 
-Proposed renderer interface:
+Renderer interface:
 
 my $text = $renderer->pretty_grid($grid);
 

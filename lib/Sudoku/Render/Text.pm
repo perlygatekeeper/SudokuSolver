@@ -6,6 +6,12 @@ use warnings;
 use Sudoku::Render::GridCharacters;
 use Sudoku::Render::GridBuilder;
 
+my @GRID_FORMAT_ORDER = qw(pretty compact);
+my %GRID_FORMAT_METHOD = (
+    pretty  => 'pretty_grid',
+    compact => 'compact_grid',
+);
+
 sub new {
     my ($class, %args) = @_;
     $args{mode} //= 'normal';
@@ -34,6 +40,34 @@ sub grid_characters {
 
 sub available_character_sets {
     return Sudoku::Render::GridCharacters->names;
+}
+
+sub available_grid_formats {
+    return @GRID_FORMAT_ORDER;
+}
+
+sub default_grid_format {
+    return 'pretty';
+}
+
+sub supports_grid_format {
+    my ($self, $format) = @_;
+    return defined $format && exists $GRID_FORMAT_METHOD{$format};
+}
+
+sub render_grid {
+    my ($self, $grid, %args) = @_;
+
+    my $format = delete $args{format};
+    $format = $self->default_grid_format if !defined $format;
+
+    if (!$self->supports_grid_format($format)) {
+        my $available = join ', ', $self->available_grid_formats;
+        die "Unknown grid format '$format'; available formats: $available\n";
+    }
+
+    my $method = $GRID_FORMAT_METHOD{$format};
+    return $self->$method($grid, %args);
 }
 
 sub grid_builder {
