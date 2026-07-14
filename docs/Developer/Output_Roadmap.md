@@ -30,7 +30,7 @@
 ## Phase 5
 
 - [x] Unicode light, double-line, and heavy grid rendering
-- [ ] Output to files
+- [x] Output to files
 - [ ] Stable renderer events
 - [ ] Optional color layer
 

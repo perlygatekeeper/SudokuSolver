@@ -27,6 +27,7 @@ my $list_grid_formats;
 my $list_character_sets;
 my $result_format;
 my $list_result_formats;
+my $output_file;
 
 GetOptions(
   'file|f=s'     => \$puzzle_file,
@@ -43,10 +44,16 @@ GetOptions(
   'list-character-sets' => \$list_character_sets,
   'result-format=s' => \$result_format,
   'list-result-formats' => \$list_result_formats,
+  'output-file=s' => \$output_file,
   'trace-grid-after-deduction' => \$trace_grid_after_deduction,
 ) or pod2usage(2);
 
 pod2usage(0) if $show_help;
+
+if (defined $output_file) {
+  open STDOUT, '>:encoding(UTF-8)', $output_file
+    or die "Cannot open output file '$output_file': $!\n";
+}
 
 if ($show_version) {
   print "SudokuSolver $Sudoku::VERSION\n";
@@ -188,6 +195,7 @@ sudoku.pl - solve a Sudoku puzzle
   sudoku.pl --list-character-sets
   sudoku.pl --result-format json --file Puzzles/Puzzle3.txt
   sudoku.pl --list-result-formats
+  sudoku.pl --output-file result.txt --file Puzzles/Puzzle3.txt
   sudoku.pl --help
 
 For compatibility with the legacy Makefile, a single positional argument is also accepted:
@@ -256,6 +264,13 @@ List available structured result formats and exit.
 =item B<--list-character-sets>
 
 List the available grid character sets and exit.
+
+=item B<--output-file FILE>
+
+Write standard program output to FILE instead of the terminal. This applies to
+human narration, selected grid formats, JSON results, benchmark summaries, and
+discovery listings. Diagnostics and fatal errors continue to use standard error.
+The file is written as UTF-8 and replaced if it already exists.
 
 =item B<--debug>
 

@@ -801,13 +801,20 @@ Unicode should be an optional presentation choice. Plain ASCII should remain ful
 
 ### Output Directed to a File
 
-**Status:** Planned
+**Status:** Implemented
 
-Expected command-line use:
+Command-line use:
 
+```bash
 sudoku.pl --output-file result.txt --file puzzle.sdk
+```
 
-Rendering methods should return strings so that the caller can send the same output to standard output, a file, a test capture, or another consumer.
+The option redirects normal narration, selected grid formats, JSON results,
+benchmark summaries, and discovery listings. The destination is written as
+UTF-8 and replaced if it already exists. Fatal errors remain on standard error.
+
+Rendering methods return strings so that the caller can send the same output to
+standard output, a file, a test capture, or another consumer.
 
 ### Stable Renderer Events
 
