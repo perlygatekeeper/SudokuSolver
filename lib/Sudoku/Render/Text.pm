@@ -44,6 +44,37 @@ sub grid_builder {
     );
 }
 
+sub compact_grid {
+    my ($self, $grid, %args) = @_;
+
+    die "compact_grid requires a grid object\n"
+        if !defined $grid || !$grid->can('cells');
+
+    my $empty = exists $args{empty_cell_character}
+        ? $args{empty_cell_character}
+        : '.';
+
+    die "empty_cell_character must be exactly one character\n"
+        if !defined $empty || length($empty) != 1;
+
+    my $cells = $grid->cells;
+
+    die "compact_grid requires exactly 81 cells\n"
+        if ref($cells) ne 'ARRAY' || @$cells != 81;
+
+    my @values = map {
+        my $value = $_->value;
+        $value ? $value : $empty;
+    } @$cells;
+
+    my @rows;
+    for my $row (0 .. 8) {
+        push @rows, join q{}, @values[$row * 9 .. $row * 9 + 8];
+    }
+
+    return join("\n", @rows) . "\n";
+}
+
 sub pretty_grid {
     my ($self, $grid) = @_;
 
