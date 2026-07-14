@@ -215,6 +215,16 @@ perl-version:
 size:
 	@echo "Project size, non-blank lines"
 	@echo "============================="
+	        @printf "%-28s %8s\n" "Component" "Lines"
+	@printf "%-28s %8s\n" "---------" "-----"
+	@printf "%-28s %8s\n" "bin/sudoku.pl" "$$(grep -hcv '^[[:space:]]*$$' bin/sudoku.pl 2>/dev/null || echo 0)"
+	@printf "%-28s %8s\n" "lib" "$$(find lib -type f -name '*.pm' -print0 | xargs -0 grep -hcv '^[[:space:]]*$$' | awk '{s+=$$1} END {print s+0}')"
+	@printf "%-28s %8s\n" "tests" "$$(find t -type f -name '*.t' -print0 | xargs -0 grep -hcv '^[[:space:]]*$$' | awk '{s+=$$1} END {print s+0}')"
+	@printf "%-28s %8s\n" "docs" "$$(find docs -type f -print0 | xargs -0 grep -hcv '^[[:space:]]*$$' | awk '{s+=$$1} END {print s+0}')"
+	@printf "%-28s %8s\n" "Puzzles" "$$(find Puzzles -type f -print0 | xargs -0 grep -hcv '^[[:space:]]*$$' | awk '{s+=$$1} END {print s+0}')"
+	@echo "-----------------------------"
+	@printf "%-28s %8s\n" "TOTAL" "$$(find bin/sudoku.pl lib t Puzzles -type f \( -name '*.pl' -o -name '*.pm' -o -name '*.t' -o -name '*.txt' \) -print0 | xargs -0 grep -hcv '^[[:space:]]*$$' | awk '{s+=$$1} END {print s+0}')"
+
 
 size-modules:
 	@echo "Module size, non-blank lines"
