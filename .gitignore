@@ -1,3 +1,4 @@
 *.out
 *.solution
 .DS_Store
+*.tgz
