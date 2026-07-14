@@ -136,6 +136,45 @@ clean:
 status:
 	git status --short
 
+show-compact:
+	perl -Ilib bin/sudoku.pl \
+		--output quiet \
+		--grid-format compact \
+		--file Puzzles/solved_puzzle.txt
+
+show-pretty:
+	perl -Ilib bin/sudoku.pl \
+		--output quiet \
+		--grid-format pretty \
+		--file Puzzles/solved_puzzle.txt
+
+show-unicode:
+	perl -Ilib bin/sudoku.pl \
+		--output quiet \
+		--grid-format pretty \
+		--character-set UNICODE_LIGHT \
+		--file Puzzles/solved_puzzle.txt
+
+show-unicode-double:
+	perl -Ilib bin/sudoku.pl \
+		--output quiet \
+		--grid-format pretty \
+		--character-set UNICODE_DOUBLE \
+		--file Puzzles/solved_puzzle.txt
+
+show-unicode-heavy:
+	perl -Ilib bin/sudoku.pl \
+		--output quiet \
+		--grid-format pretty \
+		--character-set UNICODE_HEAVY \
+		--file Puzzles/solved_puzzle.txt
+
+show-candidates:
+	perl -Ilib bin/sudoku.pl \
+		--output quiet \
+		--grid-format candidates \
+		--file Puzzles/solved_puzzle.txt
+
 tarball: backup
 
 backup:
