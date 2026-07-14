@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use Sudoku::Render::GridCharacters;
+use Sudoku::Render::GridBuilder;
 
 sub new {
     my ($class, %args) = @_;
@@ -33,6 +34,14 @@ sub grid_characters {
 
 sub available_character_sets {
     return Sudoku::Render::GridCharacters->names;
+}
+
+sub grid_builder {
+    my ($self) = @_;
+
+    return Sudoku::Render::GridBuilder->new(
+        character_set => $self->{character_set},
+    );
 }
 
 sub mode {
