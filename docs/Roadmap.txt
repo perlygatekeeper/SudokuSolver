@@ -412,3 +412,13 @@ Patch 0069 — Digit Forcing Chains
 * Accept contradiction, common placement, and common elimination proofs.
 * Preserve one assumption only, bounded propagation, and no recursive search.
 * Emit structured human-readable deductions and benchmark statistics.
+
+
+Patch 0070 — Enhanced Digit Forcing Chains
+-------------------------------------------
+
+* Expand premise selection beyond bivalue cells to every remaining candidate.
+* Rank premises by cell size and conjugate-pair participation.
+* Evaluate the ON branch first and stop immediately on contradiction.
+* Restrict branch propagation to Naked and Hidden Singles.
+* Add regression coverage for non-bivalue premises and ON-first early exit.

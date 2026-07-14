@@ -216,3 +216,14 @@ Added bounded Digit Forcing Chains on top of the hypothetical inference engine.
 The strategy compares ON and OFF branches for one candidate, accepts branch
 contradictions or conclusions shared by both branches, and emits one structured
 human-readable deduction without nested assumptions or recursive search.
+
+
+Enhanced Digit Forcing Chains
+-----------------------------
+
+Expanded Digit Forcing Chains beyond bivalue-cell premises. Candidate premises
+are now ranked heuristically, ON contradictions return without an unnecessary
+OFF branch, and hypothetical propagation is intentionally restricted to Naked
+and Hidden Singles. This aligns the solver with the contradiction chains found
+in the remaining frontier benchmark puzzles while preserving one bounded,
+non-recursive assumption.

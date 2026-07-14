@@ -2,16 +2,21 @@
 
 ## Candidate selection
 
-Visit unsolved cells in grid order and their remaining candidates in numeric
-order. Candidates in solved or single-candidate cells are not used as branch
-premises.
+Build a premise for every remaining candidate in every unsolved cell with at
+least two candidates. Premises are scored before searching. Smaller cells rank
+higher, and a candidate receives an additional score when it has two or three
+remaining locations in its row, column, or box. Ties are resolved in stable
+row, column, and candidate order.
+
+A completely empty grid is skipped because it has no constrained premise and
+is used by the benchmark test suite as a deliberately stalled puzzle.
 
 ## Branches
 
-For each premise `RrCc(d)` run:
-
-- ON: temporarily set `RrCc=d`;
-- OFF: temporarily remove `d` from `RrCc`.
+For each premise `RrCc(d)`, run the ON branch first by temporarily setting
+`RrCc=d`. If that branch contradicts, remove `d` immediately and do not run
+the OFF branch. Otherwise run the OFF branch by temporarily removing `d` from
+`RrCc`, then compare the two completed branches.
 
 `Sudoku::Hypothetical` clones the exact candidate state and calls bounded
 `Solver::propagate()`. Its default strategy filter excludes forcing and
@@ -33,12 +38,14 @@ candidate is therefore never mistaken for an elimination.
 If both branches contradict, no deduction is emitted because the incoming grid
 state is itself inconsistent.
 
-## Initial search boundary
+## Propagation boundary
 
-This first implementation tests candidates only in bivalue cells and propagates Naked Singles, Hidden Singles, Pointing / Claiming, Naked Pairs, and Hidden Pairs. It does not recursively invoke advanced chain or forcing strategies. Each branch is limited to 100 propagated deductions.
+Branches propagate only Naked Singles and Hidden Singles. This matches the
+contradiction chains observed in the four frontier benchmark puzzles while
+keeping the proof short, deterministic, and human-readable. Advanced chains
+and forcing strategies are never invoked inside a branch.
 
 ## Limits
 
-The default branch limit is 500 propagated deductions. Reaching a limit does
-not invalidate deductions already derived in that branch, but the strategy
-never treats a limit as a contradiction or a completed solve.
+The default branch limit is 50 propagated deductions. Reaching a limit does
+not count as a contradiction or a completed proof.

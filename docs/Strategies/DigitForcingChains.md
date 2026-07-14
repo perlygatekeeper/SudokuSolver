@@ -25,7 +25,11 @@ recursive backtracking solver. The implementation has one branch point, a hard
 propagation limit, no nested assumptions, and an explanation that exposes the
 proof found in both branches.
 
-## Initial search boundary
+## Search boundary
 
-This first implementation tests candidates only in bivalue cells and propagates Naked Singles, Hidden Singles, Pointing / Claiming, Naked Pairs, and Hidden Pairs. It does not recursively invoke advanced chain or forcing strategies. Each branch is limited to 100 propagated deductions.
+The enhanced implementation considers every remaining candidate in a nonempty puzzle, including candidates in cells with three or more possibilities. Premises are ordered heuristically: candidates in smaller cells and candidates participating in row, column, or box conjugate pairs are tried first.
+
+The ON branch runs first. If it contradicts, the candidate is removed immediately without running the OFF branch. Otherwise the OFF branch is evaluated for an opposite contradiction or a conclusion shared by both branches.
+
+Hypothetical propagation uses only Naked Singles and Hidden Singles, does not invoke another forcing strategy, and is limited to 50 propagated deductions per branch.
 

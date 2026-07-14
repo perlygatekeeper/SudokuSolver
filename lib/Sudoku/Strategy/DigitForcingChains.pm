@@ -8,14 +8,11 @@ use parent 'Sudoku::Strategy::Base';
 use Sudoku::Deduction;
 use Sudoku::Hypothetical;
 
-use constant MAX_BRANCH_STEPS => 100;
+use constant MAX_BRANCH_STEPS => 50;
 
 my @DEFAULT_PROPAGATION_STRATEGIES = qw(
     Sudoku::Strategy::NakedSingles
     Sudoku::Strategy::HiddenSingles
-    Sudoku::Strategy::PointingClaiming
-    Sudoku::Strategy::NakedPairs
-    Sudoku::Strategy::HiddenPairs
 );
 
 sub name {
@@ -25,27 +22,105 @@ sub name {
 sub apply {
     my ( $self, $grid ) = @_;
 
+    # A completely empty grid has no useful forcing premise and appears in the
+    # benchmark harness as a deliberately stalled puzzle. Avoid exploring all
+    # 729 candidates in that underconstrained state.
+    return unless grep { $_->value } @{ $grid->cells };
+
+    for my $premise ($self->_ordered_premises($grid)) {
+        my ($cell, $value) = @{$premise}{qw(cell value)};
+
+        # Contradiction chains overwhelmingly use the ON assumption. Run it
+        # first and return immediately when it disproves the premise.
+        my $on = $self->_run_branch($grid, $cell, $value, 'on');
+        if ($on->has_contradiction) {
+            return ($self->_on_contradiction_deduction(
+                $cell, $value, $on,
+            ));
+        }
+
+        my $off = $self->_run_branch($grid, $cell, $value, 'off');
+        my $deduction = $self->_compare_branches(
+            $grid, $cell, $value, $on, $off,
+        );
+        return ($deduction) if $deduction;
+    }
+
+    return;
+}
+
+sub _ordered_premises {
+    my ( $self, $grid ) = @_;
+
+    my @premises;
     for my $cell (@{ $grid->cells }) {
         next if $cell->value;
 
         my @candidates = grep { $cell->possibilities->[$_] } 1 .. 9;
-        # The first forcing-chain implementation is intentionally bounded to
-        # bivalue premises. This keeps the search human-scaled and prevents
-        # pathological branching on broad, underconstrained grids.
-        next unless @candidates == 2;
+        next unless @candidates > 1;
 
         for my $value (@candidates) {
-            my $on  = $self->_run_branch($grid, $cell, $value, 'on');
-            my $off = $self->_run_branch($grid, $cell, $value, 'off');
-
-            my $deduction = $self->_compare_branches(
-                $grid, $cell, $value, $on, $off,
-            );
-            return ($deduction) if $deduction;
+            push @premises, {
+                cell  => $cell,
+                value => $value,
+                score => $self->_premise_score($grid, $cell, $value, scalar @candidates),
+            };
         }
     }
 
-    return;
+    return sort {
+           $b->{score} <=> $a->{score}
+        || $a->{cell}->row <=> $b->{cell}->row
+        || $a->{cell}->column <=> $b->{cell}->column
+        || $a->{value} <=> $b->{value}
+    } @premises;
+}
+
+sub _premise_score {
+    my ( $self, $grid, $cell, $value, $candidate_count ) = @_;
+
+    my $score = 10 - $candidate_count;
+
+    my @units = (
+        $grid->rows->[ $cell->row ],
+        $grid->columns->[ $cell->column ],
+        $grid->boxes->[ $cell->box ],
+    );
+
+    for my $unit (@units) {
+        my $locations = grep {
+            !$_->value && $_->possibilities->[$value]
+        } @{$unit};
+
+        $score += 12 if $locations == 2;
+        $score += 4  if $locations == 3;
+    }
+
+    return $score;
+}
+
+sub _on_contradiction_deduction {
+    my ( $self, $source, $value, $on ) = @_;
+
+    return Sudoku::Deduction->new(
+        strategy => $self->name,
+        action   => 'remove_candidate',
+        cell     => $source,
+        value    => $value,
+        reason   => sprintf(
+            'Assuming %s=%d produces a contradiction, so candidate %d is false.',
+            _cell_label($source), $value, $value,
+        ),
+        explanation => sprintf(
+            'Remove candidate %d from %s. The ON branch contradicts after %d '
+            . 'propagated step%s: %s',
+            $value,
+            _cell_label($source),
+            $on->steps,
+            $on->steps == 1 ? q{} : 's',
+            _contradiction_text($on),
+        ),
+    );
 }
 
 sub _run_branch {
@@ -75,28 +150,6 @@ sub _compare_branches {
     # If both assumptions contradict, the source state is already inconsistent;
     # a forcing strategy must not invent a deduction from it.
     return if $on_bad && $off_bad;
-
-    if ($on_bad) {
-        return Sudoku::Deduction->new(
-            strategy => $self->name,
-            action   => 'remove_candidate',
-            cell     => $source,
-            value    => $value,
-            reason   => sprintf(
-                'Assuming %s=%d produces a contradiction, so candidate %d is false.',
-                _cell_label($source), $value, $value,
-            ),
-            explanation => sprintf(
-                'Remove candidate %d from %s. The ON branch contradicts after %d '
-                . 'propagated step%s: %s',
-                $value,
-                _cell_label($source),
-                $on->steps,
-                $on->steps == 1 ? q{} : 's',
-                _contradiction_text($on),
-            ),
-        );
-    }
 
     if ($off_bad) {
         return Sudoku::Deduction->new(
