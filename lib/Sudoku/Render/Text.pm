@@ -6,10 +6,11 @@ use warnings;
 use Sudoku::Render::GridCharacters;
 use Sudoku::Render::GridBuilder;
 
-my @GRID_FORMAT_ORDER = qw(pretty compact);
+my @GRID_FORMAT_ORDER = qw(pretty compact candidates);
 my %GRID_FORMAT_METHOD = (
     pretty  => 'pretty_grid',
-    compact => 'compact_grid',
+    compact    => 'compact_grid',
+    candidates => 'candidate_grid',
 );
 
 sub new {
@@ -107,6 +108,119 @@ sub compact_grid {
     }
 
     return join("\n", @rows) . "\n";
+}
+
+sub candidate_grid {
+    my ($self, $grid) = @_;
+
+    die "candidate_grid requires a grid object\n"
+        if !defined $grid || !$grid->can('cells');
+
+    my $cells = $grid->cells;
+    die "candidate_grid requires exactly 81 cells\n"
+        if ref($cells) ne 'ARRAY' || @$cells != 81;
+
+    my $builder = $self->grid_builder;
+    my $chars   = $builder->characters;
+    my @separators = map {
+        $_ == 2 || $_ == 5 ? 'vertical' : 'vertical_minor'
+    } 0 .. 7;
+
+    my $major_rule = $builder->horizontal_rule(
+        left          => 'corner_down_right',
+        junction      => 'tee_down',
+        right         => 'corner_down_left',
+        segments      => 9,
+        segment_width => 7,
+    );
+
+    my $middle_major_rule = $builder->horizontal_rule(
+        left          => 'tee_right',
+        junction      => 'cross',
+        right         => 'tee_left',
+        segments      => 9,
+        segment_width => 7,
+    );
+
+    my $bottom_rule = $builder->horizontal_rule(
+        left          => 'corner_up_right',
+        junction      => 'tee_up',
+        right         => 'corner_up_left',
+        segments      => 9,
+        segment_width => 7,
+    );
+
+    my $minor_segment = ' ' . ($chars->{horizontal} x 5) . ' ';
+    my $minor_rule = $chars->{tee_right}
+        . join($chars->{cross}, ($minor_segment) x 9)
+        . $chars->{tee_left};
+
+    my @lines = (
+        ' ' x 79,
+        '        1       2       3       4       5       6       7       8       9      ',
+        '    ' . $major_rule . '  ',
+    );
+
+    for my $row (0 .. 8) {
+        my @row_cells = @{$cells}[$row * 9 .. $row * 9 + 8];
+
+        for my $candidate_row (0 .. 2) {
+            my @contents = map {
+                _candidate_cell_line($_, $candidate_row)
+            } @row_cells;
+
+            my $prefix = $candidate_row == 1
+                ? sprintf('  %d ', $row + 1)
+                : '    ';
+
+            push @lines, $prefix . $builder->row(
+                cells      => \@contents,
+                width      => 7,
+                align      => 'left',
+                separators => \@separators,
+            ) . '  ';
+        }
+
+        if ($row == 8) {
+            push @lines, '    ' . $bottom_rule . '  ';
+        }
+        elsif ($row == 2 || $row == 5) {
+            push @lines, '    ' . $middle_major_rule . '  ';
+        }
+        else {
+            push @lines, '    ' . $minor_rule . '  ';
+        }
+    }
+
+    return join("\n", @lines) . "\n";
+}
+
+sub _candidate_cell_line {
+    my ($cell, $candidate_row) = @_;
+
+    my @slots = (' ') x 7;
+    my $value = $cell->value;
+
+    if ($value) {
+        $slots[3] = $value if $candidate_row == 1;
+        return join q{}, @slots;
+    }
+
+    die "candidate_grid cells must provide possibilities\n"
+        if !$cell->can('possibilities');
+
+    my $possibilities = $cell->possibilities;
+    die "candidate_grid possibilities must be an array reference\n"
+        if ref($possibilities) ne 'ARRAY';
+
+    my $first = $candidate_row * 3 + 1;
+    for my $offset (0 .. 2) {
+        my $candidate = $first + $offset;
+        $slots[1 + ($offset * 2)] = $candidate
+            if $possibilities->[$candidate];
+    }
+
+    return join q{}, @slots;
 }
 
 sub pretty_grid {

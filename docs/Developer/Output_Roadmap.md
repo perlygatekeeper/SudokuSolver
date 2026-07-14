@@ -15,6 +15,7 @@
 
 ## Phase 3
 
+- [x] Candidate grid renderer (string-returning).
 - [ ] Candidate exports
   - Human-readable
   - Single-line

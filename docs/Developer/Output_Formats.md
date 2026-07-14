@@ -219,7 +219,7 @@ my $text = $renderer->pretty_grid($grid);
 
 ### Candidate Grid
 
-**Status:** Implemented as `Grid::big_print`
+**Status:** Implemented as `Sudoku::Render::Text::candidate_grid`; `Grid::big_print` remains as a compatibility wrapper.
 
 The candidate grid displays each Sudoku cell as a 3×3 miniature grid. Solved cells contain their value in the center. Unsolved cells show their remaining candidates in their natural keypad positions.
 
