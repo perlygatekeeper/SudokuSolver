@@ -17,9 +17,9 @@
 
 - [x] Candidate grid renderer (string-returning).
 - [ ] Candidate exports
-  - Human-readable
-  - Single-line
-  - JSON
+  - [x] Human-readable
+  - [ ] Single-line
+  - [ ] JSON
 
 ## Phase 4
 

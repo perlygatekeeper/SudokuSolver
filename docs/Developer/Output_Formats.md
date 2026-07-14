@@ -804,3 +804,26 @@ or, later:
 print {$output_handle} $text;
 
 This separation allows the same renderer to support terminal output, files, tests, logs, JSON containers, and other user interfaces.
+
+
+### Candidate List
+
+The `candidate-list` format prints one labeled line per Sudoku row. Solved
+cells contain their value. Unsolved cells contain every remaining candidate in
+ascending order. A cell with no remaining candidates is shown as `-`.
+
+```text
+R1: 5 3 124 26 7 2468 1489 1249 248
+R2: 6 247 247 1 9 5 3478 234 2478
+...
+R9: 123 1245 12345 2356 8 26 1346 7 9
+```
+
+Command-line example:
+
+```bash
+perl -Ilib bin/sudoku.pl --output quiet --grid-format candidate-list --file puzzle.sdk
+```
+
+This is a human-readable candidate-state view. The later single-line and JSON
+exports are the preferred machine-interchange formats.
