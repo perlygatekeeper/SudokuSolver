@@ -35,6 +35,7 @@ compact
 candidates
 candidate-list
 candidate-line
+candidate-json
 ```
 
 When `format` is omitted, `render_grid` uses `pretty`. This renderer default does
@@ -75,6 +76,38 @@ remains unchanged. Supplying `--character-set` by itself renders the default
 `pretty` grid. Character-set names are case-insensitive and may use hyphens in
 place of underscores.
 
+
+### Candidate JSON
+
+**Status:** Implemented as `Sudoku::Render::Text::candidate_json`
+
+The candidate-JSON format preserves the original puzzle, current solved-cell
+state, and every remaining candidate in a versioned machine-readable document.
+The `candidates` array always contains exactly 81 strings in row-major order.
+Solved cells contain their value, unsolved cells contain their remaining
+candidates in ascending order, and a contradictory cell is represented by `-`.
+
+```json
+{
+   "candidates" : [ "5", "3", "124", "26" ],
+   "current_grid" : "530070000...",
+   "format" : "SudokuSolver candidate-state",
+   "puzzle" : "530070000...",
+   "version" : 1
+}
+```
+
+Command-line example:
+
+```bash
+sudoku.pl --output quiet --grid-format candidate-json --file puzzle.sdk
+```
+
+The JSON keys are emitted in canonical order and the document ends with a
+newline. The format version permits future schema evolution without silently
+changing the meaning of existing exports.
+
+---
 
 ### Candidate Line
 

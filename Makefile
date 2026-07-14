@@ -129,6 +129,7 @@ clean:
 	rm -f *.out *.solution
 	rm -f Puzzle*.out Puzzle*.solution
 	rm -f Puzzles/*.out Puzzles/*.solution
+	rm -f sudoku_solver*.tgz
 	find . -name '*~' -delete
 	find . -name '*.bak' -delete
 	find . -name '.DS_Store' -delete
@@ -178,7 +179,7 @@ show-candidates:
 tarball: backup
 
 backup:
-	$(TAR) -cvzf ../$(NAME)-`date +%Y%m%d-%H%M`.tgz \
+	$(TAR) -cvzf ./$(NAME)-`date +%Y%m%d-%H%M`.tgz \
 		Makefile \
 		Readme.md \
 		$(SCRIPT) \

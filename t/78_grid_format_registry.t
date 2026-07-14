@@ -44,7 +44,7 @@ my $grid = Local::Grid->new(1, (0) x 80);
 
 is_deeply(
     [ $renderer->available_grid_formats ],
-    [ qw(pretty compact candidates candidate-list candidate-line) ],
+    [ qw(pretty compact candidates candidate-list candidate-line candidate-json) ],
     'available_grid_formats returns formats in discovery order',
 );
 
@@ -54,6 +54,7 @@ ok($renderer->supports_grid_format('compact'), 'compact format is supported');
 ok($renderer->supports_grid_format('candidates'), 'candidates format is supported');
 ok($renderer->supports_grid_format('candidate-list'), 'candidate-list format is supported');
 ok($renderer->supports_grid_format('candidate-line'), 'candidate-line format is supported');
+ok($renderer->supports_grid_format('candidate-json'), 'candidate-json format is supported');
 ok(!$renderer->supports_grid_format('json'), 'unknown format is not supported');
 ok(!$renderer->supports_grid_format(undef), 'undefined format is not supported');
 

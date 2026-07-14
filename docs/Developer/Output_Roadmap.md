@@ -19,7 +19,7 @@
 - [ ] Candidate exports
   - [x] Human-readable
   - [x] Single-line
-  - [ ] JSON
+  - [x] JSON
 
 ## Phase 4
 

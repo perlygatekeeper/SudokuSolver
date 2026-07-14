@@ -3,16 +3,21 @@ package Sudoku::Render::Text;
 use strict;
 use warnings;
 
+use JSON::PP ();
+
 use Sudoku::Render::GridCharacters;
 use Sudoku::Render::GridBuilder;
 
-my @GRID_FORMAT_ORDER = qw(pretty compact candidates candidate-list candidate-line);
+my @GRID_FORMAT_ORDER = qw(
+    pretty compact candidates candidate-list candidate-line candidate-json
+);
 my %GRID_FORMAT_METHOD = (
     pretty  => 'pretty_grid',
     compact    => 'compact_grid',
     candidates     => 'candidate_grid',
     'candidate-list' => 'candidate_list',
     'candidate-line' => 'candidate_line',
+    'candidate-json' => 'candidate_json',
 );
 
 sub new {
@@ -149,6 +154,36 @@ sub candidate_line {
 
     return join(q{,}, map { _candidate_field($_, 'candidate_line') } @$cells)
         . "\n";
+}
+
+sub candidate_json {
+    my ($self, $grid) = @_;
+
+    die "candidate_json requires a grid object\n"
+        if !defined $grid || !$grid->can('cells');
+
+    my $cells = $grid->cells;
+    die "candidate_json requires exactly 81 cells\n"
+        if ref($cells) ne 'ARRAY' || @$cells != 81;
+
+    my @candidates = map { _candidate_field($_, 'candidate_json') } @$cells;
+    my $current_grid = join q{}, map { $_->value || 0 } @$cells;
+    my $puzzle = join q{}, map {
+        $_->can('given') && $_->given ? ($_->value || 0) : 0
+    } @$cells;
+
+    my $document = {
+        format       => 'SudokuSolver candidate-state',
+        version      => 1,
+        puzzle       => $puzzle,
+        current_grid => $current_grid,
+        candidates   => \@candidates,
+    };
+
+    return JSON::PP->new
+        ->canonical(1)
+        ->pretty(1)
+        ->encode($document);
 }
 
 sub _candidate_field {

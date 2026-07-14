@@ -202,7 +202,7 @@ Select human output style. Current modes are quiet, normal, explain, trace, and 
 =item B<--grid-format FORMAT>
 
 Render the final grid using a named format. Current formats are pretty, compact, candidates,
-and candidate-list. This is opt-in and does not alter the existing default output.
+candidate-list, candidate-line, and candidate-json. This is opt-in and does not alter the existing default output.
 Use C<--output quiet> when only the grid should be printed.
 
 =item B<--character-set SET>
