@@ -80,6 +80,7 @@ is_deeply(
         'Unique Rectangle Type 4',
         'AIC',
         'Grouped AIC',
+        'Digit Forcing Chains',
     ],
     'Solver exposes canonical strategy order',
 );
@@ -125,6 +126,7 @@ is_deeply(
         'Unique Rectangle Type 4',
         'AIC',
         'Grouped AIC',
+        'Digit Forcing Chains',
     ],
     'Solver exposes canonical strategy order',
 );

@@ -45,6 +45,7 @@ is_deeply(
         'Sudoku::Strategy::UniqueRectangleType4',
         'Sudoku::Strategy::AIC',
         'Sudoku::Strategy::GroupedAIC',
+        'Sudoku::Strategy::DigitForcingChains',
     ],
     'registry returns strategies in canonical solving order',
 );
@@ -91,6 +92,7 @@ is_deeply(
         'Unique Rectangle Type 4',
         'AIC',
         'Grouped AIC',
+        'Digit Forcing Chains',
     ],
     'registry exposes canonical strategy names',
 );

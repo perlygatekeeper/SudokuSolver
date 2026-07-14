@@ -403,3 +403,12 @@ Patch 0068 — Hypothetical Inference Engine
 * Add bounded deterministic propagation with no nested assumptions.
 * Return structured status, deductions, history, and contradictions.
 * Establish reusable infrastructure for Digit, Cell, and Unit Forcing Chains.
+
+
+Patch 0069 — Digit Forcing Chains
+---------------------------------
+
+* Add one-candidate ON/OFF branch comparison using Sudoku::Hypothetical.
+* Accept contradiction, common placement, and common elimination proofs.
+* Preserve one assumption only, bounded propagation, and no recursive search.
+* Emit structured human-readable deductions and benchmark statistics.
