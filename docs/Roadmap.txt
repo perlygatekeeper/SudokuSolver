@@ -394,3 +394,12 @@ Patch 0067 — Grouped AIC
 * Reuse ordinary and grouped strong links through Sudoku::StrongLinks.
 * Preserve ordinary AIC and Grouped L1-Wing as earlier, more specific strategies.
 * Add grouped endpoint visibility checks, tests, documentation, and benchmark reporting.
+
+Patch 0068 — Hypothetical Inference Engine
+------------------------------------------
+
+* Add exact candidate-state cloning for temporary branches.
+* Add one ON/OFF candidate assumption per branch.
+* Add bounded deterministic propagation with no nested assumptions.
+* Return structured status, deductions, history, and contradictions.
+* Establish reusable infrastructure for Digit, Cell, and Unit Forcing Chains.

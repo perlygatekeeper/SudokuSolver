@@ -196,3 +196,14 @@ Grouped AIC
 Added Grouped Alternating Inference Chains. The strategy combines singleton and
 grouped candidate nodes, alternates strong and weak links, and eliminates a
 candidate only when it sees every possible location in both same-digit endpoints.
+
+Hypothetical Inference Engine
+=============================
+
+Added `Sudoku::Hypothetical`, `Sudoku::Hypothetical::Result`, and bounded
+`Solver::propagate()` infrastructure for future forcing-chain strategies. A
+hypothetical branch clones the exact value and candidate state, applies one
+ON/OFF candidate assumption, performs deterministic propagation without nested
+assumptions, and returns structured status, deductions, history, and any
+contradiction. This infrastructure is not registered as a solving strategy and
+does not change benchmark capability or difficulty ratings.

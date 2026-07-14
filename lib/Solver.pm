@@ -457,6 +457,52 @@ sub step {
   return $progress ? $deduction : undef;
 }
 
+sub propagate {
+  my ( $self, $grid, %options ) = @_;
+
+  die "propagate requires a Grid object\n"
+    unless blessed($grid) && $grid->isa('Grid');
+
+  my $max_steps = $options{max_steps} // 500;
+  die "max_steps must be a positive integer\n"
+    unless $max_steps =~ /^\d+$/ && $max_steps > 0;
+
+  my @history;
+  my $steps = 0;
+
+  $self->check_contradiction($grid) unless $self->has_contradiction;
+
+  while (
+    $grid->solved <= 80
+      && !$self->has_contradiction
+      && $steps < $max_steps
+  ) {
+    my $deduction = $self->step($grid);
+    last unless $deduction;
+
+    ++$steps;
+    push @history, {
+      kind      => 'deduction',
+      step      => $steps,
+      strategy  => $deduction->strategy,
+      deduction => $deduction,
+    };
+  }
+
+  my $status = $self->has_contradiction ? 'contradiction'
+    : $grid->solved > 80                 ? 'solved'
+    : $steps >= $max_steps               ? 'limit'
+    :                                      'fixed_point';
+
+  $self->status($status);
+
+  return {
+    status  => $status,
+    steps   => $steps,
+    history => \@history,
+  };
+}
+
 sub run_strategy {
   my ( $self, $grid, $strategy ) = @_;
 
