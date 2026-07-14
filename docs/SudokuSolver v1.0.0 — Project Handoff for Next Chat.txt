@@ -122,7 +122,7 @@ The Makefile contains numerous new rendering targets.
 
 The project now contains approximately 73–74 tests.
 
-Current numbering contains many collisions, including:
+The old numbering contained many collisions, including:
 
 * 65
 * 67
@@ -133,9 +133,10 @@ Current numbering contains many collisions, including:
 * 78
 * 79
 
-The next cleanup should move to a permanent three-digit numbering system.
+To address this we moved to a permanent three-digit numbering system.
 
-A renumbering script has already been drafted but should be regenerated from the current repository immediately before applying.
+A renumbering script had been drafted, and was applied to the working tree
+before this hand-off.
 
 ---
 
@@ -162,6 +163,22 @@ The README should become a proper GitHub landing page and emphasize:
 * output capabilities
 * benchmark results
 * project philosophy
+
+I would actually make this a "high-quality documentation release", not just "replace the README."
+
+Specifically, Patch 0072 would contain:
+
+Readme.md                     (completely rewritten)
+Release_notes_v1.0.0.txt      (new)
+docs/Roadmap.txt              (mark v1.0 complete)
+docs/Developer/
+    Current_Status_and_Subprojects.md
+        (small status update)
+
+No code.
+No tests.
+No Makefile.
+Just documentation.
 
 ---
 
