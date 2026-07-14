@@ -890,3 +890,17 @@ perl -Ilib bin/sudoku.pl --output quiet --grid-format candidate-list --file puzz
 
 This is a human-readable candidate-state view. The later single-line and JSON
 exports are the preferred machine-interchange formats.
+
+
+## General JSON Solve Result
+
+Use `--result-format json` for one structured document describing the complete solve result.
+It includes status, original puzzle, current grid, solved and remaining cell counts,
+deduction statistics, difficulty metadata, solution when solved, and structured
+contradiction information when applicable.
+
+```bash
+sudoku.pl --result-format json --file puzzle.sdk
+```
+
+This option suppresses human narration so standard output remains valid JSON.

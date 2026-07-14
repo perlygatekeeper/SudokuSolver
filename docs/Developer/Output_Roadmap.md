@@ -23,7 +23,7 @@
 
 ## Phase 4
 
-- [ ] JSON output
+- [x] General JSON solve-result output
 - [ ] CSV / TSV output
 - [ ] One-line puzzle / solution output
 

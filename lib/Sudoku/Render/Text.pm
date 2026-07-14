@@ -8,6 +8,8 @@ use JSON::PP ();
 use Sudoku::Render::GridCharacters;
 use Sudoku::Render::GridBuilder;
 
+my @RESULT_FORMAT_ORDER = qw(json);
+
 my @GRID_FORMAT_ORDER = qw(
     pretty compact candidates candidate-list candidate-line candidate-json
 );
@@ -57,6 +59,67 @@ sub available_grid_formats {
 sub default_grid_format {
     return 'pretty';
 }
+
+sub available_result_formats {
+    return @RESULT_FORMAT_ORDER;
+}
+
+sub supports_result_format {
+    my ($self, $format) = @_;
+    return defined $format && grep { $_ eq $format } @RESULT_FORMAT_ORDER;
+}
+
+sub result_json {
+    my ($self, $solver, $grid) = @_;
+
+    die "result_json requires a solver object\n"
+        if !defined $solver || !$solver->can('deduction_count');
+    die "result_json requires a grid object\n"
+        if !defined $grid || !$grid->can('cells');
+
+    my $cells = $grid->cells;
+    die "result_json requires exactly 81 cells\n"
+        if ref($cells) ne 'ARRAY' || @$cells != 81;
+
+    my $status = $solver->has_contradiction ? 'contradiction'
+        : $grid->solved == 81 ? 'solved'
+        : 'stalled';
+
+    my $puzzle = join q{}, map {
+        $_->can('given') && $_->given ? ($_->value || 0) : 0
+    } @$cells;
+    my $current_grid = join q{}, map { $_->value || 0 } @$cells;
+    my $difficulty = $solver->difficulty;
+    my $statistics = $solver->statistics;
+
+    my $document = {
+        format          => 'SudokuSolver result',
+        version         => 1,
+        status          => $status,
+        puzzle          => $puzzle,
+        current_grid    => $current_grid,
+        solved_cells    => 0 + $grid->solved,
+        remaining_cells => 81 - $grid->solved,
+        deductions      => 0 + $solver->deduction_count,
+        difficulty      => $difficulty->as_hash,
+        statistics      => $statistics->as_hash,
+        solution        => $status eq 'solved' ? $current_grid : undef,
+        contradiction   => undef,
+    };
+
+    if ($status eq 'contradiction') {
+        my $contradiction = $solver->contradiction;
+        $document->{contradiction} = {
+            kind        => $contradiction->kind,
+            message     => $contradiction->message,
+            location    => $contradiction->location,
+            explanation => $contradiction->explanation,
+        };
+    }
+
+    return JSON::PP->new->canonical(1)->pretty(1)->encode($document);
+}
+
 
 sub supports_grid_format {
     my ($self, $format) = @_;

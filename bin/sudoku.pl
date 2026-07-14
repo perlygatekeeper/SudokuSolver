@@ -25,6 +25,8 @@ my $grid_format;
 my $character_set;
 my $list_grid_formats;
 my $list_character_sets;
+my $result_format;
+my $list_result_formats;
 
 GetOptions(
   'file|f=s'     => \$puzzle_file,
@@ -39,6 +41,8 @@ GetOptions(
   'character-set=s' => \$character_set,
   'list-grid-formats' => \$list_grid_formats,
   'list-character-sets' => \$list_character_sets,
+  'result-format=s' => \$result_format,
+  'list-result-formats' => \$list_result_formats,
   'trace-grid-after-deduction' => \$trace_grid_after_deduction,
 ) or pod2usage(2);
 
@@ -49,7 +53,7 @@ if ($show_version) {
   exit 0;
 }
 
-if ($list_grid_formats || $list_character_sets) {
+if ($list_grid_formats || $list_character_sets || $list_result_formats) {
   require Sudoku::Render::Text;
 
   if ($list_grid_formats) {
@@ -63,7 +67,7 @@ if ($list_grid_formats || $list_character_sets) {
     }
   }
 
-  print "\n" if $list_grid_formats && $list_character_sets;
+  print "\n" if $list_grid_formats && ($list_character_sets || $list_result_formats);
 
   if ($list_character_sets) {
     print "Available character sets\n\n";
@@ -71,6 +75,14 @@ if ($list_grid_formats || $list_character_sets) {
       my $suffix = $set eq 'ASCII' ? ' (default)' : q{};
       print "    $set$suffix\n";
     }
+  }
+
+  print "\n" if $list_character_sets && $list_result_formats;
+
+  if ($list_result_formats) {
+    my $renderer = Sudoku::Render::Text->new;
+    print "Available result formats\n\n";
+    print "    $_\n" for $renderer->available_result_formats;
   }
 
   exit 0;
@@ -103,6 +115,7 @@ require Solver;
 require Sudoku::Render::Text;
 
 $grid_format = lc $grid_format if defined $grid_format;
+$result_format = lc $result_format if defined $result_format;
 if (defined $character_set) {
   $character_set = uc $character_set;
   $character_set =~ tr/-/_/;
@@ -117,6 +130,17 @@ if (defined $grid_format && !$renderer->supports_grid_format($grid_format)) {
   die "Unknown grid format '$grid_format'; available formats: $available\n";
 }
 
+if (defined $result_format && !$renderer->supports_result_format($result_format)) {
+  my $available = join ', ', $renderer->available_result_formats;
+  die "Unknown result format '$result_format'; available formats: $available\n";
+}
+
+if (defined $result_format && (defined $grid_format || defined $character_set)) {
+  die "--result-format cannot be combined with --grid-format or --character-set\n";
+}
+
+$output_mode = 'quiet' if defined $result_format;
+
 my $solver = Solver->new(
   renderer => $renderer,
 );
@@ -129,7 +153,10 @@ my $grid = $solver->run(
   output_mode  => $output_mode,
 );
 
-if (defined $grid_format || defined $character_set) {
+if (defined $result_format) {
+  print $renderer->result_json($solver, $grid);
+}
+elsif (defined $grid_format || defined $character_set) {
   binmode STDOUT, ':encoding(UTF-8)'
     if $renderer->character_set ne 'ASCII';
 
@@ -159,6 +186,8 @@ sudoku.pl - solve a Sudoku puzzle
   sudoku.pl --output quiet --grid-format pretty --character-set UNICODE_LIGHT --file Puzzles/Puzzle3.txt
   sudoku.pl --list-grid-formats
   sudoku.pl --list-character-sets
+  sudoku.pl --result-format json --file Puzzles/Puzzle3.txt
+  sudoku.pl --list-result-formats
   sudoku.pl --help
 
 For compatibility with the legacy Makefile, a single positional argument is also accepted:
@@ -215,6 +244,14 @@ so C<unicode-light> is equivalent to C<UNICODE_LIGHT>.
 =item B<--list-grid-formats>
 
 List the available named grid formats and exit.
+
+=item B<--result-format FORMAT>
+
+Render a structured solve result. Current format: json. This suppresses human narration and cannot be combined with grid-format options.
+
+=item B<--list-result-formats>
+
+List available structured result formats and exit.
 
 =item B<--list-character-sets>
 
