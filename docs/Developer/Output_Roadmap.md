@@ -41,3 +41,13 @@
 3. Documentation and example corpus
 4. Test infrastructure and fixtures
 5. Packaging and developer tooling
+
+## Completed Infrastructure
+
+- [x] Grid character-set registry
+- [x] Reusable grid builder
+- [x] String-returning pretty grid
+- [x] String-returning compact grid
+- [x] String-returning candidate grid
+- [x] Named grid-format registry and dispatcher
+- [x] CLI grid-format selection and discovery

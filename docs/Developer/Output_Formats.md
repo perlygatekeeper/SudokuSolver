@@ -32,6 +32,7 @@ The currently available formats are, in discovery order:
 ```text
 pretty
 compact
+candidates
 ```
 
 When `format` is omitted, `render_grid` uses `pretty`. This renderer default does
@@ -47,6 +48,30 @@ my $text = $renderer->render_grid(
 );
 ```
 
+
+
+### Command-Line Discovery and Selection
+
+The command-line program exposes the renderer registry without changing its
+legacy default output:
+
+```bash
+sudoku.pl --list-grid-formats
+sudoku.pl --list-character-sets
+```
+
+A final grid may be selected explicitly:
+
+```bash
+sudoku.pl --output quiet --grid-format compact --file puzzle.sdk
+sudoku.pl --output quiet --grid-format pretty --character-set UNICODE_LIGHT --file puzzle.sdk
+sudoku.pl --output quiet --grid-format candidates --character-set UNICODE_DOUBLE --file puzzle.sdk
+```
+
+`--grid-format` is opt-in. If it is omitted, the existing command-line output
+remains unchanged. Supplying `--character-set` by itself renders the default
+`pretty` grid. Character-set names are case-insensitive and may use hyphens in
+place of underscores.
 
 ### Compact Grid
 
