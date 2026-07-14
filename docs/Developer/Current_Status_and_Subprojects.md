@@ -81,7 +81,7 @@ benchmark data without changing solving logic.
 
 ### 1. Enhanced Output Framework
 
-Current active branch. Continue incrementally and preserve merge safety.
+ Current active branch. Continue incrementally and preserve merge safety.
 
 ### 2. Puzzle Input and Canonicalization
 
