@@ -1,0 +1,163 @@
+==============================================================================
+SudokuSolver v1.0.0 Release Notes
+==============================================================================
+
+Release Date: 2026-07-14
+
+SudokuSolver 1.0.0 completes the project's original vision: a modern Perl
+Sudoku solver that can solve the complete canonical collection of minimal
+17-clue puzzles through explainable logical inference rather than unrestricted
+recursive backtracking.
+
+Canonical Corpus Result
+=======================
+
+    Puzzles processed : 49,158
+    Solved            : 49,158
+    Stalled           : 0
+    Contradictions    : 0
+
+The first 1,000 puzzles remain a convenient development regression suite. The
+complete 49,158-puzzle corpus is now the authoritative capability benchmark.
+
+Solver Architecture
+===================
+
+Version 1.0.0 provides a deduction-driven solver architecture with:
+
+* Independent strategy modules under Sudoku::Strategy.
+* Structured Sudoku::Deduction objects.
+* A stable strategy registry and restart policy.
+* Reusable fish and strong-link infrastructure.
+* Grouped candidate inference nodes.
+* A bounded hypothetical inference engine.
+* Contradiction detection and structured terminal status.
+* Solve statistics, hint, explain, trace, and step-by-step facilities.
+* Versioned difficulty ratings.
+* Benchmark execution and strategy-contribution reporting.
+
+Implemented Strategy Families
+=============================
+
+Singles and Intersections
+-------------------------
+
+* Naked Singles
+* Hidden Singles
+* Pointing / Claiming
+
+Subsets
+-------
+
+* Naked Pairs, Triples, and Quads
+* Hidden Pairs, Triples, and Quads
+
+Fish
+----
+
+* X-Wing
+* Swordfish
+* Jellyfish
+
+Wings and Uniqueness
+--------------------
+
+* XY-Wing
+* XYZ-Wing
+* WXYZ-Wing
+* Unique Rectangle Types 1 through 4
+
+Patterns, Coloring, and Chains
+------------------------------
+
+* Remote Pairs
+* Skyscraper
+* Two-String Kite
+* Empty Rectangle
+* Simple Coloring
+* Multi-Coloring
+* X-Chains
+* XY-Chains
+* Alternating Inference Chains
+* Grouped L1-Wing
+* Grouped Alternating Inference Chains
+* Digit Forcing Chains
+
+Completing the Corpus
+=====================
+
+The final capability advances were Grouped AIC, Digit Forcing Chains, and the
+bounded Hypothetical Inference Engine.
+
+Hypothetical inference is deliberately constrained. Each branch applies one
+candidate assumption and performs bounded deterministic propagation without
+nested assumptions. A deduction is accepted only when a branch contradicts or
+when both branches establish the same conclusion. A completed hypothetical
+solve is not used as unrestricted search proof.
+
+Enhanced Output System
+======================
+
+The enhanced-output work is included in version 1.0.0.
+
+The renderer subsystem provides:
+
+* Pretty and compact grids.
+* Candidate grid and human-readable candidate-list output.
+* Exact 81-field candidate-line export.
+* Versioned candidate-state JSON export.
+* Versioned structured solve-result JSON.
+* ASCII, Unicode light, Unicode double, and Unicode heavy character sets.
+* Runtime discovery of grid, character-set, and result formats.
+* Output-to-file support.
+* Stable renderer event objects and an ordered event log.
+
+Legacy command-line output remains backward-compatible unless a new renderer or
+result format is explicitly selected.
+
+Testing and Reliability
+=======================
+
+The automated suite covers cells, grids, solver control flow, deductions,
+strategy contracts, individual strategies, output formats, benchmarks,
+difficulty, and known-solution regressions.
+
+Tests use a permanent three-digit numbering scheme so related areas remain
+grouped and future additions do not recreate earlier numbering collisions.
+
+Recommended release verification:
+
+    make PERL=perl check
+    git diff --check
+    make PERL=perl benchmark
+
+Documentation
+=============
+
+Version 1.0.0 includes expanded documentation for:
+
+* Overall architecture and strategy development.
+* Individual solving strategies and algorithm notes.
+* Benchmark operation and interpretation.
+* Output architecture, formats, and compatibility contracts.
+* Current sub-project status and future roadmap.
+
+Looking Ahead
+=============
+
+Post-1.0 development can concentrate on refinement rather than basic solver
+completion. Likely areas include:
+
+* Performance profiling and optimization.
+* Aggregate whole-corpus benchmark reporting.
+* Difficulty calibration improvements.
+* Additional result and replay renderers.
+* Puzzle canonicalization, fingerprints, and duplicate detection.
+* Packaging, continuous integration, and release tooling.
+* Puzzle generation.
+* GUI or web interfaces.
+
+Any new advanced strategy should have a measurable purpose, focused tests, and
+clear human-readable reasoning. The guiding principle remains:
+
+    Prefer explainable logical inference over unrestricted search.

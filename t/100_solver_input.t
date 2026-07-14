@@ -41,7 +41,7 @@ my $error = do {
 };
 like(
     $error,
-    qr/Puzzle string must contain exactly 81 digits or dots/,
+    qr/Puzzle string must contain exactly 81 digits or \(0's, dots, dashes, or underscores for empty cells\)/,
     'normalize_puzzle_string rejects malformed puzzle strings',
 );
 
