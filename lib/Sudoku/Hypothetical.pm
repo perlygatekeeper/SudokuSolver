@@ -150,17 +150,19 @@ sub run {
     my @deductions = @{ $solver->deductions };
     splice @deductions, 0, $assumption_count if $assumption_count;
 
-    return Sudoku::Hypothetical::Result->new(
-        status        => $propagation->{status},
-        assumption    => $assumption,
-        grid          => $branch,
-        steps         => $propagation->{steps},
-        deductions    => \@deductions,
-        history       => \@history,
-        contradiction => $solver->has_contradiction
-            ? $solver->contradiction
-            : undef,
+    my %result_args = (
+        status     => $propagation->{status},
+        assumption => $assumption,
+        grid       => $branch,
+        steps      => $propagation->{steps},
+        deductions => \@deductions,
+        history    => \@history,
     );
+
+    $result_args{contradiction} = $solver->contradiction
+        if $solver->has_contradiction && $solver->contradiction;
+
+    return Sudoku::Hypothetical::Result->new(%result_args);
 }
 
 sub _apply_assumption {

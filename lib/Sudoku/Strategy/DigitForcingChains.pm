@@ -251,6 +251,7 @@ sub _contradiction_text {
     my ($result) = @_;
 
     return 'the branch is contradictory' unless $result->has_contradiction;
+    return 'the branch is contradictory' unless $result->contradiction;
     return $result->contradiction->message;
 }
 

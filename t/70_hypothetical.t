@@ -45,6 +45,8 @@ my $result = Sudoku::Hypothetical->new(
 
 isa_ok($result, 'Sudoku::Hypothetical::Result');
 is($result->status, 'fixed_point', 'branch reaches a deterministic fixed point');
+ok(!$result->has_contradiction,
+    'a normal fixed-point branch does not claim a contradiction');
 is($result->grid->cell_from_row_column(0, 0)->value, 2,
     'OFF assumption leaves a naked single that is propagated');
 is(scalar @{ $result->placements }, 1, 'propagated placement is reported');
