@@ -33,6 +33,8 @@ The currently available formats are, in discovery order:
 pretty
 compact
 candidates
+candidate-list
+candidate-line
 ```
 
 When `format` is omitted, `render_grid` uses `pretty`. This renderer default does
@@ -72,6 +74,34 @@ sudoku.pl --output quiet --grid-format candidates --character-set UNICODE_DOUBLE
 remains unchanged. Supplying `--character-set` by itself renders the default
 `pretty` grid. Character-set names are case-insensitive and may use hyphens in
 place of underscores.
+
+
+### Candidate Line
+
+**Status:** Implemented as `Sudoku::Render::Text::candidate_line`
+
+The candidate-line format serializes the complete candidate state as exactly 81
+comma-separated fields in row-major order, from R1C1 through R9C9. Solved cells
+contain their solved value. Unsolved cells contain their remaining candidates in
+ascending order. A cell with no remaining candidates is represented by `-`.
+
+Example prefix:
+
+```text
+5,3,124,26,7,2468,1489,1249,248,...
+```
+
+Command-line example:
+
+```bash
+sudoku.pl --output quiet --grid-format candidate-line --file puzzle.sdk
+```
+
+The output contains exactly 80 commas and ends with a newline. It is intended for
+exact state preservation, regression fixtures, diffs, and interchange with other
+tools.
+
+---
 
 ### Compact Grid
 

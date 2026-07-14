@@ -6,12 +6,13 @@ use warnings;
 use Sudoku::Render::GridCharacters;
 use Sudoku::Render::GridBuilder;
 
-my @GRID_FORMAT_ORDER = qw(pretty compact candidates candidate-list);
+my @GRID_FORMAT_ORDER = qw(pretty compact candidates candidate-list candidate-line);
 my %GRID_FORMAT_METHOD = (
     pretty  => 'pretty_grid',
     compact    => 'compact_grid',
     candidates     => 'candidate_grid',
     'candidate-list' => 'candidate_list',
+    'candidate-line' => 'candidate_line',
 );
 
 sub new {
@@ -136,17 +137,32 @@ sub candidate_list {
     return join("\n", @rows) . "\n";
 }
 
+sub candidate_line {
+    my ($self, $grid) = @_;
+
+    die "candidate_line requires a grid object\n"
+        if !defined $grid || !$grid->can('cells');
+
+    my $cells = $grid->cells;
+    die "candidate_line requires exactly 81 cells\n"
+        if ref($cells) ne 'ARRAY' || @$cells != 81;
+
+    return join(q{,}, map { _candidate_field($_, 'candidate_line') } @$cells)
+        . "\n";
+}
+
 sub _candidate_field {
-    my ($cell) = @_;
+    my ($cell, $context) = @_;
+    $context //= 'candidate_list';
 
     my $value = $cell->value;
     return $value if $value;
 
-    die "candidate_list cells must provide possibilities\n"
+    die "$context cells must provide possibilities\n"
         if !$cell->can('possibilities');
 
     my $possibilities = $cell->possibilities;
-    die "candidate_list possibilities must be an array reference\n"
+    die "$context possibilities must be an array reference\n"
         if ref($possibilities) ne 'ARRAY';
 
     my $field = join q{}, grep { $possibilities->[$_] } 1 .. 9;
