@@ -1,28 +1,23 @@
-# Roadmap
-
-## SudokuSolver Development Roadmap
-
----
+# SudokuSolver Development Roadmap
 
 ## Project Philosophy
 
-SudokuSolver is intended to be a logic-based Sudoku solver whose primary goal
-is to solve puzzles using techniques that a human player can understand.
+SudokuSolver is a logic-first solver and analysis tool. Its primary goal is to
+solve puzzles through techniques that a human can inspect and understand.
 
-Whenever practical:
+Development should continue to follow these rules:
 
-* Prefer logical deduction over brute-force search.
-* Keep solving techniques independent and easily testable.
-* Each solving strategy should be capable of explaining why a deduction is valid.
+* Prefer logical deduction over unrestricted brute-force search.
+* Keep solving strategies independent and directly testable.
+* Require every deduction to explain why it is valid.
 * Preserve backward compatibility whenever practical.
 * Favor readable, maintainable code over clever code.
-* Keep commits small and focused on a single logical change.
-* Follow test-driven development whenever possible.
+* Keep commits small and focused.
+* Use tests and stable benchmarks to prevent regressions.
 
-Ultimately, SudokuSolver should become not only an excellent solver, but an
-excellent teaching tool.
-
----
+Bounded hypothetical inference is acceptable when it produces a finite,
+human-verifiable proof. Recursive guessing and completed speculative solves
+should not silently become the basis for ordinary deductions.
 
 ## Completed Release Tracks
 
@@ -30,256 +25,216 @@ excellent teaching tool.
 
 Status: complete
 
-Completed:
-
-* Restored the legacy repository.
-* Restored successful syntax checking.
-* Added a Makefile for common development tasks.
-* Added cpanfile dependency tracking.
-* Added project versioning.
-* Established the initial test harness.
-* Added developer documentation.
-* Improved command-line puzzle selection.
-* Improved puzzle loading behavior.
-
----
+* Restored the legacy repository and syntax checking.
+* Added dependency tracking, versioning, a Makefile, and the initial test suite.
+* Improved puzzle loading and command-line puzzle selection.
+* Established developer documentation.
 
 ### Version 0.6.x — Strategy Architecture
 
 Status: complete
 
-Completed:
+* Introduced the Sudoku::Strategy namespace and strategy base class.
+* Extracted legacy strategies into independent modules.
+* Added structured Sudoku::Deduction objects.
+* Added the strategy registry and deduction-driven solver orchestration.
+* Preserved the tiered restart policy.
+* Added strategy contracts and focused tests.
 
-* Created the Sudoku::Strategy namespace.
-* Introduced Sudoku::Strategy::Base.
-* Extracted all seven legacy strategies into strategy modules:
+### Version 0.7.x — User-Facing Solver Features
 
-    * Naked Singles
-    * Hidden Singles
-    * Pointing / Claiming
-    * Naked Pairs
-    * Hidden Pairs
-    * X-Wing
-    * Remote Pairs
+Status: complete
 
-* Introduced Sudoku::Deduction.
-* Introduced the strategy registry.
-* Preserved the legacy tiered strategy restart order.
-* Moved strategy orchestration into Solver.
-* Canonicalized strategy names.
-* Added strategy contract tests.
-* Expanded strategy documentation.
-
----
-
-### Version 0.7.x — User-Facing Deduction Features
-
-Status: complete when v0.7.0 is tagged
-
-Completed:
-
-* Added solve statistics.
-* Added step-by-step solving.
-* Added Hint Mode.
-* Added Explain Mode.
+* Added statistics, step-by-step solving, hint mode, and explain mode.
 * Added versioned difficulty ratings.
-* Added contradiction detection.
-* Added flexible puzzle-file handling.
-* Added benchmark support.
+* Added contradiction detection and benchmark support.
+* Improved flexible puzzle-file handling.
 
-Benchmark target:
+### Versions 0.8.x–0.9.x — Advanced Logical Coverage
 
-```text
-make benchmark
-```
+Status: complete
 
-Primary benchmark:
+* Added triples and quads.
+* Added Swordfish and Jellyfish through reusable fish infrastructure.
+* Added XY-Wing, XYZ-Wing, and WXYZ-Wing.
+* Added Unique Rectangle Types 1 through 4.
+* Added Skyscraper, Two-String Kite, and Empty Rectangle.
+* Added reusable strong-link infrastructure.
+* Added Simple Coloring, Multi-Coloring, X-Chains, and XY-Chains.
+* Added AIC, grouped inference nodes, Grouped L1-Wing, and Grouped AIC.
+* Added bounded hypothetical propagation and Digit Forcing Chains.
+* Expanded from the first-50 benchmark to the entire canonical corpus.
 
-```text
-Puzzles/sudoku17-first50.txt
-```
+### Version 1.0.0 — Original Vision Complete
 
-Known baseline:
+Status: complete and tagged
 
-```text
-Solved: 41 / 50
-```
-
-Goal:
-
-```text
-Solved: 50 / 50 without guessing
-```
-
----
-
-## Version 0.8.x — Solver Reliability and Advanced Strategies
-
-Status: planned
-
-Primary goals:
-
-* Eliminate benchmark contradictions.
-* Preserve or improve benchmark coverage.
-* Expand the logical strategy repertoire.
-
-Current benchmark:
+Canonical minimal 17-clue corpus:
 
 ```text
-Solved:          42
-Stalled:          5
-Contradictions:   3
+Puzzles processed : 49,158
+Solved            : 49,158
+Stalled           : 0
+Contradictions    : 0
 ```
 
-Targets:
+Version 1.0.0 also includes:
 
-```text
-Solved:          50
-Stalled:          0
-Contradictions:   0
-```
+* Logic-first solving without unrestricted recursive backtracking.
+* Structured and explainable deductions throughout the solver.
+* Stable benchmark and regression infrastructure.
+* Renderer abstraction and versioned event objects.
+* Pretty, compact, candidate, Unicode, and machine-readable output formats.
+* Candidate-state export and structured JSON solve results.
+* A permanent three-digit test-numbering scheme.
+* Expanded user, strategy, algorithm, and developer documentation.
 
-Planned work:
+The first 1,000 canonical puzzles are now a development regression suite. The
+complete 49,158-puzzle corpus is the authoritative capability benchmark.
 
-* Audit candidate-removal strategies.
-* Improve contradiction diagnostics.
-* [done] Naked Triples.
-* [done] Hidden Triples.
-* [done] Naked Quads.
-* [done] Hidden Quads.
-* [done] Swordfish.
-* [done] Jellyfish.
-* [done] XY-Wing.
-* [done] XYZ-Wing.
-* [done] WXYZ-Wing.
-* W-Wing.
-* Skyscraper.
-* [done] Two-String Kite.
-* [done] Empty Rectangle.
-* [done] Simple Coloring.
-* [done] Alternating Inference Chains (AIC).
+## Post-1.0 Priorities
 
----
+The solver has reached functional completion. New work should improve quality,
+performance, integration, and analysis without weakening the logic-first
+contract.
 
-## Phase 3 — Strategy Expansion
+### 1. Performance and Benchmark Engineering
 
-Primary goal:
+* Profile strategy execution on the full corpus.
+* Identify repeated candidate scans and avoid unnecessary allocation.
+* Preserve strategy ordering and deduction behavior while optimizing.
+* Add aggregate reporting across all canonical benchmark files.
+* Track elapsed time, strategy usage, deductions, cells, and eliminations.
+* Make performance comparisons reproducible across releases.
 
-Solve all first 50 canonical 17-clue benchmark puzzles without guessing.
+### 2. Output and Renderer Expansion
 
-Known stalled benchmark puzzles from the current strategy set:
+* Add CSV and TSV result output.
+* Add explicit one-line puzzle and solution renderers.
+* Add event-aware text and JSON renderers.
+* Add compact replay and solution-path formats.
+* Add optional color as a final presentation layer.
+* Investigate Markdown, HTML, SVG, and GUI-oriented renderers.
+* Keep renderer contracts versioned and solver behavior independent of output.
 
-```text
-09
-11
-12
-21
-24
-28
-45
-47
-49
-```
+### 3. Puzzle Input, Canonicalization, and Identity
 
-Planned strategy additions:
+* Normalize supported blank markers through one input path.
+* Improve validation and error diagnostics.
+* Add canonical 81-character serialization.
+* Add symmetry canonicalization where useful.
+* Add stable puzzle fingerprints and duplicate detection.
+* Support candidate-state interchange imports after the format contract is set.
 
-* [done] Naked Triples
-* [done] Hidden Triples
-* [done] Naked Quads
-* [done] Hidden Quads
-* [done] Swordfish
-* [done] XY-Wing
-* [done] XYZ-Wing
-* [done] WXYZ-Wing
-* Skyscraper
-* Two-String Kite
-* [done] Simple Coloring
+### 4. Difficulty and Analysis
 
-Guiding rule:
+* Calibrate difficulty against a larger and more varied puzzle collection.
+* Distinguish required strategy difficulty from incidental strategy use.
+* Add strategy timing and search-effort metrics where meaningful.
+* Preserve rating-version metadata so historical results remain interpretable.
+* Investigate puzzle classification and comparative solve reports.
 
-Every new strategy should increase benchmark coverage or improve explanation
-quality without introducing regressions.
+### 5. Test and Fixture Infrastructure
 
----
+* Expand reusable puzzle fixtures and golden-output helpers.
+* Add renderer snapshot and event-stream contract tests.
+* Add temporary-file and CLI integration-test helpers.
+* Retain the first-1,000 corpus as a regular regression target.
+* Add practical full-corpus regression procedures for release verification.
 
-## Future Analysis and Research Features
+### 6. Packaging and Developer Tooling
 
-Possible future work:
+* Add continuous-integration coverage.
+* Add distribution and tarball validation.
+* Add release helpers and documentation-consistency checks.
+* Improve installation and troubleshooting documentation.
+* Keep `make check`, `git diff --check`, and benchmark verification central to
+  release preparation.
 
-* Puzzle canonicalization.
-* Symmetry transformations.
-* Difficulty rating v2 and later.
-* Strategy timing statistics.
-* Puzzle fingerprinting.
-* Duplicate detection.
-* Benchmarking additional puzzle collections.
-* Optional search/backtracking mode as a separate engine.
-* Solver profiling and performance optimization.
-* Rendering subsystem.
-* GUI or web interface.
+### 7. User Interfaces and Generation
 
----
+Longer-term possibilities:
+
+* Puzzle generation with uniqueness verification.
+* Difficulty-targeted generation.
+* Interactive terminal interface.
+* Desktop GUI or web interface.
+* Teaching mode driven by deductions and renderer events.
+
+## Strategy Policy After 1.0
+
+Additional strategies are not required merely to increase the strategy count.
+A new strategy should be considered when it:
+
+* solves a demonstrated puzzle class more directly;
+* produces a clearer proof than an existing fallback;
+* materially improves performance or difficulty analysis; or
+* supplies reusable inference infrastructure.
+
+Each added strategy should include focused positive and negative tests,
+structured deductions, human-readable explanations, documentation, benchmark
+accounting, and a justified place in the registry.
 
 ## Long-Term Architecture
 
+```text
 Cell
-    Represents a single Sudoku cell.
+    Represents one Sudoku cell and its candidate state.
 
 Grid
-    Represents puzzle state and provides lookup/mutation services.
+    Represents puzzle state and provides lookup and mutation services.
 
 Solver
-    Controls solving order and applies deductions.
+    Controls strategy order, applies deductions, and records events.
 
 Strategy
-    Finds logical deductions.
+    Finds one or more logical deductions without mutating the live grid.
 
 Deduction
-    Represents a logical action.
+    Represents a placement or candidate elimination and its reasoning.
 
 Statistics
-    Records solving metrics.
+    Records solving metrics and strategy contributions.
 
 Difficulty
-    Rates puzzles based on a versioned interpretation of solve statistics.
+    Rates a solve using a versioned interpretation of statistics.
 
-Hint
-    Presents the next logical deduction.
-
-Explain
-    Generates human-readable reasoning for deductions.
+Hint / Explain
+    Presents the next deduction or a human-readable proof.
 
 Benchmark
-    Measures solver capability against stable puzzle collections.
+    Measures stable puzzle collections and detects regressions.
 
-Formatter / Renderer
-    Produces console, HTML, GUI, Markdown, or other output.
-
----
+Renderer
+    Converts grids, results, candidates, and events into output formats.
+```
 
 ## Architecture Milestones
 
 ```text
 [x] Test infrastructure
 [x] Documentation framework
-[x] Strategy namespace
-[x] Deduction objects
-[x] Strategy registry
+[x] Strategy namespace and registry
+[x] Structured deduction objects
 [x] Deduction-driven solver
 [x] Contradiction detection
-[x] Step-by-step solving
-[x] Hint engine
-[x] Explanation engine
-[x] Difficulty engine v1
+[x] Step-by-step, hint, and explanation facilities
+[x] Versioned difficulty engine
 [x] Benchmark framework
-[ ] Canonicalization
+[x] Reusable fish and strong-link infrastructure
+[x] Grouped inference nodes
+[x] Bounded hypothetical inference
+[x] Complete canonical 17-clue corpus coverage
 [x] Rendering subsystem
-[ ] Additional strategy families
+[x] Candidate-state export
+[x] Structured solve-result output
+[ ] Canonicalization and puzzle fingerprints
+[ ] Aggregate full-corpus benchmark reporting
+[ ] CI, packaging, and release automation
+[ ] Additional user interfaces
 ```
 
----
-
-## Development Guidelines
+## Development and Release Guidelines
 
 Every commit should ideally:
 
@@ -287,10 +242,10 @@ Every commit should ideally:
 * Compile successfully.
 * Pass `make check`.
 * Avoid trailing whitespace.
-* Be accompanied by documentation updates when appropriate.
+* Include documentation updates when appropriate.
 * Leave the repository in a releasable state.
 
-Release checklist:
+Recommended release verification:
 
 ```bash
 make PERL=perl check
@@ -298,127 +253,5 @@ git diff --check
 make PERL=perl benchmark
 ```
 
-
-Uniqueness Strategies
----------------------
-
-    [x] Unique Rectangle Type 1
-    [x] Unique Rectangle Type 2
-
-These strategies rely on the puzzle having a unique solution. Additional
-Unique Rectangle forms should be added individually with focused positive and
-negative tests.
-
-
-Empty Rectangle
----------------
-
-    [x] Empty Rectangle
-
-Implemented the box-based Empty Rectangle pattern with external row and column
-strong links, structured deductions, human-readable explanations, positive and
-negative tests, and benchmark contribution reporting.
-
-Simple Coloring
----------------
-
-    [x] Shared strong-link graph infrastructure
-    [x] Color Trap
-    [x] Color Wrap
-
-Added Sudoku::StrongLinks to discover row, column, and box conjugate pairs,
-build candidate graphs, and return connected components. Added Simple Coloring
-with alternating two-color assignment, color-trap eliminations, color-wrap
-eliminations, structured deductions, human-readable explanations, positive and
-negative tests, and strategy and algorithm documentation.
-
-
-X-Chains
---------
-
-    [x] Alternating strong/weak same-digit chain search
-    [x] Common-peer endpoint eliminations
-
-Added X-Chains using the shared Sudoku::StrongLinks graph infrastructure.
-The strategy searches bounded alternating paths that begin and end with strong
-links, emits structured deductions with human-readable chain notation, and
-includes focused positive and negative tests plus strategy and algorithm
-documentation.
-
-Multi-Coloring
---------------
-
-    [x] Cross-component color collision
-    [x] Cross-component color wing
-
-Added Multi-Coloring on top of the shared Sudoku::StrongLinks graph and
-component-coloring infrastructure. The strategy compares separate colored
-components for the same digit, emits structured candidate-removal deductions,
-and includes focused positive and negative tests plus strategy and algorithm
-documentation.
-
-
-XY-Chains
----------
-
-    [x] Bivalue alternating-candidate chain search
-    [x] Common-peer endpoint eliminations
-
-Added XY-Chains as the generalization of XY-Wing. The strategy searches bounded
-chains of visible bivalue cells, follows alternating candidates, removes the
-shared endpoint candidate from cells that see both endpoints, and emits
-structured human-readable deductions. Focused positive and negative tests and
-strategy and algorithm documentation are included.
-
-Patch 0063 — Unique Rectangle Types 3 and 4
--------------------------------------------
-
-* Add generalized Type 3 virtual-cell naked-subset detection.
-* Add Type 4 roof strong-link detection.
-* Keep separate strategy names, explanations, tests, and benchmark counts.
-
-Patch 0065 — Grouped Strong Links and Grouped L1-Wing
------------------------------------------------------
-
-* Add singleton and grouped candidate inference nodes.
-* Discover natural grouped strong links at line/box intersections.
-* Add a bounded strong-weak-strong Grouped L1-Wing strategy.
-* Preserve all-to-all visibility rules for grouped weak links and targets.
-* Establish infrastructure for future Grouped X-Chains and Grouped AIC.
-
-
-Patch 0067 — Grouped AIC
-------------------------
-
-* Add grouped candidate nodes to the general AIC search.
-* Reuse ordinary and grouped strong links through Sudoku::StrongLinks.
-* Preserve ordinary AIC and Grouped L1-Wing as earlier, more specific strategies.
-* Add grouped endpoint visibility checks, tests, documentation, and benchmark reporting.
-
-Patch 0068 — Hypothetical Inference Engine
-------------------------------------------
-
-* Add exact candidate-state cloning for temporary branches.
-* Add one ON/OFF candidate assumption per branch.
-* Add bounded deterministic propagation with no nested assumptions.
-* Return structured status, deductions, history, and contradictions.
-* Establish reusable infrastructure for Digit, Cell, and Unit Forcing Chains.
-
-
-Patch 0069 — Digit Forcing Chains
----------------------------------
-
-* Add one-candidate ON/OFF branch comparison using Sudoku::Hypothetical.
-* Accept contradiction, common placement, and common elimination proofs.
-* Preserve one assumption only, bounded propagation, and no recursive search.
-* Emit structured human-readable deductions and benchmark statistics.
-
-
-Patch 0070 — Enhanced Digit Forcing Chains
--------------------------------------------
-
-* Expand premise selection beyond bivalue cells to every remaining candidate.
-* Rank premises by cell size and conjugate-pair participation.
-* Evaluate the ON branch first and stop immediately on contradiction.
-* Restrict branch propagation to Naked and Hidden Singles.
-* Add regression coverage for non-bivalue premises and ON-first early exit.
+For capability releases, also run the complete canonical corpus benchmark and
+record the aggregate result.
