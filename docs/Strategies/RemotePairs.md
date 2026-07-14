@@ -29,7 +29,7 @@ Eliminate candidates seen by both ends of the chain.
 
 Primary test file:
 
-t/61_remote_pairs.t
+t/400_remote_pairs.t
 
 Tests should include:
 

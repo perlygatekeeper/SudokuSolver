@@ -32,7 +32,7 @@ Eliminate candidates outside the originating unit.
 Primary test file:
 
 ```
-t/42_imaginary_values.t
+t/210_pointing_claiming.t
 ```
 
 Tests should include:

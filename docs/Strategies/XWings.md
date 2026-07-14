@@ -32,7 +32,7 @@ Remove that candidate from other cells in the affected columns/rows.
 Primary test file:
 
 ```
-t/60_x_wings.t
+t/300_x_wings.t
 ```
 
 Tests should include:

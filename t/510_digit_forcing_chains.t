@@ -79,7 +79,7 @@ sub result_with_grid {
 }
 
 # Test contradiction comparison with explicit branch results. Hypothetical
-# propagation itself is covered independently by t/70_hypothetical.t.
+# propagation itself is covered independently by t/500_hypothetical.t.
 my $grid = isolated_grid();
 set_candidates($grid->cell_from_row_column(0, 0), 1, 2);
 

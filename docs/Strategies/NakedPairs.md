@@ -32,7 +32,7 @@ Remove those candidates from other cells in the unit.
 Primary test file:
 
 ```
-t/50_naked_pairs.t
+t/220_naked_pairs.t
 ```
 
 Tests should include:

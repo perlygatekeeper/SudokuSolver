@@ -204,7 +204,7 @@ Grid / Cell
     represent puzzle state
 ```
 
-The contract is enforced by `t/39_strategy_contract.t`.
+The contract is enforced by `t/133_strategy_contract.t`.
 
 ## Step-by-Step Solving
 

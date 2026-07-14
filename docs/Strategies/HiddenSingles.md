@@ -32,7 +32,7 @@ Place that candidate in the unique cell.
 Primary test file:
 
 ```
-t/41_lone_representatives.t
+t/201_hidden_singles.t
 ```
 
 Tests should include:

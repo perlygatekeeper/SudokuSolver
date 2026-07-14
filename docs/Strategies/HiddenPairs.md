@@ -32,7 +32,7 @@ Remove all other candidates from those cells.
 Primary test file:
 
 ```
-t/51_hidden_pairs.t
+t/221_hidden_pairs.t
 ```
 
 Tests should include:

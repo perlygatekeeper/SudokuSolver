@@ -25,5 +25,5 @@ The shared subset search lives in `Sudoku::Subset`.
 ## Test
 
 ```text
-t/52_naked_triples.t
+t/222_naked_triples.t
 ```

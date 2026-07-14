@@ -1,6 +1,6 @@
 # SudokuSolver example puzzle
 # Expected status with the v0.7.0 strategy set: Solved
-# Source: canonical 17-clue puzzle 07 used by t/90_regression_known_solution.t
+# Source: canonical 17-clue puzzle 07 used by t/900_regression_known_solution.t
 
 000000012
 050400000

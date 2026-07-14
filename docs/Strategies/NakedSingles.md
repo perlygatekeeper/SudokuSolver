@@ -32,7 +32,7 @@ Place the remaining value in the cell.
 Primary test file:
 
 ```
-t/40_singletons.t
+t/200_naked_singles.t
 ```
 
 Tests should include:
