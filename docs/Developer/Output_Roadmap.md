@@ -31,7 +31,7 @@
 
 - [x] Unicode light, double-line, and heavy grid rendering
 - [x] Output to files
-- [ ] Stable renderer events
+- [x] Initial stable renderer events and event log
 - [ ] Optional color layer
 
 ## Parallel Projects
