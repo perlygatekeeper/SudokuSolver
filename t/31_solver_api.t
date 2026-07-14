@@ -37,6 +37,7 @@ can_ok(
         apply_deduction
         hint
         run_strategy
+        propagate
         normalize_puzzle_string
         normalize_puzzle_row
         puzzle_strings_from_file
