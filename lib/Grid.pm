@@ -481,30 +481,16 @@ sub out {
 
 # Prettier printout
 sub pretty_print {
-  my($self) = shift;
-  my($format);
-  $format .= "     1   2   3   4   5   6   7   8   9  \n";
-  $format .= "   +---+---+---+---+---+---+---+---+---+\n";
-  $format .= " 1 | %s ' %s ' %s | %s ' %s ' %s | %s ' %s ' %s |\n";
-  $format .= "   + - + - + - + - + - + - + - + - + - +\n";
-  $format .= " 2 | %s ' %s ' %s | %s ' %s ' %s | %s ' %s ' %s |\n";
-  $format .= "   + - + - + - + - + - + - + - + - + - +\n";
-  $format .= " 3 | %s ' %s ' %s | %s ' %s ' %s | %s ' %s ' %s |\n";
-  $format .= "   +---+---+---+---+---+---+---+---+---+\n";
-  $format .= " 4 | %s ' %s ' %s | %s ' %s ' %s | %s ' %s ' %s |\n";
-  $format .= "   + - + - + - + - + - + - + - + - + - +\n";
-  $format .= " 5 | %s ' %s ' %s | %s ' %s ' %s | %s ' %s ' %s |\n";
-  $format .= "   + - + - + - + - + - + - + - + - + - +\n";
-  $format .= " 6 | %s ' %s ' %s | %s ' %s ' %s | %s ' %s ' %s |\n";
-  $format .= "   +---+---+---+---+---+---+---+---+---+\n";
-  $format .= " 7 | %s ' %s ' %s | %s ' %s ' %s | %s ' %s ' %s |\n";
-  $format .= "   + - + - + - + - + - + - + - + - + - +\n";
-  $format .= " 8 | %s ' %s ' %s | %s ' %s ' %s | %s ' %s ' %s |\n";
-  $format .= "   + - + - + - + - + - + - + - + - + - +\n";
-  $format .= " 9 | %s ' %s ' %s | %s ' %s ' %s | %s ' %s ' %s |\n";
-    $format .= "   +---+---+---+---+---+---+---+---+---+\n";
+  my ($self) = @_;
 
-  printf $format, ( map { $_->value == 0 ?  ' ' : $_->value } @{$self->cells} ) ;
+  require Sudoku::Render::Text;
+
+  my $renderer = Sudoku::Render::Text->new(
+    character_set => 'ASCII',
+  );
+
+  print $renderer->pretty_grid($self);
+  return;
 }
 
 # Best and most complete printout

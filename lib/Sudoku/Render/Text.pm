@@ -44,6 +44,79 @@ sub grid_builder {
     );
 }
 
+sub pretty_grid {
+    my ($self, $grid) = @_;
+
+    die "pretty_grid requires a grid object\n"
+        if !defined $grid || !$grid->can('cells');
+
+    my $builder = $self->grid_builder;
+    my $chars   = $builder->characters;
+    my @values  = map { $_->value ? $_->value : q{} } @{ $grid->cells };
+    my @separators = map {
+        $_ == 2 || $_ == 5 ? 'vertical' : 'vertical_minor'
+    } 0 .. 7;
+
+    my $top_rule = $builder->horizontal_rule(
+        left          => 'corner_down_right',
+        junction      => 'tee_down',
+        right         => 'corner_down_left',
+        segments      => 9,
+        segment_width => 3,
+    );
+
+    my $middle_rule = $builder->horizontal_rule(
+        left          => 'tee_right',
+        junction      => 'cross',
+        right         => 'tee_left',
+        segments      => 9,
+        segment_width => 3,
+    );
+
+    my $bottom_rule = $builder->horizontal_rule(
+        left          => 'corner_up_right',
+        junction      => 'tee_up',
+        right         => 'corner_up_left',
+        segments      => 9,
+        segment_width => 3,
+    );
+
+    my $minor_segment = ' ' . $chars->{horizontal} . ' ';
+    my $minor_rule = $chars->{tee_right}
+        . join($chars->{cross}, ($minor_segment) x 9)
+        . $chars->{tee_left};
+
+    my @lines = (
+        '     1   2   3   4   5   6   7   8   9  ',
+        '   ' . $top_rule,
+    );
+
+    for my $row (0 .. 8) {
+        my @row_values = @values[$row * 9 .. $row * 9 + 8];
+        push @lines, sprintf(
+            '%2d %s',
+            $row + 1,
+            $builder->row(
+                cells      => \@row_values,
+                width      => 3,
+                separators => \@separators,
+            ),
+        );
+
+        if ($row == 8) {
+            push @lines, '   ' . $bottom_rule;
+        }
+        elsif ($row == 2 || $row == 5) {
+            push @lines, '   ' . $middle_rule;
+        }
+        else {
+            push @lines, '   ' . $minor_rule;
+        }
+    }
+
+    return join("\n", @lines) . "\n";
+}
+
 sub mode {
     my ($self, $mode) = @_;
     $self->{mode} = $mode if @_ > 1;
