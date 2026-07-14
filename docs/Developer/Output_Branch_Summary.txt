@@ -1,0 +1,312 @@
+# SudokuSolver Output Framework Branch Summary (Merge into Main)
+
+The `feature/enhanced-output-methods` branch has now been merged back into the main SudokuSolver development branch.
+
+At the same time, the solver branch has reached a major milestone:
+
+* **The solver now successfully solves the entire 49,158-puzzle 17-Clue Corpus.**
+
+Please assume all output-framework work described below is now part of the main development branch.
+
+---
+
+## Philosophy
+
+The major architectural goal was to separate **solving** from **presentation**.
+
+The solver should produce data.
+
+Renderers should produce presentation.
+
+Output should be considered a stable API rather than a collection of `print` statements.
+
+---
+
+# Contracts
+
+Several design contracts were established.
+
+### Merge Safety
+
+The output work was intentionally additive.
+
+Avoid unnecessary changes to solver logic, strategy ordering, or benchmark behavior unless required.
+
+### Backward Compatibility
+
+Existing textual output is considered part of the public API because many regression tests compare textual output.
+
+New output formats should generally be opt-in.
+
+### Renderer Contract
+
+Renderer methods return strings.
+
+They should not print directly.
+
+The caller decides whether the returned string is
+
+* printed
+* written to a file
+* embedded in JSON
+* compared in tests
+* colored
+
+---
+
+# Completed Work
+
+The following patches were completed.
+
+## 0001
+
+Configurable grid character sets.
+
+Supports
+
+* ASCII
+* Unicode Light
+* Unicode Double
+* Unicode Heavy
+
+via an extensible registry.
+
+---
+
+## 0002
+
+Reusable Grid Builder.
+
+Renderers no longer construct borders manually.
+
+---
+
+## 0003
+
+Pretty grid renderer.
+
+Returns strings.
+
+Legacy `pretty_print()` preserved as compatibility wrapper.
+
+---
+
+## 0004
+
+Compact grid renderer.
+
+Produces
+
+53..7....
+6..195...
+...
+
+Supports configurable empty-cell character.
+
+---
+
+## 0005
+
+Grid format registry.
+
+Named formats.
+
+Dispatcher.
+
+Discovery.
+
+---
+
+## 0006
+
+Candidate grid renderer.
+
+Existing `big_print()` preserved.
+
+Supports Unicode character sets.
+
+---
+
+## 0007
+
+CLI discovery.
+
+Added
+
+--list-grid-formats
+--list-character-sets
+--grid-format
+--character-set
+
+---
+
+## 0008
+
+Human-readable candidate-state output.
+
+Example:
+
+R1: 5 3 124 26 ...
+
+---
+
+## 0009
+
+Single-line candidate-state export.
+
+81 comma-separated fields.
+
+Designed for regression testing and interchange.
+
+---
+
+## 0010
+
+Versioned JSON candidate-state export.
+
+Contains
+
+* puzzle
+* current_grid
+* candidates[81]
+
+Designed as stable machine-readable interchange.
+
+---
+
+## 0011
+
+General JSON solver output.
+
+Structured solve results.
+
+---
+
+## 0012
+
+Output-to-file support.
+
+Renderer output may be directed to files.
+
+---
+
+## 0013
+
+Initial renderer-event framework.
+
+Introduced stable structured event objects and event logs.
+
+Current events include
+
+* pass_started
+* strategy_result
+* deduction
+* restart
+* pass_finished
+* contradiction
+* final_status
+
+The event system is intentionally modest and additive.
+
+---
+
+# Output Framework
+
+Current grid formats include
+
+* pretty
+* compact
+* candidates
+* candidate-list
+* candidate-line
+* candidate-json
+
+Character sets include
+
+* ASCII
+* UNICODE_LIGHT
+* UNICODE_DOUBLE
+* UNICODE_HEAVY
+
+The framework is designed so future renderers require little or no solver modification.
+
+---
+
+# Long-Term Roadmap
+
+The following remain desirable future projects.
+
+## Candidate Interchange
+
+* HoDoKu PM Grid compatibility
+* import of candidate-state files
+* compressed replay files
+
+## Rich Rendering
+
+* mixed-weight Unicode grids
+* ANSI color themes
+* highlighting
+* additional themes
+
+## Event System
+
+Expand structured events until all output modes consume the event stream.
+
+Eventually:
+
+Solver
+
+↓
+
+Events
+
+↓
+
+Renderers
+
+↓
+
+Terminal / JSON / CSV / Replay / GUI
+
+## Benchmark Modernization
+
+Eventually benchmark output should become another renderer rather than having its own formatting code.
+
+## Additional Renderers
+
+Potential future renderers include
+
+* Markdown
+* HTML
+* SVG
+* PNG
+* PDF
+
+without modifying solver logic.
+
+---
+
+# Other Parallel Projects
+
+The output framework was only one of several orthogonal projects identified.
+
+Remaining long-term efforts include
+
+1. Puzzle input and canonicalization.
+2. Documentation and example corpus.
+3. Test infrastructure and fixtures.
+4. Packaging and developer tooling.
+5. Theme system (future evolution of the character-set registry).
+
+---
+
+# Current Situation
+
+Output development is considered mature enough to continue directly on the main branch.
+
+The output framework is now part of the core architecture and should be treated as such when implementing future solving strategies or benchmark improvements.
+
+Whenever practical, new user-visible output should be implemented through the renderer framework rather than direct printing.
+
+The renderer framework should continue to evolve alongside solver development rather than as a separate subsystem.
