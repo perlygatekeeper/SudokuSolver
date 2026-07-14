@@ -1,7 +1,7 @@
 .PHONY: \
     all help check syntax test run clean status \
     deps deps-notest version gitadd perl-version \
-    backup tarball report solved echo 17-50 benchmark benchmark-first50 examples
+    backup tarball report solved echo 17-50 benchmark benchmark-first50 benchmark-all-1000 examples
 
 PERL          ?= perl5.34
 PROVE         := prove
@@ -67,7 +67,8 @@ help:
 	@echo "  make status   - git status"
 	@echo "  make deps     - install CPAN dependencies from cpanfile"
 	@echo "  make version  - show project version"
-	@echo "  make benchmark - run canonical 17-clue benchmark"
+	@echo "  make benchmark          - run canonical 17-clue benchmark"
+	@echo "  make benchmark-all-1000 - benchmark every Puzzles/Benchmarks/sudoku17-??-1000.txt file"
 	@echo "  make examples  - run solved, stalled, and contradiction examples"
 	@echo ""
 	@echo "Variables:"
@@ -107,6 +108,32 @@ benchmark-first100:
 benchmark-first1000:
 	@echo "== Canonical 17-Clue Benchmark (First 1000) =="
 	@$(PERL) -Ilib $(SCRIPT) --benchmark Puzzles/sudoku17-first1000.txt
+
+
+benchmark-all-1000:
+	@set -e; \
+	found=0; \
+	for puzzle in Puzzles/Benchmarks/sudoku17-??-158.txt; do \
+		[ -f "$$puzzle" ] || continue; \
+		found=1; \
+		report="$${puzzle%.txt}-benchmark.txt"; \
+		tmp="$$report.tmp"; \
+		echo "== Benchmarking $$puzzle =="; \
+		if $(PERL) -Ilib $(SCRIPT) --benchmark "$$puzzle" | tee "$$tmp"; then \
+			mv "$$tmp" "$$report"; \
+			cat "$$report"; \
+			echo "Report: $$report"; \
+		else \
+			status=$$?; \
+			rm -f "$$tmp"; \
+			exit $$status; \
+		fi; \
+		echo ""; \
+	done; \
+	if [ "$$found" -eq 0 ]; then \
+		echo "No benchmark files matched Puzzles/Benchmarks/sudoku17-??-1000.txt" >&2; \
+		exit 1; \
+	fi
 
 benchmark-final4:
 	@echo "== Canonical 17-Clue Benchmark (Final 4 Stalled Puzzles) =="
@@ -151,6 +178,7 @@ backup:
 		$(DOCSDIR)Algorithm_Notes/*.md \
 		$(DOCSDIR)Strategies/*.md \
 		$(PUZZLEDIR)Examples/*.sdk \
+		$(PUZZLEDIR)Benchmarks/*.txt \
 		$(PUZZLEDIR)*.txt \
 		$(CPANFILE)
 
@@ -166,6 +194,7 @@ gitadd:
 		$(DOCSDIR)Algorithm_Notes/*.md \
 		$(DOCSDIR)Strategies/*.md \
 		$(PUZZLEDIR)Examples/*.sdk \
+		$(PUZZLEDIR)Benchmarks/*.txt \
 		$(PUZZLEDIR)*.txt $(CPANFILE)
 	git status
 
