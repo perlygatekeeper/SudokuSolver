@@ -1,0 +1,207 @@
+i# SudokuSolver v1.0.0 — Project Handoff for Next Chat
+
+## Current Repository State
+
+Current branch:
+
+* `main`
+
+Project milestone:
+
+* **v1.0.0 has already been tagged.**
+
+The repository now includes:
+
+* Enhanced output subsystem merged from `feature/enhanced-output-formats`
+* Renderer architecture
+* New output formats
+* New developer documentation
+* Expanded Makefile
+* Expanded automated test suite
+
+The merge completed **without conflicts**.
+
+---
+
+# Major Accomplishments
+
+## Solver
+
+The solver now logically solves the complete canonical corpus of minimal 17-clue Sudoku puzzles.
+
+Corpus results:
+
+* 49,158 processed
+* 49,158 solved
+* 0 stalled
+* 0 contradictions
+
+This was achieved without introducing unrestricted recursive backtracking.
+
+The final techniques that completed the corpus were:
+
+* Grouped AIC
+* Digit Forcing Chains
+* Bounded Hypothetical Inference
+
+---
+
+# Current Architecture
+
+Implemented strategy families include:
+
+* Singles
+* Pairs
+* Triples
+* Quads
+* Pointing / Claiming
+* Fish
+
+  * X-Wing
+  * Swordfish
+  * Jellyfish
+* Wings
+
+  * XY-Wing
+  * XYZ-Wing
+  * WXYZ-Wing
+* Chains
+
+  * Remote Pairs
+  * Skyscraper
+  * Two-String Kite
+  * Empty Rectangle
+  * Simple Coloring
+  * X-Chains
+  * Multi-Coloring
+  * XY-Chains
+  * AIC
+  * Grouped L1-Wing
+  * Grouped AIC
+  * Digit Forcing Chains
+* Unique Rectangle Types 1–4
+
+Infrastructure now includes:
+
+* reusable Fish framework
+* reusable strong-link framework
+* Hypothetical Inference Engine
+* structured Deduction objects
+* renderer event system
+* renderer abstraction
+* benchmark framework
+* difficulty model
+* explain mode
+* hint mode
+* trace mode
+
+---
+
+# Output System
+
+The enhanced output branch has been merged.
+
+New renderer architecture exists under:
+
+* `lib/Sudoku/Render/`
+
+Developer documentation now includes:
+
+* Output_Architecture.md
+* Output_Contracts.md
+* Output_Formats.md
+* Output_Formats_Simple.md
+* Output_Roadmap.md
+* Current_Status_and_Subprojects.md
+
+The Makefile contains numerous new rendering targets.
+
+---
+
+# Test Suite
+
+The project now contains approximately 73–74 tests.
+
+Current numbering contains many collisions, including:
+
+* 65
+* 67
+* 69
+* 70
+* 71
+* 76
+* 78
+* 79
+
+The next cleanup should move to a permanent three-digit numbering system.
+
+A renumbering script has already been drafted but should be regenerated from the current repository immediately before applying.
+
+---
+
+# Immediate Next Task (Patch 0072)
+
+Create a documentation-only patch.
+
+No code changes.
+
+Files expected:
+
+* README.md (complete rewrite)
+* Release_notes_v1.0.0.txt (new)
+* docs/Roadmap.txt
+* docs/Developer/Current_Status_and_Subprojects.md (small update if needed)
+
+The README should become a proper GitHub landing page and emphasize:
+
+* 49,158 / 49,158 solved
+* zero contradictions
+* logic-first architecture
+* explainable deductions
+* supported strategies
+* output capabilities
+* benchmark results
+* project philosophy
+
+---
+
+# After Patch 0072
+
+Suggested sequence:
+
+1. Documentation patch
+2. Test-suite renumbering
+3. Begin v1.1.x development
+
+Potential future work:
+
+* Performance optimization
+* Aggregate benchmark reporting
+* Additional output formats
+* Puzzle generation
+* Difficulty calibration improvements
+* GUI/Web interface
+* Additional advanced logical techniques if warranted
+
+---
+
+# Development Philosophy
+
+Maintain the project's guiding principle:
+
+> Prefer explainable logical inference over unrestricted search.
+
+Bounded hypothetical inference is acceptable because it produces a human-verifiable logical proof.
+
+Avoid recursive guessing or using completed hypothetical solves as proof whenever practical.
+
+---
+
+# Notes
+
+The benchmark of the first 1,000 puzzles has transitioned from a development target into a regression suite.
+
+The full 49,158-puzzle corpus is now the primary benchmark for measuring future regressions and performance improvements.
+
+Version 1.0.0 represents the completion of the project's original vision.
+
