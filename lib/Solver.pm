@@ -17,6 +17,7 @@ use Sudoku::Statistics;
 use Sudoku::Difficulty;
 use Sudoku::Explain;
 use Sudoku::Render::Text;
+use Sudoku::Render::EventLog;
 
 has 'default_puzzle_file' => (
   isa     => 'Str',
@@ -47,6 +48,28 @@ has 'renderer' => (
   is      => 'rw',
   default => sub { Sudoku::Render::Text->new },
 );
+
+has 'event_log' => (
+  isa     => 'Sudoku::Render::EventLog',
+  is      => 'ro',
+  default => sub { Sudoku::Render::EventLog->new },
+);
+
+sub events {
+  my ($self) = @_;
+  return $self->event_log->events;
+}
+
+sub clear_events {
+  my ($self) = @_;
+  $self->event_log->clear;
+  return $self;
+}
+
+sub record_event {
+  my ( $self, $type, %data ) = @_;
+  return $self->event_log->record( $type, %data );
+}
 
 has 'status' => (
   isa     => 'Str',
@@ -79,8 +102,16 @@ sub check_contradiction {
   my $contradiction = $self->_find_contradiction($grid);
 
   if ($contradiction) {
+    my $is_new = !$self->has_contradiction;
     $self->contradiction($contradiction);
     $self->status('contradiction');
+    $self->record_event(
+      'contradiction',
+      kind        => $contradiction->kind,
+      message     => $contradiction->message,
+      location    => $contradiction->location,
+      explanation => $contradiction->explanation,
+    ) if $is_new;
     return $contradiction;
   }
 
@@ -207,6 +238,21 @@ sub record_deduction {
     unless blessed($deduction) && $deduction->isa('Sudoku::Deduction');
 
   push @{ $self->deductions }, $deduction;
+
+  my %event_data = (
+    strategy    => $deduction->strategy,
+    action      => $deduction->action,
+    location    => $deduction->location,
+    reason      => $deduction->reason,
+    explanation => $deduction->explanation,
+  );
+
+  for my $field (qw(row column box unit_type unit_index value candidate)) {
+    my $predicate = "has_$field";
+    $event_data{$field} = $deduction->$field if $deduction->$predicate;
+  }
+
+  $self->record_event( 'deduction', %event_data );
 
   return $deduction;
 }
@@ -541,6 +587,8 @@ sub run {
     $self->renderer->mode( $options{output_mode} );
   }
 
+  $self->clear_events;
+
   my $puzzle_string = $self->puzzle_string_from_options(%options);
 
   print "puzzle_string: $puzzle_string\n" if $self->debug;
@@ -555,6 +603,7 @@ sub run {
 
   while ( $puzzle->solved <= 80 and not $self->has_contradiction ) {
     ++$pass;
+    $self->record_event( 'pass_started', pass => $pass );
 
     if ( $self->output_mode =~ /^(trace|debug)$/ ) {
       print $self->renderer->pass_start($pass);
@@ -563,6 +612,14 @@ sub run {
 
     my $deduction = $self->step($puzzle);
     my $progress  = defined $deduction ? 1 : 0;
+
+    for my $attempt ( @{ $self->last_strategy_attempts } ) {
+      $self->record_event(
+        'strategy_result',
+        strategy => $attempt->{strategy},
+        count    => 0 + $attempt->{count},
+      );
+    }
 
     if ( $self->output_mode =~ /^(trace|debug)$/ ) {
       for my $attempt ( @{ $self->last_strategy_attempts } ) {
@@ -577,15 +634,33 @@ sub run {
       $self->emit_deduction($deduction);
       $self->trace_deduction( $puzzle, $deduction );
 
+      $self->record_event( 'restart', from => 'Naked Singles' );
+
       print $self->renderer->restart_notice
         if $self->output_mode =~ /^(trace|debug)$/;
     }
+
+    $self->record_event(
+      'pass_finished',
+      pass     => $pass,
+      progress => $progress ? 1 : 0,
+    );
 
     print $self->renderer->pass_end( $pass, $progress )
       if $self->output_mode =~ /^(trace|debug)$/;
 
     last unless $progress;
   }
+
+  my $final_status = $self->has_contradiction ? 'contradiction'
+    : $puzzle->solved == 81 ? 'solved'
+    : 'stalled';
+  $self->record_event(
+    'final_status',
+    status       => $final_status,
+    solved_cells => 0 + $puzzle->solved,
+    deductions   => 0 + $self->deduction_count,
+  );
 
   print $self->renderer->final_status( $self, $puzzle )
     unless $self->output_mode eq 'quiet';

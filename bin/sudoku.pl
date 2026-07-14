@@ -21,6 +21,13 @@ my $benchmark_file;
 my $debug;
 my $trace_grid_after_deduction;
 my $output_mode;
+my $grid_format;
+my $character_set;
+my $list_grid_formats;
+my $list_character_sets;
+my $result_format;
+my $list_result_formats;
+my $output_file;
 
 GetOptions(
   'file|f=s'     => \$puzzle_file,
@@ -31,13 +38,60 @@ GetOptions(
   'benchmark=s'  => \$benchmark_file,
   'debug'        => \$debug,
   'output=s'     => \$output_mode,
+  'grid-format=s' => \$grid_format,
+  'character-set=s' => \$character_set,
+  'list-grid-formats' => \$list_grid_formats,
+  'list-character-sets' => \$list_character_sets,
+  'result-format=s' => \$result_format,
+  'list-result-formats' => \$list_result_formats,
+  'output-file=s' => \$output_file,
   'trace-grid-after-deduction' => \$trace_grid_after_deduction,
 ) or pod2usage(2);
 
 pod2usage(0) if $show_help;
 
+if (defined $output_file) {
+  open STDOUT, '>:encoding(UTF-8)', $output_file
+    or die "Cannot open output file '$output_file': $!\n";
+}
+
 if ($show_version) {
   print "SudokuSolver $Sudoku::VERSION\n";
+  exit 0;
+}
+
+if ($list_grid_formats || $list_character_sets || $list_result_formats) {
+  require Sudoku::Render::Text;
+
+  if ($list_grid_formats) {
+    my $renderer = Sudoku::Render::Text->new;
+    my $default  = $renderer->default_grid_format;
+
+    print "Available grid formats\n\n";
+    for my $format ($renderer->available_grid_formats) {
+      my $suffix = $format eq $default ? ' (default)' : q{};
+      print "    $format$suffix\n";
+    }
+  }
+
+  print "\n" if $list_grid_formats && ($list_character_sets || $list_result_formats);
+
+  if ($list_character_sets) {
+    print "Available character sets\n\n";
+    for my $set (Sudoku::Render::Text->available_character_sets) {
+      my $suffix = $set eq 'ASCII' ? ' (default)' : q{};
+      print "    $set$suffix\n";
+    }
+  }
+
+  print "\n" if $list_character_sets && $list_result_formats;
+
+  if ($list_result_formats) {
+    my $renderer = Sudoku::Render::Text->new;
+    print "Available result formats\n\n";
+    print "    $_\n" for $renderer->available_result_formats;
+  }
+
   exit 0;
 }
 
@@ -65,9 +119,39 @@ if (defined $positional_arg) {
 }
 
 require Solver;
+require Sudoku::Render::Text;
 
-my $solver = Solver->new;
-$solver->run(
+$grid_format = lc $grid_format if defined $grid_format;
+$result_format = lc $result_format if defined $result_format;
+if (defined $character_set) {
+  $character_set = uc $character_set;
+  $character_set =~ tr/-/_/;
+}
+
+my $renderer = Sudoku::Render::Text->new(
+  character_set => $character_set,
+);
+
+if (defined $grid_format && !$renderer->supports_grid_format($grid_format)) {
+  my $available = join ', ', $renderer->available_grid_formats;
+  die "Unknown grid format '$grid_format'; available formats: $available\n";
+}
+
+if (defined $result_format && !$renderer->supports_result_format($result_format)) {
+  my $available = join ', ', $renderer->available_result_formats;
+  die "Unknown result format '$result_format'; available formats: $available\n";
+}
+
+if (defined $result_format && (defined $grid_format || defined $character_set)) {
+  die "--result-format cannot be combined with --grid-format or --character-set\n";
+}
+
+$output_mode = 'quiet' if defined $result_format;
+
+my $solver = Solver->new(
+  renderer => $renderer,
+);
+my $grid = $solver->run(
   puzzle_file   => $puzzle_file,
   puzzle_index  => $puzzle_index,
   puzzle_string => $puzzle_string,
@@ -75,6 +159,19 @@ $solver->run(
   trace_grid_after_deduction => $trace_grid_after_deduction,
   output_mode  => $output_mode,
 );
+
+if (defined $result_format) {
+  print $renderer->result_json($solver, $grid);
+}
+elsif (defined $grid_format || defined $character_set) {
+  binmode STDOUT, ':encoding(UTF-8)'
+    if $renderer->character_set ne 'ASCII';
+
+  print $renderer->render_grid(
+    $grid,
+    format => $grid_format,
+  );
+}
 
 1;
 
@@ -92,6 +189,13 @@ sudoku.pl - solve a Sudoku puzzle
   sudoku.pl --benchmark Puzzles/sudoku17-first50.txt
   sudoku.pl --trace-grid-after-deduction --file Puzzles/Puzzle3.txt
   sudoku.pl --output explain --file Puzzles/Puzzle3.txt
+  sudoku.pl --output quiet --grid-format compact --file Puzzles/Puzzle3.txt
+  sudoku.pl --output quiet --grid-format pretty --character-set UNICODE_LIGHT --file Puzzles/Puzzle3.txt
+  sudoku.pl --list-grid-formats
+  sudoku.pl --list-character-sets
+  sudoku.pl --result-format json --file Puzzles/Puzzle3.txt
+  sudoku.pl --list-result-formats
+  sudoku.pl --output-file result.txt --file Puzzles/Puzzle3.txt
   sudoku.pl --help
 
 For compatibility with the legacy Makefile, a single positional argument is also accepted:
@@ -131,6 +235,42 @@ Debugging option. Print the grid after each individual deduction is applied.
 =item B<--output MODE>
 
 Select human output style. Current modes are quiet, normal, explain, trace, and debug.
+
+=item B<--grid-format FORMAT>
+
+Render the final grid using a named format. Current formats are pretty, compact, candidates,
+candidate-list, candidate-line, and candidate-json. This is opt-in and does not alter the existing default output.
+Use C<--output quiet> when only the grid should be printed.
+
+=item B<--character-set SET>
+
+Select the grid character set. Current sets are ASCII, UNICODE_LIGHT,
+UNICODE_DOUBLE, and UNICODE_HEAVY. Supplying this option without
+C<--grid-format> renders the default pretty grid. Hyphens and case are accepted,
+so C<unicode-light> is equivalent to C<UNICODE_LIGHT>.
+
+=item B<--list-grid-formats>
+
+List the available named grid formats and exit.
+
+=item B<--result-format FORMAT>
+
+Render a structured solve result. Current format: json. This suppresses human narration and cannot be combined with grid-format options.
+
+=item B<--list-result-formats>
+
+List available structured result formats and exit.
+
+=item B<--list-character-sets>
+
+List the available grid character sets and exit.
+
+=item B<--output-file FILE>
+
+Write standard program output to FILE instead of the terminal. This applies to
+human narration, selected grid formats, JSON results, benchmark summaries, and
+discovery listings. Diagnostics and fatal errors continue to use standard error.
+The file is written as UTF-8 and replaced if it already exists.
 
 =item B<--debug>
 

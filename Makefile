@@ -156,6 +156,7 @@ clean:
 	rm -f *.out *.solution
 	rm -f Puzzle*.out Puzzle*.solution
 	rm -f Puzzles/*.out Puzzles/*.solution
+	rm -f sudoku_solver*.tgz
 	find . -name '*~' -delete
 	find . -name '*.bak' -delete
 	find . -name '.DS_Store' -delete
@@ -163,10 +164,49 @@ clean:
 status:
 	git status --short
 
+show-compact:
+	perl -Ilib bin/sudoku.pl \
+		--output quiet \
+		--grid-format compact \
+		--file Puzzles/solved_puzzle.txt
+
+show-pretty:
+	perl -Ilib bin/sudoku.pl \
+		--output quiet \
+		--grid-format pretty \
+		--file Puzzles/solved_puzzle.txt
+
+show-unicode:
+	perl -Ilib bin/sudoku.pl \
+		--output quiet \
+		--grid-format pretty \
+		--character-set UNICODE_LIGHT \
+		--file Puzzles/solved_puzzle.txt
+
+show-unicode-double:
+	perl -Ilib bin/sudoku.pl \
+		--output quiet \
+		--grid-format pretty \
+		--character-set UNICODE_DOUBLE \
+		--file Puzzles/solved_puzzle.txt
+
+show-unicode-heavy:
+	perl -Ilib bin/sudoku.pl \
+		--output quiet \
+		--grid-format pretty \
+		--character-set UNICODE_HEAVY \
+		--file Puzzles/solved_puzzle.txt
+
+show-candidates:
+	perl -Ilib bin/sudoku.pl \
+		--output quiet \
+		--grid-format candidates \
+		--file Puzzles/solved_puzzle.txt
+
 tarball: backup
 
 backup:
-	$(TAR) -cvzf ../$(NAME)-`date +%Y%m%d-%H%M`.tgz \
+	$(TAR) -cvzf ./$(NAME)-`date +%Y%m%d-%H%M`.tgz \
 		Makefile \
 		Readme.md \
 		$(SCRIPT) \
@@ -204,6 +244,16 @@ perl-version:
 size:
 	@echo "Project size, non-blank lines"
 	@echo "============================="
+	        @printf "%-28s %8s\n" "Component" "Lines"
+	@printf "%-28s %8s\n" "---------" "-----"
+	@printf "%-28s %8s\n" "bin/sudoku.pl" "$$(grep -hcv '^[[:space:]]*$$' bin/sudoku.pl 2>/dev/null || echo 0)"
+	@printf "%-28s %8s\n" "lib" "$$(find lib -type f -name '*.pm' -print0 | xargs -0 grep -hcv '^[[:space:]]*$$' | awk '{s+=$$1} END {print s+0}')"
+	@printf "%-28s %8s\n" "tests" "$$(find t -type f -name '*.t' -print0 | xargs -0 grep -hcv '^[[:space:]]*$$' | awk '{s+=$$1} END {print s+0}')"
+	@printf "%-28s %8s\n" "docs" "$$(find docs -type f -print0 | xargs -0 grep -hcv '^[[:space:]]*$$' | awk '{s+=$$1} END {print s+0}')"
+	@printf "%-28s %8s\n" "Puzzles" "$$(find Puzzles -type f -print0 | xargs -0 grep -hcv '^[[:space:]]*$$' | awk '{s+=$$1} END {print s+0}')"
+	@echo "-----------------------------"
+	@printf "%-28s %8s\n" "TOTAL" "$$(find bin/sudoku.pl lib t Puzzles -type f \( -name '*.pl' -o -name '*.pm' -o -name '*.t' -o -name '*.txt' \) -print0 | xargs -0 grep -hcv '^[[:space:]]*$$' | awk '{s+=$$1} END {print s+0}')"
+
 
 size-modules:
 	@echo "Module size, non-blank lines"
