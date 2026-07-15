@@ -169,8 +169,8 @@ Development increments:
 * [x] Record the exact invertible digit transform in a canonical-result object.
 * [x] Minimize row permutations within bands and band permutations.
 * [x] Minimize column permutations within stacks and stack permutations.
-* [ ] Combine spatial and digit normalization into one deterministic representative.
-* [ ] Require idempotent full canonization and invariance under every supported symmetry.
+* [x] Combine spatial and digit normalization into one deterministic representative.
+* [x] Require idempotent full canonization and invariance under every supported symmetry.
 * [ ] Produce stable canonical fingerprints from canonical coordinate encodings.
 * [ ] Assign permanent corpus IDs only after canonical ordering is stable.
 
@@ -178,8 +178,11 @@ The first increment established the digit-normal form. The second increment
 adds exhaustive row-side normalization across all 1,296 band and within-band
 row permutations, digit-normalizing every candidate before lexical comparison.
 The third increment adds the corresponding 1,296-candidate column-side normal
-form across stack and within-stack column permutations. Full spatial
-canonization, which must combine both families, remains incomplete.
+form across stack and within-stack column permutations. The fourth increment combines both spatial families and digit normalization in
+an exhaustive correctness baseline spanning 1,679,616 spatial candidates. It
+returns an exact witness transform and establishes idempotence and full symmetry
+invariance. This baseline is not yet fast enough for the complete corpus;
+performance pruning remains required before Phase 4 generation.
 
 ### Phase 4 — Definitive Master Corpus
 

@@ -335,3 +335,35 @@ The final replay invariant is:
 ```text
 replay(metadata) == originally generated puzzle
 ```
+
+
+## Full Canonical Form Baseline
+
+The Phase 3 correctness baseline considers the Cartesian product of the legal
+row-side and column-side spatial families:
+
+```text
+1,296 row-family transforms
+× 1,296 column-family transforms
+= 1,679,616 spatial candidates
+```
+
+Every spatial candidate is digit-normalized before lexical comparison. The
+smallest normalized 81-character string is the canonical representative. The
+result records the exact composed symmetry transform that maps the original
+puzzle to that representative.
+
+Required contracts:
+
+```text
+canonicalize(canonicalize(P)) == canonicalize(P)
+canonicalize(T.apply(P)) == canonicalize(P)
+result.transform.apply(P) == result.puzzle
+result.transform.inverse.apply(result.puzzle) == P
+```
+
+This exhaustive implementation is the reference definition for correctness.
+It is intentionally retained as a baseline while later Phase 3 work introduces
+pruning or indexing suitable for all 49,158 corpus records. Optimized
+implementations must produce byte-identical canonical strings and equivalent
+witness transforms.

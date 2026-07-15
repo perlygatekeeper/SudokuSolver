@@ -9,7 +9,7 @@ use Sudoku::Canonical::Result;
 use Sudoku::CoordinateEncoding qw(validate_puzzle_string);
 use Sudoku::Symmetry;
 
-our @EXPORT_OK = qw(normalize_digits normalize_rows normalize_columns);
+our @EXPORT_OK = qw(normalize_digits normalize_rows normalize_columns canonicalize);
 
 sub normalize_digits {
     my ($puzzle) = @_;
@@ -24,6 +24,11 @@ sub normalize_rows {
 sub normalize_columns {
     my ($puzzle) = @_;
     return __PACKAGE__->column_normal_form($puzzle)->puzzle;
+}
+
+sub canonicalize {
+    my ($puzzle) = @_;
+    return __PACKAGE__->canonical_form($puzzle)->puzzle;
 }
 
 sub digit_normal_form {
@@ -122,6 +127,109 @@ sub column_normal_form {
     }
 
     return $best;
+}
+
+
+sub canonical_form {
+    my ($class, $puzzle) = @_;
+    $puzzle = validate_puzzle_string($puzzle);
+
+    my @source_rows = map { substr($puzzle, $_ * 9, 9) } 0 .. 8;
+    my $best_puzzle;
+    my ($best_row_spec, $best_col_spec, $best_digits);
+
+    for my $row_spec (_spatial_specs('row')) {
+        my @rows = map { $source_rows[$_] } @{ $row_spec->{target_to_source} };
+
+        for my $col_spec (_spatial_specs('column')) {
+            my @digit_map = (0) x 10;
+            my $next_digit = 1;
+            my $candidate = q{};
+
+            for my $target_row (0 .. 8) {
+                my $row = $rows[$target_row];
+                for my $source_col (@{ $col_spec->{target_to_source} }) {
+                    my $digit = substr($row, $source_col, 1);
+                    if ($digit ne '0') {
+                        $digit_map[$digit] ||= $next_digit++;
+                        $digit = $digit_map[$digit];
+                    }
+                    $candidate .= $digit;
+
+                    if (defined $best_puzzle) {
+                        my $prefix_length = length $candidate;
+                        my $best_prefix = substr($best_puzzle, 0, $prefix_length);
+                        last if $candidate gt $best_prefix;
+                    }
+                }
+                last if defined($best_puzzle)
+                    && length($candidate) < (($target_row + 1) * 9);
+            }
+
+            next if length($candidate) != 81;
+            next if defined($best_puzzle) && $candidate ge $best_puzzle;
+
+            for my $source_digit (1 .. 9) {
+                $digit_map[$source_digit] ||= $next_digit++;
+            }
+
+            $best_puzzle = $candidate;
+            $best_row_spec = $row_spec;
+            $best_col_spec = $col_spec;
+            $best_digits = [ @digit_map[1 .. 9] ];
+        }
+    }
+
+    my $spatial = Sudoku::Symmetry->new(
+        bands => $best_row_spec->{major},
+        rows  => $best_row_spec->{locals},
+        stacks => $best_col_spec->{major},
+        cols   => $best_col_spec->{locals},
+    );
+    my $digit = Sudoku::Symmetry->new(digits => $best_digits);
+    my $combined = $spatial->compose($digit);
+
+    return Sudoku::Canonical::Result->new(
+        puzzle    => $best_puzzle,
+        transform => $combined,
+        stage     => 'canonical',
+    );
+}
+
+my %SPATIAL_SPECS;
+sub _spatial_specs {
+    my ($kind) = @_;
+    return @{ $SPATIAL_SPECS{$kind} } if $SPATIAL_SPECS{$kind};
+
+    my @specs;
+    for my $major (_permutations([ 0 .. 2 ])) {
+        for my $local0 (_permutations([ 0 .. 2 ])) {
+            for my $local1 (_permutations([ 0 .. 2 ])) {
+                for my $local2 (_permutations([ 0 .. 2 ])) {
+                    my @locals = ($local0, $local1, $local2);
+                    my @source_to_target;
+                    for my $source (0 .. 8) {
+                        my $source_major = int($source / 3);
+                        my $source_local = $source % 3;
+                        $source_to_target[$source] =
+                            $major->[$source_major] * 3
+                            + $locals[$source_major][$source_local];
+                    }
+                    my @target_to_source;
+                    for my $source (0 .. 8) {
+                        $target_to_source[$source_to_target[$source]] = $source;
+                    }
+                    push @specs, {
+                        major => [ @$major ],
+                        locals => [ map { [ @$_ ] } @locals ],
+                        target_to_source => \@target_to_source,
+                    };
+                }
+            }
+        }
+    }
+    $SPATIAL_SPECS{$kind} = \@specs;
+    return @specs;
 }
 
 sub _permutations {
