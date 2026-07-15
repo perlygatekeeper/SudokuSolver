@@ -1,0 +1,76 @@
+# SudokuSolver Roadmap
+
+## Version 1.1.0
+Status: Complete
+
+The solver and enhanced output subsystem are considered complete and released.
+
+## Version 1.2.0 — Canonical Corpus and Reproducible Puzzle Generation
+
+### Phase 1 — Puzzle Identity
+- Canonical puzzle serialization
+- Digit-grouped coordinate encoding (42-character encoding for 17-clue puzzles)
+- Encoding/decoding round-trip validation
+- Stable puzzle fingerprint
+
+### Phase 2 — Sudoku Symmetry
+- Digit permutations
+- Row permutations within bands
+- Column permutations within stacks
+- Band permutations
+- Stack permutations
+- Seeded, reproducible symmetry transforms
+
+### Phase 3 — Canonization
+- Deterministic canonical representative
+- Idempotent canonicalization
+- Canonical IDs
+
+### Phase 4 — Definitive Master Corpus
+Each of the 49,158 canonical 17-clue puzzles will include:
+- Canonical ID
+- Digit-grouped coordinate encoding
+- Canonical puzzle
+- Solution
+- Difficulty score
+- Difficulty label
+- Difficulty version
+- Highest required strategy
+- Human-identifiable clue-pattern symmetries
+
+### Phase 5 — Corpus Query API
+Provide composable selection:
+- select(...)
+- sorting
+- limiting
+- random selection
+- lookup by ID or fingerprint
+
+Support filtering by:
+- difficulty
+- score
+- highest strategy
+- clue count
+- symmetry
+- canonical ID
+- fingerprint
+
+### Phase 6 — Symmetry-Randomized Generation
+Generate equivalent puzzles using reproducible symmetry transforms.
+
+### Phase 7 — Controlled Clue Reveals
+Reveal solved cells to reach requested clue counts.
+
+### Phase 8 — Difficulty Targeting
+Generate puzzles that satisfy requested difficulty characteristics.
+
+### Phase 9 — Provenance and Replay
+Every generated puzzle records:
+- generation timestamp
+- canonical ID
+- symmetry seed
+- reveal seed
+- explicit reveal list
+- generator version
+
+Replay must regenerate the identical puzzle.
