@@ -12,6 +12,7 @@ PUZZLEDIR     := Puzzles/
 TAR           := gtar
 NAME          := sudoku_solver
 TESTDIR       := t/
+THEMEDIR      := themes/
 DOCSDIR       := docs/
 RELEASE_NOTES := $(shell ls docs/Release_*.txt)
 ROADMAP       := $(shell ls docs/Roadmap*.txt)
@@ -211,6 +212,7 @@ backup:
 		Readme.md \
 		$(SCRIPT) \
 		$(MODS) \
+		$(THEMESDIR) \
 		$(TESTDIR)*.t \
 		$(DOCSDIR)*.txt \
 		$(DOCSDIR)Developer/*.md \
@@ -228,7 +230,7 @@ version:
 gitadd:
 	git add Makefile Readme.md \
 		$(SCRIPT) $(MODS) $(VERSION_MOD) \
-		$(TESTDIR)*.t $(DOCSDIR)*.txt \
+		$(THEMEDIR)*.theme $(TESTDIR)*.t $(DOCSDIR)*.txt \
 		$(DOCSDIR)Developer/*.md \
 		$(DOCSDIR)benchmark_*.txt \
 		$(DOCSDIR)Algorithm_Notes/*.md \

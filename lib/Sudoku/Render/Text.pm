@@ -7,6 +7,7 @@ use JSON::PP ();
 
 use Sudoku::Render::GridCharacters;
 use Sudoku::Render::GridBuilder;
+use Sudoku::Render::Theme;
 
 my @RESULT_FORMAT_ORDER = qw(json csv tsv);
 
@@ -35,6 +36,9 @@ sub new {
     $args{grid_characters} = Sudoku::Render::GridCharacters->character_set(
         $args{character_set},
     );
+    $args{color} //= 'never';
+    $args{color_theme} //= 'subtle';
+    $args{theme} = Sudoku::Render::Theme->new(name => $args{color_theme});
 
     return bless \%args, $class;
 }
@@ -50,6 +54,33 @@ sub grid_characters {
 
     my %copy = %{ $self->{grid_characters} };
     return \%copy;
+}
+
+sub available_color_themes {
+    return Sudoku::Render::Theme->names;
+}
+
+sub color {
+    my ($self, $value) = @_;
+    $self->{color} = $value if @_ > 1;
+    return $self->{color};
+}
+
+sub color_theme {
+    my ($self) = @_;
+    return $self->{theme}->name;
+}
+
+sub style {
+    my ($self, $role, $text) = @_;
+    return $text if !$self->{color_enabled};
+    return $self->{theme}->style($role, $text);
+}
+
+sub color_enabled {
+    my ($self, $value) = @_;
+    $self->{color_enabled} = $value ? 1 : 0 if @_ > 1;
+    return $self->{color_enabled} ? 1 : 0;
 }
 
 sub available_character_sets {
@@ -535,7 +566,11 @@ sub pretty_grid {
 
     my $builder = $self->grid_builder;
     my $chars   = $builder->characters;
-    my @values  = map { $_->value ? $_->value : q{} } @{ $grid->cells };
+    my @values  = map {
+        $_->value
+            ? $self->style($_->can('given') && $_->given ? 'given' : 'solved', $_->value)
+            : $self->style('empty', q{})
+    } @{ $grid->cells };
     my @separators = map {
         $_ == 2 || $_ == 5 ? 'vertical' : 'vertical_minor'
     } 0 .. 7;
@@ -609,7 +644,8 @@ sub mode {
 sub pass_start {
     my ($self, $pass) = @_;
 
-    return sprintf "Pass %d\n%s\n", $pass, '-' x (5 + length($pass));
+    my $title = $self->style('heading', "Pass $pass");
+    return $title . "\n" . ('-' x (5 + length($pass))) . "\n";
 }
 
 sub pass_end {
@@ -624,19 +660,20 @@ sub strategy_result {
     my ($self, $strategy_name, $count) = @_;
 
     return sprintf "    %s: %s\n",
-        $strategy_name,
+        $self->style('strategy', $strategy_name),
         $count ? "applied $count deduction" . ($count == 1 ? q{} : 's') : 'no deductions';
 }
 
 sub restart_notice {
-    return "    Restarting from Naked Singles.\n";
+    my ($self) = @_;
+    return "    " . $self->style('subheading', 'Restarting from Naked Singles.') . "\n";
 }
 
 sub deduction {
     my ($self, $deduction) = @_;
 
     my $title = $self->deduction_title($deduction);
-    my @lines = ($title);
+    my @lines = ($self->style('strategy', $title));
 
     if (($deduction->action // q{}) eq 'set_value') {
         push @lines, sprintf '    Set %s = %s',
@@ -695,7 +732,7 @@ sub final_status {
 
     if ($solver->has_contradiction) {
         return join q{},
-            "Contradiction\n",
+            $self->style('error', "Contradiction") . "\n",
             "-------------\n",
             $solver->contradiction->summary . "\n",
             sprintf("Solved cells: %d / 81\n", $grid->solved),
@@ -707,7 +744,7 @@ sub final_status {
     if ($grid->solved == 81) {
         my $solution = join q{}, map { $_->value } @{ $grid->cells };
         return join q{},
-            "Solved\n",
+            $self->style('success', "Solved") . "\n",
             "------\n",
             sprintf("Solved all 81 cells in %d deduction%s.\n",
                 $deductions, $deductions == 1 ? q{} : 's'),
@@ -717,7 +754,7 @@ sub final_status {
     }
 
     return join q{},
-        "Stalled\n",
+        $self->style('warning', "Stalled") . "\n",
         "-------\n",
         sprintf("Solved cells: %d / 81\n", $grid->solved),
         sprintf("Remaining cells: %d\n", 81 - $grid->solved),

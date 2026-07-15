@@ -155,10 +155,12 @@ sub _fit_cell {
     $value = q{} if !defined $value;
     $value = "$value";
 
-    die "Cell value '$value' is wider than its configured width $width\n"
-        if length($value) > $width;
+    my $visible_length = _visible_length($value);
 
-    my $padding = $width - length($value);
+    die "Cell value '$value' is wider than its configured width $width\n"
+        if $visible_length > $width;
+
+    my $padding = $width - $visible_length;
 
     return $value . (' ' x $padding) if $align eq 'left';
     return (' ' x $padding) . $value if $align eq 'right';
@@ -166,6 +168,12 @@ sub _fit_cell {
     my $left_padding  = int($padding / 2);
     my $right_padding = $padding - $left_padding;
     return (' ' x $left_padding) . $value . (' ' x $right_padding);
+}
+
+sub _visible_length {
+    my ($value) = @_;
+    $value =~ s/\e\[[0-9;]*m//g;
+    return length($value);
 }
 
 sub _validate_widths {

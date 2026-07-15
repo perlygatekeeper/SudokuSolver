@@ -1,0 +1,16 @@
+# SudokuSolver greyscale ANSI theme
+heading = bold
+subheading = underline
+given = bold
+solved = normal
+empty = dim
+candidate = normal
+strategy = bold
+explanation = normal
+success = bold
+warning = underline
+error = reverse
+stat_name = bold
+stat_value = normal
+filename = underline
+emphasis = bold

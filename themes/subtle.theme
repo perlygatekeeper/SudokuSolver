@@ -1,0 +1,16 @@
+# SudokuSolver subtle ANSI theme
+heading = bold cyan
+subheading = cyan
+given = bold
+solved = cyan
+empty = dim
+candidate = normal
+strategy = blue
+explanation = normal
+success = green
+warning = yellow
+error = red
+stat_name = cyan
+stat_value = normal
+filename = underline
+emphasis = bold

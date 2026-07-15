@@ -28,6 +28,9 @@ my $list_character_sets;
 my $result_format;
 my $list_result_formats;
 my $output_file;
+my $color = 'auto';
+my $color_theme = 'subtle';
+my $list_color_themes;
 
 GetOptions(
   'file|f=s'     => \$puzzle_file,
@@ -45,6 +48,9 @@ GetOptions(
   'result-format=s' => \$result_format,
   'list-result-formats' => \$list_result_formats,
   'output-file=s' => \$output_file,
+  'color=s' => \$color,
+  'color-theme=s' => \$color_theme,
+  'list-color-themes' => \$list_color_themes,
   'trace-grid-after-deduction' => \$trace_grid_after_deduction,
 ) or pod2usage(2);
 
@@ -60,7 +66,7 @@ if ($show_version) {
   exit 0;
 }
 
-if ($list_grid_formats || $list_character_sets || $list_result_formats) {
+if ($list_grid_formats || $list_character_sets || $list_result_formats || $list_color_themes) {
   require Sudoku::Render::Text;
 
   if ($list_grid_formats) {
@@ -84,12 +90,22 @@ if ($list_grid_formats || $list_character_sets || $list_result_formats) {
     }
   }
 
-  print "\n" if $list_character_sets && $list_result_formats;
+  print "\n" if $list_character_sets && ($list_result_formats || $list_color_themes);
 
   if ($list_result_formats) {
     my $renderer = Sudoku::Render::Text->new;
     print "Available result formats\n\n";
     print "    $_\n" for $renderer->available_result_formats;
+  }
+
+  print "\n" if $list_result_formats && $list_color_themes;
+
+  if ($list_color_themes) {
+    print "Available color themes\n\n";
+    for my $theme (Sudoku::Render::Text->available_color_themes) {
+      my $suffix = $theme eq 'subtle' ? ' (default)' : q{};
+      print "    $theme$suffix\n";
+    }
   }
 
   exit 0;
@@ -123,14 +139,31 @@ require Sudoku::Render::Text;
 
 $grid_format = lc $grid_format if defined $grid_format;
 $result_format = lc $result_format if defined $result_format;
+$color = lc($color // 'auto');
+$color_theme = lc($color_theme // 'subtle');
 if (defined $character_set) {
   $character_set = uc $character_set;
   $character_set =~ tr/-/_/;
 }
 
+die "Unknown color mode '$color'; available modes: auto, always, never\n"
+  if $color !~ /\A(?:auto|always|never)\z/;
+
+my %known_color_theme = map { $_ => 1 } Sudoku::Render::Text->available_color_themes;
+die "Unknown color theme '$color_theme'; available themes: "
+  . join(', ', Sudoku::Render::Text->available_color_themes) . "\n"
+  if !$known_color_theme{$color_theme};
+
+my $color_enabled = $color eq 'always' ? 1
+  : $color eq 'never' ? 0
+  : -t STDOUT ? 1 : 0;
+
 my $renderer = Sudoku::Render::Text->new(
   character_set => $character_set,
+  color          => $color,
+  color_theme    => $color_theme,
 );
+$renderer->color_enabled($color_enabled);
 
 if (defined $grid_format && !$renderer->supports_grid_format($grid_format)) {
   my $available = join ', ', $renderer->available_grid_formats;
@@ -140,6 +173,10 @@ if (defined $grid_format && !$renderer->supports_grid_format($grid_format)) {
 if (defined $result_format && !$renderer->supports_result_format($result_format)) {
   my $available = join ', ', $renderer->available_result_formats;
   die "Unknown result format '$result_format'; available formats: $available\n";
+}
+
+if (defined $result_format && $color eq 'always') {
+  die "--color always cannot be combined with --result-format; machine-readable output is never colored\n";
 }
 
 if (defined $result_format && (defined $grid_format || defined $character_set)) {
@@ -201,6 +238,8 @@ sudoku.pl - solve a Sudoku puzzle
   sudoku.pl --result-format csv --file Puzzles/Puzzle3.txt
   sudoku.pl --output quiet --grid-format solution-line --file Puzzles/Puzzle3.txt
   sudoku.pl --list-result-formats
+  sudoku.pl --color auto --color-theme subtle --file Puzzles/Puzzle3.txt
+  sudoku.pl --list-color-themes
   sudoku.pl --output-file result.txt --file Puzzles/Puzzle3.txt
   sudoku.pl --help
 
@@ -240,7 +279,13 @@ Debugging option. Print the grid after each individual deduction is applied.
 
 =item B<--output MODE>
 
-Select human output style. Current modes are quiet, normal, explain, trace, and debug.
+Select human output style.
+
+  quiet  - machine-friendly, minimal output.
+  normal - human-friendly summary (default).
+  explain - show successful logical deductions.
+  trace  - show solver decision flow, including unsuccessful strategy attempts.
+  debug  - show internal implementation details.
 
 =item B<--grid-format FORMAT>
 
@@ -273,6 +318,22 @@ List available structured result formats and exit.
 =item B<--list-character-sets>
 
 List the available grid character sets and exit.
+
+=item B<--color MODE>
+
+Control ANSI styling for human-readable output. MODE is C<auto>, C<always>,
+or C<never>. The default is C<auto>, which enables styling only when standard
+output is a terminal. Machine-readable JSON, CSV, and TSV results are never
+colored.
+
+=item B<--color-theme THEME>
+
+Select the encapsulated color theme. Current themes are C<subtle> (default),
+C<bright>, and C<greyscale>.
+
+=item B<--list-color-themes>
+
+List available color themes and exit.
 
 =item B<--output-file FILE>
 

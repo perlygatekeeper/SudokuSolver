@@ -171,6 +171,21 @@ perl bin/sudoku.pl --output-file result.txt --file puzzle.sdk
 The renderer architecture and format contracts are documented under
 `docs/Developer/`.
 
+## Terminal Color
+
+Human-readable output supports optional ANSI styling:
+
+```bash
+perl bin/sudoku.pl --color auto --color-theme subtle --file Puzzles/Puzzle3.txt
+perl bin/sudoku.pl --color always --color-theme bright --file Puzzles/Puzzle3.txt
+perl bin/sudoku.pl --color never --file Puzzles/Puzzle3.txt
+```
+
+Color activation and appearance are independent. The available themes are
+`subtle`, `bright`, and `greyscale`; discover them with
+`--list-color-themes`. Machine-readable JSON, CSV, and TSV output is never
+colored.
+
 ## Testing
 
 Run the complete syntax and test suite:

@@ -32,7 +32,10 @@
 - [x] Unicode light, double-line, and heavy grid rendering
 - [x] Output to files
 - [x] Initial stable renderer events and event log
-- [ ] Optional color layer
+- [x] Optional color layer
+  - [x] Auto / always / never activation
+  - [x] Data-driven subtle, bright, and greyscale themes
+  - [x] Semantic renderer roles and ANSI-safe grid alignment
 
 ## Parallel Projects
 

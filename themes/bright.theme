@@ -1,0 +1,16 @@
+# SudokuSolver bright ANSI theme
+heading = bold bright-cyan
+subheading = bright-cyan
+given = bold bright-white
+solved = bright-green
+empty = bright-black
+candidate = bright-white
+strategy = bold bright-magenta
+explanation = bright-white
+success = bold bright-green
+warning = bold bright-yellow
+error = bold bright-red
+stat_name = bright-cyan
+stat_value = bright-white
+filename = underline bright-blue
+emphasis = bold bright-white
