@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sudoku grid</title>
+<style>
+table.sudoku{border-collapse:collapse;font-family:system-ui,sans-serif;font-size:2rem}
+table.sudoku td{width:2.2rem;height:2.2rem;text-align:center;border:1px solid #777}
+table.sudoku tr:first-child td{border-top:3px solid #111}
+table.sudoku tr:last-child td{border-bottom:3px solid #111}
+table.sudoku td:first-child{border-left:3px solid #111}
+table.sudoku td:last-child{border-right:3px solid #111}
+table.sudoku tr:nth-child(3n) td{border-bottom:3px solid #111}
+table.sudoku td:nth-child(3n){border-right:3px solid #111}
+table.sudoku .given{font-weight:700}
+</style>
+</head>
+<body>
+<table class="sudoku" aria-label="Sudoku grid">
+  <tr>
+    <td class="given">1</td>
+    <td class="given">2</td>
+    <td class="given">3</td>
+    <td class="given">4</td>
+    <td class="given">5</td>
+    <td class="given">6</td>
+    <td class="given">7</td>
+    <td class="given">8</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="given">2</td>
+    <td class="given">3</td>
+    <td class="given">4</td>
+    <td class="given">5</td>
+    <td class="given">6</td>
+    <td class="given">7</td>
+    <td class="given">8</td>
+    <td>&nbsp;</td>
+    <td class="given">1</td>
+  </tr>
+  <tr>
+    <td class="given">3</td>
+    <td class="given">4</td>
+    <td class="given">5</td>
+    <td class="given">6</td>
+    <td class="given">7</td>
+    <td class="given">8</td>
+    <td>&nbsp;</td>
+    <td class="given">1</td>
+    <td class="given">2</td>
+  </tr>
+  <tr>
+    <td class="given">4</td>
+    <td class="given">5</td>
+    <td class="given">6</td>
+    <td class="given">7</td>
+    <td class="given">8</td>
+    <td>&nbsp;</td>
+    <td class="given">1</td>
+    <td class="given">2</td>
+    <td class="given">3</td>
+  </tr>
+  <tr>
+    <td class="given">5</td>
+    <td class="given">6</td>
+    <td class="given">7</td>
+    <td class="given">8</td>
+    <td>&nbsp;</td>
+    <td class="given">1</td>
+    <td class="given">2</td>
+    <td class="given">3</td>
+    <td class="given">4</td>
+  </tr>
+  <tr>
+    <td class="given">6</td>
+    <td class="given">7</td>
+    <td class="given">8</td>
+    <td>&nbsp;</td>
+    <td class="given">1</td>
+    <td class="given">2</td>
+    <td class="given">3</td>
+    <td class="given">4</td>
+    <td class="given">5</td>
+  </tr>
+  <tr>
+    <td class="given">7</td>
+    <td class="given">8</td>
+    <td>&nbsp;</td>
+    <td class="given">1</td>
+    <td class="given">2</td>
+    <td class="given">3</td>
+    <td class="given">4</td>
+    <td class="given">5</td>
+    <td class="given">6</td>
+  </tr>
+  <tr>
+    <td class="given">8</td>
+    <td>&nbsp;</td>
+    <td class="given">1</td>
+    <td class="given">2</td>
+    <td class="given">3</td>
+    <td class="given">4</td>
+    <td class="given">5</td>
+    <td class="given">6</td>
+    <td class="given">7</td>
+  </tr>
+  <tr>
+    <td>&nbsp;</td>
+    <td class="given">1</td>
+    <td class="given">2</td>
+    <td class="given">3</td>
+    <td class="given">4</td>
+    <td class="given">5</td>
+    <td class="given">6</td>
+    <td class="given">7</td>
+    <td class="given">8</td>
+  </tr>
+</table>
+</body>
+</html>
