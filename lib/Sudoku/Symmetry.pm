@@ -58,6 +58,58 @@ sub apply_puzzle {
     return join q{}, @output;
 }
 
+
+sub inverse {
+    my ($self) = @_;
+
+    my @inverse_digits = (0) x 9;
+    for my $source_digit (1 .. 9) {
+        my $target_digit = $self->{digits}[ $source_digit - 1 ];
+        $inverse_digits[ $target_digit - 1 ] = $source_digit;
+    }
+
+    my $inverse_rows = _invert_absolute_permutation($self->_absolute_rows);
+    my $inverse_cols = _invert_absolute_permutation($self->_absolute_cols);
+
+    return __PACKAGE__->_from_absolute_permutations(
+        digits => \@inverse_digits,
+        rows   => $inverse_rows,
+        cols   => $inverse_cols,
+    );
+}
+
+sub compose {
+    my ($self, $next) = @_;
+
+    die "compose requires another Sudoku::Symmetry transform\n"
+        unless ref($next) && $next->isa(__PACKAGE__);
+
+    my @digits = map {
+        $next->{digits}[ $self->{digits}[$_ - 1] - 1 ]
+    } 1 .. 9;
+
+    my $rows = _compose_absolute_permutations(
+        $self->_absolute_rows,
+        $next->_absolute_rows,
+    );
+    my $cols = _compose_absolute_permutations(
+        $self->_absolute_cols,
+        $next->_absolute_cols,
+    );
+
+    return __PACKAGE__->_from_absolute_permutations(
+        digits => \@digits,
+        rows   => $rows,
+        cols   => $cols,
+    );
+}
+
+sub equals {
+    my ($self, $other) = @_;
+    return 0 unless ref($other) && $other->isa(__PACKAGE__);
+    return $self->serialize eq $other->serialize;
+}
+
 sub serialize {
     my ($self) = @_;
 
@@ -79,6 +131,89 @@ sub bands  { return [ @{ $_[0]->{bands}  } ] }
 sub stacks { return [ @{ $_[0]->{stacks} } ] }
 sub rows   { return [ map { [ @$_ ] } @{ $_[0]->{rows} } ] }
 sub cols   { return [ map { [ @$_ ] } @{ $_[0]->{cols} } ] }
+
+
+sub _absolute_rows {
+    my ($self) = @_;
+    my @rows;
+
+    for my $source_row (0 .. 8) {
+        my $source_band = int($source_row / 3);
+        my $row_in_band = $source_row % 3;
+        push @rows,
+            $self->{bands}[$source_band] * 3
+            + $self->{rows}[$source_band][$row_in_band];
+    }
+
+    return \@rows;
+}
+
+sub _absolute_cols {
+    my ($self) = @_;
+    my @cols;
+
+    for my $source_col (0 .. 8) {
+        my $source_stack = int($source_col / 3);
+        my $col_in_stack = $source_col % 3;
+        push @cols,
+            $self->{stacks}[$source_stack] * 3
+            + $self->{cols}[$source_stack][$col_in_stack];
+    }
+
+    return \@cols;
+}
+
+sub _from_absolute_permutations {
+    my ($class, %args) = @_;
+
+    my (@bands, @rows, @stacks, @cols);
+
+    for my $source_band (0 .. 2) {
+        my @targets = map { $args{rows}[ $source_band * 3 + $_ ] } 0 .. 2;
+        my $target_band = int($targets[0] / 3);
+
+        die "absolute row permutation does not preserve band structure\n"
+            if grep { int($_ / 3) != $target_band } @targets;
+
+        push @bands, $target_band;
+        push @rows, [ map { $_ % 3 } @targets ];
+    }
+
+    for my $source_stack (0 .. 2) {
+        my @targets = map { $args{cols}[ $source_stack * 3 + $_ ] } 0 .. 2;
+        my $target_stack = int($targets[0] / 3);
+
+        die "absolute column permutation does not preserve stack structure\n"
+            if grep { int($_ / 3) != $target_stack } @targets;
+
+        push @stacks, $target_stack;
+        push @cols, [ map { $_ % 3 } @targets ];
+    }
+
+    return $class->new(
+        digits => $args{digits},
+        bands  => \@bands,
+        rows   => \@rows,
+        stacks => \@stacks,
+        cols   => \@cols,
+    );
+}
+
+sub _invert_absolute_permutation {
+    my ($permutation) = @_;
+    my @inverse = (0) x @$permutation;
+
+    for my $source (0 .. $#$permutation) {
+        $inverse[ $permutation->[$source] ] = $source;
+    }
+
+    return \@inverse;
+}
+
+sub _compose_absolute_permutations {
+    my ($first, $second) = @_;
+    return [ map { $second->[ $first->[$_] ] } 0 .. $#$first ];
+}
 
 sub _validate {
     my ($self) = @_;

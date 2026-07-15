@@ -144,8 +144,8 @@ Development increments:
   and stack permutations.
 * [x] Apply a transform to a normalized puzzle string.
 * [x] Serialize a transform into stable human-readable shorthand.
-* [ ] Invert transforms and verify exact restoration.
-* [ ] Compose transforms and verify equivalence to sequential application.
+* [x] Invert transforms and verify exact restoration.
+* [x] Compose transforms and verify equivalence to sequential application.
 * [ ] Parse serialized transforms for replay.
 * [ ] Generate deterministic random transforms from a supplied seed.
 

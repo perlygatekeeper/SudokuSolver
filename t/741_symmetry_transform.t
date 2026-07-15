@@ -84,4 +84,42 @@ for my $case (
     like $@, $pattern, "$name with useful error";
 }
 
+# Phase 2 inversion and composition guarantees.
+my $inverse = $combined->inverse;
+ok !$inverse->is_identity, 'inverse of a non-identity transform is non-identity';
+is $inverse->apply_puzzle($combined->apply_puzzle($puzzle)), $puzzle,
+    'inverse restores the exact original puzzle';
+is $combined->apply_puzzle($inverse->apply_puzzle($puzzle)), $puzzle,
+    'transform also restores input after applying its inverse first';
+ok $combined->compose($inverse)->is_identity,
+    'transform composed with its inverse is identity';
+ok $inverse->compose($combined)->is_identity,
+    'inverse composed with transform is identity';
+ok $identity->inverse->is_identity, 'identity is its own inverse';
+
+my $next = Sudoku::Symmetry->new(
+    digits => [ 1, 3, 2, 4, 5, 6, 7, 9, 8 ],
+    bands  => [ 2, 0, 1 ],
+    rows   => [ [ 1, 0, 2 ], [ 2, 1, 0 ], [ 1, 2, 0 ] ],
+    stacks => [ 1, 2, 0 ],
+    cols   => [ [ 2, 0, 1 ], [ 1, 0, 2 ], [ 2, 1, 0 ] ],
+);
+my $composed = $combined->compose($next);
+my $sequential = $next->apply_puzzle($combined->apply_puzzle($puzzle));
+is $composed->apply_puzzle($puzzle), $sequential,
+    'compose applies the receiver first and the argument second';
+is clue_count($composed->apply_puzzle($puzzle)), clue_count($puzzle),
+    'composed transform preserves clue count';
+ok $combined->compose($identity)->equals($combined),
+    'right composition with identity preserves transform';
+ok $identity->compose($combined)->equals($combined),
+    'left composition with identity preserves transform';
+ok $combined->inverse->inverse->equals($combined),
+    'double inversion restores the original transform';
+
+my $compose_ok = eval { $combined->compose('not a transform'); 1 };
+ok !$compose_ok, 'compose rejects non-transform arguments';
+like $@, qr/another Sudoku::Symmetry transform/,
+    'compose rejection has a useful error';
+
 done_testing();

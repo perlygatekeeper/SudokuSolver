@@ -162,10 +162,27 @@ Stable shorthand uses this form:
 D=213456789;B=120;R=201|120|021;S=201;C=120|201|012
 ```
 
-Later Phase 2 increments add inversion, composition, shorthand parsing, and
-deterministic seeded generation. The full phase must support application,
-inversion, composition, serialization, replay, and deterministic random
-construction.
+The second Phase 2 increment adds inversion and composition:
+
+```perl
+my $inverse  = $transform->inverse;
+my $restored = $inverse->apply_puzzle($variant);
+
+# Composition order is explicit: the receiver is applied first, then $next.
+my $combined = $transform->compose($next);
+```
+
+Required guarantees include:
+
+```text
+T.inverse.apply(T.apply(P)) == P
+T.compose(U).apply(P)       == U.apply(T.apply(P))
+T.compose(T.inverse)        == identity
+```
+
+Later Phase 2 increments add shorthand parsing and deterministic seeded
+generation. The full phase must support application, inversion, composition,
+serialization, replay, and deterministic random construction.
 
 ## Phase 3: Canonization and Identity
 
