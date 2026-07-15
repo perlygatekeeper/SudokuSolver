@@ -227,6 +227,25 @@ normalize_digits(D.apply(P))          == normalize_digits(P)
 for every valid digit permutation `D`. It does not yet canonicalize spatial
 row, column, band, or stack equivalents.
 
+The second layer is the row-normal form. It enumerates every legal combination
+of the three band permutations and the three independent row-within-band
+permutations: `3! * (3!)^3 = 1,296` row-side transforms. Each transformed
+puzzle is digit-normalized, and the lexicographically smallest resulting
+81-character string is selected. The returned transform composes the winning
+row-side transform with its digit-normalization transform.
+
+`Sudoku::Canonical->row_normal_form($puzzle)` therefore guarantees:
+
+```text
+normalize_rows(normalize_rows(P)) == normalize_rows(P)
+normalize_rows(R.apply(P))        == normalize_rows(P)
+normalize_rows(D.apply(P))        == normalize_rows(P)
+```
+
+for every legal row-side transform `R` and digit permutation `D`. This is still
+not the full canonical representative because column, stack, and transpose-like
+search decisions have not yet been incorporated.
+
 Full canonization must ultimately guarantee:
 
 ```text
