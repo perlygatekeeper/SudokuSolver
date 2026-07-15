@@ -1,99 +1,213 @@
 # Canonical Corpus and Generation Architecture
 
-## Vision
+## Purpose
 
-SudokuSolver evolves from a solver into a complete Sudoku analysis,
-classification, and reproducible puzzle-generation platform.
+Version 1.2.0 expands SudokuSolver from a logic-first solver into a platform
+for puzzle representation, classification, corpus queries, reproducible
+symmetry randomization, and controlled puzzle generation.
 
-## Guiding Principles
+The work is divided into nine phases so each layer can be tested and stabilized
+before the next depends on it.
 
--   Every canonical puzzle has exactly one stable identity.
--   Every generated puzzle is reproducible.
--   Metadata is human-readable.
--   Puzzle files remain editable with ordinary text editors.
--   All transformations are deterministic from stored metadata.
+## Core Principles
 
-## Primary Modules
+1. The normalized 81-character puzzle string remains the initial source of
+   truth.
+2. Derived representations must be deterministic.
+3. Stored puzzle metadata must remain readable in an ordinary text editor.
+4. Randomized operations must be reproducible from stored seeds and explicit
+   operation logs.
+5. Canonical IDs must not depend on difficulty ordering or other mutable
+   metadata.
+6. Difficulty data must always name its rating version.
+7. Corpus selection must use one composable query engine rather than a growing
+   collection of incompatible filters.
 
--   Sudoku::Canonical
--   Sudoku::Symmetry
--   Sudoku::Corpus
--   Sudoku::Generator
+## Phase 1 Contract: Puzzle Representation
 
-## Definitive Master Corpus
+Phase 1 produces a stable encoding from a normalized puzzle. It is deliberately
+encode-only.
 
-The master corpus contains one authoritative record for each of the
-49,158 canonical 17-clue puzzles.
+### Source representation
 
-Each record stores:
+The accepted source representation is exactly 81 characters containing only
+`0` through `9`:
 
--   Canonical ID
--   Digit-grouped coordinate encoding
--   Canonical puzzle
--   Solution
--   Difficulty score
--   Difficulty label
--   Difficulty version
--   Highest required strategy
--   Human-identifiable clue-pattern symmetries
--   Optional future metadata
+- `1` through `9` are clues;
+- `0` is an empty cell.
 
-## Coordinate Encoding
+Input normalization remains the responsibility of the existing puzzle-input
+layer. The coordinate encoder rejects dots, underscores, spaces, and other
+blank markers rather than silently normalizing them.
 
-The encoding groups coordinates by digit (1--9).
+### Digit-grouped coordinate encoding
 
-For 17-clue puzzles:
+The encoding contains nine groups in fixed digit order:
 
--   34 coordinate characters
--   8 delimiters
+```text
+1-group-2-group-3-group-4-group-5-group-6-group-7-group-8-group-9-group
+```
 
-Total: 42 characters.
+Each clue is represented by two decimal characters:
 
-The encoding must round-trip exactly.
+```text
+RC
+```
 
-## Query API
+where `R` is row 1–9 and `C` is column 1–9. Coordinates within each digit group
+are emitted in row-major order. The digit itself is omitted because the group
+position identifies it.
 
-The primary interface is:
+Exactly eight hyphens separate the nine groups. Empty digit groups are
+represented by adjacent delimiters or by an empty first or last field.
 
-    $corpus->select(...)
+Example:
 
-Selection criteria are composable and combine with logical AND.
+```text
+2953-364892-384672-5579-63-6891-8296-85-89
+```
 
-Example criteria include:
+For a puzzle containing `N` clues, the encoded length is:
 
--   difficulty
--   highest_strategy
--   symmetry
--   clue_count
--   canonical_id
--   fingerprint
+```text
+2N + 8
+```
 
-## Generation
+A 17-clue puzzle therefore always produces 42 characters.
 
-Generation consists of:
+### Phase 1 public API
 
-Canonical puzzle → Symmetry transform → Controlled clue reveals →
-Provenance metadata
+```perl
+use Sudoku::CoordinateEncoding qw(
+    validate_puzzle_string
+    clue_count
+    clue_locations
+    encode_puzzle
+);
+```
 
-## Invariants
+`encode_puzzle` accepts either a normalized puzzle string or an object exposing
+`as_puzzle_string`.
 
--   decode(encode(P)) == P
--   canonicalize(canonicalize(P)) == canonicalize(P)
--   inverse(transform(P)) == P
--   replay(metadata) reproduces the original generated puzzle
+`clue_locations` returns row-major entries containing `digit`, `row`, and
+`column`, all using human-facing 1-based coordinates.
 
-## Human-identifiable Symmetries
+### Deliberate exclusions
 
--   rotation-180
--   rotation-90
--   reflection-horizontal
--   reflection-vertical
--   reflection-main-diagonal
--   reflection-anti-diagonal
+Phase 1 does not include:
 
-These describe clue-pattern symmetry only.
+- coordinate decoding;
+- arbitrary encoding parsing;
+- canonization;
+- stable canonical IDs;
+- symmetry transforms; or
+- puzzle reconstruction from coordinate metadata.
 
-## Long-term Goal
+Decoding belongs in Phase 4, when the definitive corpus creates a genuine need
+to reconstruct and verify stored records.
 
-Use the canonical corpus as the foundation for reproducible puzzle
-generation, analysis, benchmarking, teaching, and future research.
+### Phase 1 validation
+
+The implementation must prove that:
+
+- each source puzzle contains exactly 81 normalized cells;
+- generated encodings contain exactly nine groups;
+- generated coordinate data contains only row/column digits 1–9;
+- generated coordinate data contains complete two-character pairs;
+- encoded length equals `2 * clue_count + 8`;
+- every canonical corpus puzzle contains exactly 17 clues;
+- all 49,158 corpus puzzles encode successfully; and
+- no two source-corpus puzzles produce the same encoding.
+
+The full-corpus validation entry point is:
+
+```bash
+make corpus-audit
+```
+
+## Phase 2: Sudoku Symmetry Model
+
+A symmetry transform records:
+
+- a digit permutation;
+- one row permutation for each band;
+- one column permutation for each stack;
+- a band permutation; and
+- a stack permutation.
+
+Transforms must support application, inversion, composition, serialization,
+and deterministic seeded generation.
+
+## Phase 3: Canonization and Identity
+
+Canonization maps every symmetry-equivalent puzzle to one deterministic
+representative. Required invariants include:
+
+```text
+canonicalize(canonicalize(P)) == canonicalize(P)
+canonicalize(transform(P))    == canonicalize(P)
+```
+
+Permanent canonical IDs are assigned only after canonical ordering is stable.
+The canonical coordinate encoding becomes the content-derived fingerprint.
+
+## Phase 4: Definitive Master Corpus
+
+The authoritative corpus contains one record for every canonical 17-clue
+puzzle. Records include identity, puzzle, solution, versioned difficulty,
+highest strategy, and simple human-identifiable clue-pattern symmetries.
+
+Supported pattern symmetries are:
+
+- `rotation-180`
+- `rotation-90`
+- `reflection-horizontal`
+- `reflection-vertical`
+- `reflection-main-diagonal`
+- `reflection-anti-diagonal`
+
+This is clue-mask analysis only; full automorphism-group analysis is out of
+scope.
+
+Phase 4 also adds coordinate decoding and round-trip corpus verification.
+
+## Phase 5: Corpus Query Contract
+
+The primary public query interface is composable:
+
+```perl
+my $query = $corpus->select(
+    difficulty       => 'Expert',
+    highest_strategy => 'XY-Chain',
+    symmetry         => 'rotation-180',
+);
+```
+
+Multiple criteria use AND semantics. Individual criteria may support ranges,
+lists of accepted values, and explicit exclusions.
+
+The query result may then be sorted, limited, or reproducibly randomized.
+Convenience methods such as `puzzles_by_difficulty` delegate to this common
+selection engine.
+
+## Phases 6–9: Generation and Replay
+
+Generation follows this pipeline:
+
+```text
+canonical corpus record
+    -> seeded symmetry transform
+    -> seeded controlled clue reveals
+    -> difficulty validation
+    -> human-readable provenance file
+```
+
+Symmetry and clue reveals use separate seeds. The explicit transform and reveal
+list are stored alongside the seeds so replay remains stable even if random
+selection internals change in a later release.
+
+The final replay invariant is:
+
+```text
+replay(metadata) == originally generated puzzle
+```

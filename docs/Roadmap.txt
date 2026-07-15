@@ -92,74 +92,119 @@ Version 1.0.0 also includes:
 The first 1,000 canonical puzzles are now a development regression suite. The
 complete 49,158-puzzle corpus is the authoritative capability benchmark.
 
-## Post-1.0 Priorities
+## Version 1.1.0 — Enhanced Output and Presentation
 
-The solver has reached functional completion. New work should improve quality,
-performance, integration, and analysis without weakening the logic-first
-contract.
+Status: complete and tagged
 
-### 1. Performance and Benchmark Engineering
+Version 1.1.0 completed the enhanced-output effort, including tabular,
+document, image, Unicode, color-theme, and CLI usability improvements.
 
-* Profile strategy execution on the full corpus.
-* Identify repeated candidate scans and avoid unnecessary allocation.
-* Preserve strategy ordering and deduction behavior while optimizing.
-* Add aggregate reporting across all canonical benchmark files.
-* Track elapsed time, strategy usage, deductions, cells, and eliminations.
-* Make performance comparisons reproducible across releases.
+## Version 1.2.0 — Canonical Corpus and Reproducible Puzzle Generation
 
-### 2. Output and Renderer Expansion
+Version 1.2.0 turns the complete canonical 17-clue collection into a
+queryable, reproducible puzzle corpus and generation platform. Work is divided
+into nine phases.
 
-* Add CSV and TSV result output.
-* Add explicit one-line puzzle and solution renderers.
-* Add event-aware text and JSON renderers.
-* Add compact replay and solution-path formats.
-* Add optional color as a final presentation layer.
-* Investigate Markdown, HTML, SVG, and GUI-oriented renderers.
-* Keep renderer contracts versioned and solver behavior independent of output.
+### Phase 1 — Puzzle Representation
 
-### 3. Puzzle Input, Canonicalization, and Identity
+Goal: produce a deterministic, human-readable representation derived from an
+81-character normalized puzzle string.
 
-* Normalize supported blank markers through one input path.
-* Improve validation and error diagnostics.
-* Add canonical 81-character serialization.
-* Add symmetry canonicalization where useful.
-* Add stable puzzle fingerprints and duplicate detection.
-* Support candidate-state interchange imports after the format contract is set.
+Deliverables:
 
-### 4. Difficulty and Analysis
+* Preserve the normalized 81-character puzzle string as the source of truth.
+* Add digit-grouped coordinate encoding in fixed digit order 1 through 9.
+* Store row/column coordinate pairs without repeating their digit.
+* Separate the nine digit groups with exactly eight delimiters.
+* Produce exactly 42 characters for every 17-clue puzzle.
+* Add clue-count and clue-location helpers.
+* Validate generated encodings and audit all 49,158 corpus puzzles.
+* Specify the encoding format in developer documentation.
 
-* Calibrate difficulty against a larger and more varied puzzle collection.
-* Distinguish required strategy difficulty from incidental strategy use.
-* Add strategy timing and search-effort metrics where meaningful.
-* Preserve rating-version metadata so historical results remain interpretable.
-* Investigate puzzle classification and comparative solve reports.
+Phase 1 is intentionally encode-only. It does not parse or decode arbitrary
+coordinate encodings. Decoding is introduced when the definitive corpus gains
+a genuine requirement to reconstruct puzzles from stored records.
 
-### 5. Test and Fixture Infrastructure
+Definition of done:
 
-* Expand reusable puzzle fixtures and golden-output helpers.
-* Add renderer snapshot and event-stream contract tests.
-* Add temporary-file and CLI integration-test helpers.
-* Retain the first-1,000 corpus as a regular regression target.
-* Add practical full-corpus regression procedures for release verification.
+* All 49,158 corpus puzzles encode successfully.
+* Every corpus puzzle has exactly 17 clues.
+* Every generated encoding has nine groups and the expected length.
+* Every generated encoding is unique within the source corpus.
+* The encoding format is pinned by focused regression tests.
 
-### 6. Packaging and Developer Tooling
+### Phase 2 — Sudoku Symmetry Model
 
-* Add continuous-integration coverage.
-* Add distribution and tarball validation.
-* Add release helpers and documentation-consistency checks.
-* Improve installation and troubleshooting documentation.
-* Keep `make check`, `git diff --check`, and benchmark verification central to
-  release preparation.
+* Represent digit, row-within-band, column-within-stack, band, and stack
+  permutations explicitly.
+* Apply, invert, compose, serialize, and replay transforms.
+* Generate deterministic random transforms from a supplied seed.
 
-### 7. User Interfaces and Generation
+### Phase 3 — Canonization and Stable Identity
 
-Longer-term possibilities:
+* Reduce symmetry-equivalent puzzles to one deterministic representative.
+* Require idempotent canonization.
+* Produce stable canonical fingerprints from canonical coordinate encodings.
+* Assign permanent corpus IDs only after canonical ordering is stable.
 
-* Puzzle generation with uniqueness verification.
-* Difficulty-targeted generation.
-* Interactive terminal interface.
-* Desktop GUI or web interface.
-* Teaching mode driven by deductions and renderer events.
+### Phase 4 — Definitive Master Corpus
+
+Build one authoritative record for each of the 49,158 canonical 17-clue
+puzzles. Each record includes:
+
+* canonical ID and coordinate encoding;
+* canonical 81-character puzzle and complete solution;
+* versioned difficulty score and label;
+* highest required strategy; and
+* human-identifiable clue-pattern rotation and reflection symmetries.
+
+The authoritative artifact should be streamable and reproducibly generated.
+Human-readable and tabular views may be derived from it.
+
+### Phase 5 — Corpus Query API
+
+* Provide lookup by canonical ID and coordinate fingerprint.
+* Expose a composable `select(...)` interface accepting multiple criteria at
+  once with AND semantics.
+* Support difficulty, score, highest strategy, clue count, symmetry, ID, and
+  fingerprint criteria.
+* Support ranges, multiple accepted values, exclusions, sorting, limits, and
+  deterministic random selection.
+* Add convenience helpers that delegate to the common selection engine.
+
+### Phase 6 — Symmetry-Randomized Puzzle Creation
+
+* Select a canonical corpus seed.
+* Apply a deterministic random symmetry transform.
+* Preserve both transformed puzzle and transformed solution.
+* Record the symmetry seed and explicit transform shorthand.
+
+### Phase 7 — Controlled Clue Reveals
+
+* Reveal values from the transformed solution without removing original clues.
+* Reach an exact requested clue count.
+* Use a separate reveal seed.
+* Store the explicit reveal-cell list for future-proof replay.
+
+### Phase 8 — Difficulty-Targeted Generation
+
+* Generate within requested difficulty labels or score ranges.
+* Support highest-strategy and strategy-ceiling constraints.
+* Preserve the difficulty-rating version used to accept each puzzle.
+
+### Phase 9 — Provenance and Replay
+
+Generated puzzle files remain readable in ordinary text editors and record:
+
+* generation date and generator version;
+* canonical ID and coordinate encoding;
+* symmetry seed and explicit transform;
+* reveal seed and explicit reveal list;
+* final clue count; and
+* versioned difficulty metadata.
+
+Replay must reproduce the exact generated puzzle and verify its stored
+provenance.
 
 ## Strategy Policy After 1.0
 
@@ -228,7 +273,7 @@ Renderer
 [x] Rendering subsystem
 [x] Candidate-state export
 [x] Structured solve-result output
-[ ] Canonicalization and puzzle fingerprints
+[~] Canonical corpus and reproducible generation (v1.2.0)
 [ ] Aggregate full-corpus benchmark reporting
 [ ] CI, packaging, and release automation
 [ ] Additional user interfaces
