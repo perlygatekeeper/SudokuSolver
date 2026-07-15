@@ -14,8 +14,8 @@ use Sudoku::CoordinateEncoding qw(
 my @files = @ARGV;
 
 if (!@files) {
-    @files = sort glob "$Bin/../Puzzles/Benchmarks/sudoku17-??-1000.txt";
-    push @files, sort glob "$Bin/../Puzzles/Benchmarks/sudoku17-??-158.txt";
+    @files = sort glob "$Bin/../Puzzles/Benchmarks_Corpus/sudoku17-??-1000.txt";
+    push @files, sort glob "$Bin/../Puzzles/Benchmarks_Corpus/sudoku17-??-158.txt";
 }
 
 die "No corpus files supplied or found\n" unless @files;

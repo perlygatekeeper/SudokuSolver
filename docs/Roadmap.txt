@@ -135,10 +135,29 @@ Definition of done:
 
 ### Phase 2 — Sudoku Symmetry Model
 
-* Represent digit, row-within-band, column-within-stack, band, and stack
-  permutations explicitly.
-* Apply, invert, compose, serialize, and replay transforms.
-* Generate deterministic random transforms from a supplied seed.
+Goal: represent every allowed Sudoku-preserving permutation explicitly and
+apply it deterministically to normalized puzzle strings.
+
+Development increments:
+
+* [x] Represent and validate digit, row-within-band, column-within-stack, band,
+  and stack permutations.
+* [x] Apply a transform to a normalized puzzle string.
+* [x] Serialize a transform into stable human-readable shorthand.
+* [ ] Invert transforms and verify exact restoration.
+* [ ] Compose transforms and verify equivalence to sequential application.
+* [ ] Parse serialized transforms for replay.
+* [ ] Generate deterministic random transforms from a supplied seed.
+
+Definition of done:
+
+* Every transform component is a validated permutation.
+* Application preserves puzzle length and clue count.
+* Applying a transform to a puzzle and its solution preserves consistency.
+* Inversion restores the exact original puzzle.
+* Composition matches sequential application.
+* Serialization and parsing round-trip exactly.
+* Reusing a random seed produces the same transform.
 
 ### Phase 3 — Canonization and Stable Identity
 

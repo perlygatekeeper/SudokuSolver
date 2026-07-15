@@ -130,13 +130,42 @@ make corpus-audit
 A symmetry transform records:
 
 - a digit permutation;
-- one row permutation for each band;
-- one column permutation for each stack;
+- one row permutation for each source band;
+- one column permutation for each source stack;
 - a band permutation; and
 - a stack permutation.
 
-Transforms must support application, inversion, composition, serialization,
-and deterministic seeded generation.
+All coordinate permutations are stored as zero-based source-to-target maps.
+For example, `bands => [2, 0, 1]` sends source band 0 to target band 2,
+source band 1 to target band 0, and source band 2 to target band 1. Digit
+permutations are one-based source-to-target maps, so the first entry is the
+new value for source digit 1.
+
+The first Phase 2 increment provides:
+
+```perl
+my $transform = Sudoku::Symmetry->new(
+    digits => [ 2, 1, 3, 4, 5, 6, 7, 8, 9 ],
+    bands  => [ 1, 2, 0 ],
+    rows   => [ [2,0,1], [1,2,0], [0,2,1] ],
+    stacks => [ 2, 0, 1 ],
+    cols   => [ [1,2,0], [2,0,1], [0,1,2] ],
+);
+
+my $variant = $transform->apply_puzzle($puzzle);
+my $shorthand = $transform->serialize;
+```
+
+Stable shorthand uses this form:
+
+```text
+D=213456789;B=120;R=201|120|021;S=201;C=120|201|012
+```
+
+Later Phase 2 increments add inversion, composition, shorthand parsing, and
+deterministic seeded generation. The full phase must support application,
+inversion, composition, serialization, replay, and deterministic random
+construction.
 
 ## Phase 3: Canonization and Identity
 
