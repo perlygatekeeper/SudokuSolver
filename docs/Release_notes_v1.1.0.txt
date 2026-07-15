@@ -1,0 +1,113 @@
+Release Notes v1.1.0
+Highlights
+Major Output System Expansion
+
+Version 1.1.0 dramatically expands SudokuSolver's presentation capabilities.
+
+The solver can now render puzzles in numerous human-readable, machine-readable,
+document, and graphics formats while maintaining a common rendering
+architecture.
+
+New capabilities include:
+
+Compact and pretty grid layouts
+Multiple Unicode border styles
+Mixed-weight Unicode box drawing
+Markdown output
+HTML output
+SVG output
+PNG image output
+PDF document output
+CSV and TSV result export
+JSON result export
+Candidate export in multiple formats
+One-line puzzle/grid/solution formats
+Output directly to files
+Discoverable renderer architecture
+Color Themes
+
+Human-readable output now supports optional ANSI color.
+
+Features include:
+
+automatic terminal detection
+always/never color modes
+theme support
+subtle theme
+bright theme
+greyscale theme
+
+Machine-readable formats intentionally remain free of ANSI escape sequences.
+
+Renderer Improvements
+
+The renderer subsystem has been substantially generalized.
+
+Highlights include:
+
+semantic renderer architecture
+reusable rendering components
+document renderers
+image renderers
+improved Unicode character handling
+mixed-weight Unicode grids
+stable machine-readable output
+Command Line Improvements
+
+The command line interface has become significantly more user-friendly.
+
+New features include:
+
+renderer discovery
+improved help
+expanded output-mode documentation
+intelligent "Did you mean?" suggestions
+typo correction for enumerated options
+
+Example:
+
+Unknown grid format 'htlm'.
+
+Did you mean 'html'?
+Documentation
+
+Documentation has been extensively updated.
+
+Included improvements:
+
+completely rewritten README
+v1.0.0 release notes
+updated roadmap
+developer documentation
+renderer documentation
+output format documentation
+color theme documentation
+Examples
+
+The examples suite has been expanded to demonstrate:
+
+text renderers
+Unicode renderers
+machine-readable exports
+document renderers
+image renderers
+color themes
+Internal Improvements
+
+Numerous internal improvements accompany the new functionality.
+
+These include:
+
+cleaner renderer abstractions
+data-driven color themes
+improved CLI validation
+reusable suggestion engine
+expanded regression tests
+additional renderer tests
+continued compatibility with existing solver behavior
+Compatibility
+
+Solver behavior and solving techniques are unchanged from v1.0.0.
+
+Version 1.1.0 focuses on presentation, export, documentation, and usability
+improvements.

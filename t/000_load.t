@@ -10,7 +10,7 @@ test_project_modules();
 
 is(
     $Sudoku::VERSION,
-    '1.0.0',
+    '1.1.0',
     'Project version is correct',
 );
 
