@@ -141,6 +141,7 @@ benchmark-final4:
 	@$(PERL) -Ilib $(SCRIPT) --benchmark Puzzles/sudoku17-final4.txt
 
 examples:
+	@mkdir -p examples-output
 	@echo "== Solved example =="
 	@$(PERL) -Ilib $(SCRIPT) --file Puzzles/Examples/solved.sdk --output normal
 	@echo ""
@@ -149,6 +150,22 @@ examples:
 	@echo ""
 	@echo "== Contradiction example =="
 	@$(PERL) -Ilib $(SCRIPT) --file Puzzles/Examples/contradiction.sdk --output normal
+	@echo ""
+	@echo "== Compact and mixed-weight Unicode grids =="
+	@$(PERL) -Ilib $(SCRIPT) --file Puzzles/Examples/solved.sdk --output quiet --grid-format compact
+	@$(PERL) -Ilib $(SCRIPT) --file Puzzles/Examples/solved.sdk --output quiet --grid-format pretty --character-set UNICODE_MIXED
+	@echo ""
+	@echo "== Machine-readable results =="
+	@$(PERL) -Ilib $(SCRIPT) --file Puzzles/Examples/solved.sdk --result-format json --output-file examples-output/solved.json
+	@$(PERL) -Ilib $(SCRIPT) --file Puzzles/Examples/solved.sdk --result-format csv --output-file examples-output/solved.csv
+	@$(PERL) -Ilib $(SCRIPT) --file Puzzles/Examples/solved.sdk --result-format tsv --output-file examples-output/solved.tsv
+	@echo "== Document and image renderers =="
+	@$(PERL) -Ilib $(SCRIPT) --file Puzzles/Examples/solved.sdk --output quiet --grid-format markdown --output-file examples-output/solved.md
+	@$(PERL) -Ilib $(SCRIPT) --file Puzzles/Examples/solved.sdk --output quiet --grid-format html --output-file examples-output/solved.html
+	@$(PERL) -Ilib $(SCRIPT) --file Puzzles/Examples/solved.sdk --output quiet --grid-format svg --output-file examples-output/solved.svg
+	@$(PERL) -Ilib $(SCRIPT) --file Puzzles/Examples/solved.sdk --output quiet --grid-format png --output-file examples-output/solved.png
+	@$(PERL) -Ilib $(SCRIPT) --file Puzzles/Examples/solved.sdk --output quiet --grid-format pdf --output-file examples-output/solved.pdf
+	@echo "Generated examples in examples-output/"
 
 run:
 	$(PERL) -Ilib $(SCRIPT) $(PUZZLE)
@@ -158,6 +175,7 @@ clean:
 	rm -f Puzzle*.out Puzzle*.solution
 	rm -f Puzzles/*.out Puzzles/*.solution
 	rm -f sudoku_solver*.tgz
+	rm -rf examples-output
 	find . -name '*~' -delete
 	find . -name '*.bak' -delete
 	find . -name '.DS_Store' -delete

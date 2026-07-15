@@ -179,6 +179,10 @@ if (defined $result_format && $color eq 'always') {
   die "--color always cannot be combined with --result-format; machine-readable output is never colored\n";
 }
 
+if (defined $grid_format && $grid_format =~ /\A(?:png|pdf)\z/ && !defined $output_file) {
+  die "--grid-format $grid_format requires --output-file FILE\n";
+}
+
 if (defined $result_format && (defined $grid_format || defined $character_set)) {
   die "--result-format cannot be combined with --grid-format or --character-set\n";
 }
@@ -205,8 +209,13 @@ if (defined $result_format) {
   );
 }
 elsif (defined $grid_format || defined $character_set) {
-  binmode STDOUT, ':encoding(UTF-8)'
-    if $renderer->character_set ne 'ASCII';
+  if (defined $grid_format && $grid_format =~ /\A(?:png|pdf)\z/) {
+    binmode STDOUT, ':raw';
+  }
+  else {
+    binmode STDOUT, ':encoding(UTF-8)'
+      if $renderer->character_set ne 'ASCII' || (defined $grid_format && $grid_format =~ /\A(?:markdown|html|svg)\z/);
+  }
 
   print $renderer->render_grid(
     $grid,
@@ -290,14 +299,14 @@ Select human output style.
 =item B<--grid-format FORMAT>
 
 Render the final grid using a named format. Current formats are pretty, compact,
-puzzle-line, grid-line, solution-line, candidates, candidate-list, candidate-line,
-and candidate-json. This is opt-in and does not alter the existing default output.
+markdown, html, svg, png, pdf, puzzle-line, grid-line, solution-line, candidates, candidate-list, candidate-line,
+and candidate-json. PNG and PDF require C<--output-file>. This is opt-in and does not alter the existing default output.
 Use C<--output quiet> when only the grid should be printed.
 
 =item B<--character-set SET>
 
 Select the grid character set. Current sets are ASCII, UNICODE_LIGHT,
-UNICODE_DOUBLE, and UNICODE_HEAVY. Supplying this option without
+UNICODE_DOUBLE, UNICODE_HEAVY, and UNICODE_MIXED. Supplying this option without
 C<--grid-format> renders the default pretty grid. Hyphens and case are accepted,
 so C<unicode-light> is equivalent to C<UNICODE_LIGHT>.
 

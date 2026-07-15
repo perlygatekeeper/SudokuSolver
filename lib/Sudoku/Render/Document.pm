@@ -1,0 +1,188 @@
+package Sudoku::Render::Document;
+
+use strict;
+use warnings;
+use utf8;
+
+sub new { bless {}, shift }
+
+sub markdown {
+    my ($self, $grid) = @_;
+    my @cells = _cells($grid);
+    my @out = ('|   | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |',
+               '|---|---|---|---|---|---|---|---|---|---|');
+    for my $r (0 .. 8) {
+        my @row = map { $_->value || q{} } @cells[$r * 9 .. $r * 9 + 8];
+        push @out, '| **' . ($r + 1) . '** | ' . join(' | ', @row) . ' |';
+        push @out, '|---|---|---|---|---|---|---|---|---|---|' if $r == 2 || $r == 5;
+    }
+    return join("\n", @out) . "\n";
+}
+
+sub html {
+    my ($self, $grid) = @_;
+    my @cells = _cells($grid);
+    my @out = (
+        '<!doctype html>', '<html lang="en">', '<head>',
+        '<meta charset="utf-8">', '<title>Sudoku grid</title>',
+        '<style>',
+        'table.sudoku{border-collapse:collapse;font-family:system-ui,sans-serif;font-size:2rem}',
+        'table.sudoku td{width:2.2rem;height:2.2rem;text-align:center;border:1px solid #777}',
+        'table.sudoku tr:first-child td{border-top:3px solid #111}',
+        'table.sudoku tr:last-child td{border-bottom:3px solid #111}',
+        'table.sudoku td:first-child{border-left:3px solid #111}',
+        'table.sudoku td:last-child{border-right:3px solid #111}',
+        'table.sudoku tr:nth-child(3n) td{border-bottom:3px solid #111}',
+        'table.sudoku td:nth-child(3n){border-right:3px solid #111}',
+        'table.sudoku .given{font-weight:700}',
+        '</style>', '</head>', '<body>', '<table class="sudoku" aria-label="Sudoku grid">',
+    );
+    for my $r (0 .. 8) {
+        push @out, '  <tr>';
+        for my $c (0 .. 8) {
+            my $cell = $cells[$r * 9 + $c];
+            my $class = $cell->can('given') && $cell->given ? ' class="given"' : q{};
+            my $value = $cell->value || '&nbsp;';
+            push @out, "    <td$class>$value</td>";
+        }
+        push @out, '  </tr>';
+    }
+    push @out, '</table>', '</body>', '</html>';
+    return join("\n", @out) . "\n";
+}
+
+sub svg {
+    my ($self, $grid) = @_;
+    my @cells = _cells($grid);
+    my $size = 450;
+    my $cell = 50;
+    my @out = (
+        qq{<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 $size $size" role="img" aria-label="Sudoku grid">},
+        '<rect width="450" height="450" fill="white"/>',
+    );
+    for my $i (0 .. 9) {
+        my $p = $i * $cell;
+        my $w = $i % 3 == 0 ? 3 : 1;
+        push @out, qq{<path d="M $p 0 V 450 M 0 $p H 450" stroke="black" stroke-width="$w"/>};
+    }
+    for my $r (0 .. 8) {
+        for my $c (0 .. 8) {
+            my $cell_obj = $cells[$r * 9 + $c];
+            next if !$cell_obj->value;
+            my $x = $c * $cell + 25;
+            my $y = $r * $cell + 34;
+            my $weight = $cell_obj->can('given') && $cell_obj->given ? 700 : 400;
+            push @out, qq{<text x="$x" y="$y" text-anchor="middle" font-family="sans-serif" font-size="30" font-weight="$weight">} . $cell_obj->value . '</text>';
+        }
+    }
+    push @out, '</svg>';
+    return join("\n", @out) . "\n";
+}
+
+sub png {
+    my ($self, $grid) = @_;
+    require Compress::Zlib;
+    my @cells = _cells($grid);
+    my ($w, $h) = (450, 450);
+    my @rows = map { "\xff\xff\xff" x $w } 1 .. $h;
+    my $black = "\x00\x00\x00";
+    for my $i (0 .. 9) {
+        my $p = $i * 50;
+        my $thickness = $i % 3 == 0 ? 3 : 1;
+        for my $d (0 .. $thickness - 1) {
+            _vline(\@rows, $w, $h, ($p + $d < $w ? $p + $d : $p - $d), $black);
+            _hline(\@rows, $w, $h, ($p + $d < $h ? $p + $d : $p - $d), $black);
+        }
+    }
+    for my $r (0 .. 8) {
+        for my $c (0 .. 8) {
+            my $value = $cells[$r * 9 + $c]->value || 0;
+            next if !$value;
+            _digit(\@rows, $w, $h, $c * 50 + 13, $r * 50 + 9, $value, 5, $black);
+        }
+    }
+    my $raw = join q{}, map { "\x00$_" } @rows;
+    my $png = "\x89PNG\r\n\x1a\n";
+    $png .= _chunk('IHDR', pack('NNCCCCC', $w, $h, 8, 2, 0, 0, 0));
+    $png .= _chunk('IDAT', Compress::Zlib::compress($raw));
+    $png .= _chunk('IEND', q{});
+    return $png;
+}
+
+sub pdf {
+    my ($self, $grid) = @_;
+    my @cells = _cells($grid);
+    my @ops = ('0 0 0 RG', '0 0 0 rg');
+    my ($left, $bottom, $cell) = (72, 171, 50);
+    for my $i (0 .. 9) {
+        my $p = $i * $cell;
+        my $lw = $i % 3 == 0 ? 2.5 : 0.7;
+        push @ops, "$lw w", sprintf('%d %d m %d %d l S', $left + $p, $bottom, $left + $p, $bottom + 450);
+        push @ops, sprintf('%d %d m %d %d l S', $left, $bottom + $p, $left + 450, $bottom + $p);
+    }
+    for my $r (0 .. 8) {
+        for my $c (0 .. 8) {
+            my $v = $cells[$r * 9 + $c]->value || 0;
+            next if !$v;
+            my $x = $left + $c * $cell + 17;
+            my $y = $bottom + (8 - $r) * $cell + 13;
+            push @ops, "BT /F1 24 Tf $x $y Td ($v) Tj ET";
+        }
+    }
+    my $stream = join("\n", @ops) . "\n";
+    my @obj;
+    $obj[1] = '<< /Type /Catalog /Pages 2 0 R >>';
+    $obj[2] = '<< /Type /Pages /Kids [3 0 R] /Count 1 >>';
+    $obj[3] = '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 594 792] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>';
+    $obj[4] = '<< /Length ' . length($stream) . " >>\nstream\n$stream" . 'endstream';
+    $obj[5] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>';
+    my $pdf = "%PDF-1.4\n";
+    my @offset = (0);
+    for my $i (1 .. 5) {
+        $offset[$i] = length($pdf);
+        $pdf .= "$i 0 obj\n$obj[$i]\nendobj\n";
+    }
+    my $xref = length($pdf);
+    $pdf .= "xref\n0 6\n0000000000 65535 f \n";
+    $pdf .= sprintf("%010d 00000 n \n", $offset[$_]) for 1 .. 5;
+    $pdf .= "trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n$xref\n%%EOF\n";
+    return $pdf;
+}
+
+sub _cells {
+    my ($grid) = @_;
+    die "document renderer requires a grid object\n" if !defined $grid || !$grid->can('cells');
+    my $cells = $grid->cells;
+    die "document renderer requires exactly 81 cells\n" if ref($cells) ne 'ARRAY' || @$cells != 81;
+    return @$cells;
+}
+
+sub _chunk {
+    my ($type, $data) = @_;
+    return pack('N', length($data)) . $type . $data
+        . pack('N', Compress::Zlib::crc32($type . $data));
+}
+sub _pixel {
+    my ($rows, $w, $h, $x, $y, $rgb) = @_;
+    return if $x < 0 || $y < 0 || $x >= $w || $y >= $h;
+    substr($rows->[$y], $x * 3, 3, $rgb);
+}
+sub _vline { my ($r,$w,$h,$x,$rgb)=@_; _pixel($r,$w,$h,$x,$_, $rgb) for 0..$h-1 }
+sub _hline { my ($r,$w,$h,$y,$rgb)=@_; _pixel($r,$w,$h,$_, $y, $rgb) for 0..$w-1 }
+
+my %FONT = (
+  1=>[qw(00100 01100 00100 00100 00100 00100 01110)], 2=>[qw(01110 10001 00001 00010 00100 01000 11111)],
+  3=>[qw(11110 00001 00001 01110 00001 00001 11110)], 4=>[qw(00010 00110 01010 10010 11111 00010 00010)],
+  5=>[qw(11111 10000 10000 11110 00001 00001 11110)], 6=>[qw(01110 10000 10000 11110 10001 10001 01110)],
+  7=>[qw(11111 00001 00010 00100 01000 01000 01000)], 8=>[qw(01110 10001 10001 01110 10001 10001 01110)],
+  9=>[qw(01110 10001 10001 01111 00001 00001 01110)],
+);
+sub _digit {
+    my ($rows,$w,$h,$x,$y,$digit,$scale,$rgb)=@_;
+    my $glyph=$FONT{$digit} || return;
+    for my $gy (0..$#$glyph) { for my $gx (0..4) { next if substr($glyph->[$gy],$gx,1) ne '1';
+        for my $dy (0..$scale-1) { for my $dx (0..$scale-1) { _pixel($rows,$w,$h,$x+$gx*$scale+$dx,$y+$gy*$scale+$dy,$rgb) } }
+    } }
+}
+
+1;

@@ -264,3 +264,19 @@ Version 1.0.0 marks completion of the original solver vision:
 
 See `Release_notes_v1.0.0.txt` for the release summary and
 `docs/Roadmap.txt` for post-1.0 development priorities.
+
+### Document and image exports
+
+Final grids can also be rendered as Markdown, standalone HTML, SVG, PNG, or
+PDF. Binary PNG and PDF output require `--output-file`.
+
+```sh
+bin/sudoku.pl --output quiet --grid-format markdown --file Puzzles/Puzzle3.txt
+bin/sudoku.pl --output quiet --grid-format html --output-file puzzle.html --file Puzzles/Puzzle3.txt
+bin/sudoku.pl --output quiet --grid-format svg --output-file puzzle.svg --file Puzzles/Puzzle3.txt
+bin/sudoku.pl --output quiet --grid-format png --output-file puzzle.png --file Puzzles/Puzzle3.txt
+bin/sudoku.pl --output quiet --grid-format pdf --output-file puzzle.pdf --file Puzzles/Puzzle3.txt
+```
+
+For terminal grids, `--character-set UNICODE_MIXED` combines heavy box
+boundaries with light individual-cell separators.

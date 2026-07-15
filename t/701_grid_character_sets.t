@@ -18,7 +18,7 @@ ok(
 
 is_deeply(
     [ Sudoku::Render::GridCharacters->names ],
-    [ qw(ASCII UNICODE_DOUBLE UNICODE_HEAVY UNICODE_LIGHT) ],
+    [ qw(ASCII UNICODE_DOUBLE UNICODE_HEAVY UNICODE_LIGHT UNICODE_MIXED) ],
     'character sets are discoverable',
 );
 

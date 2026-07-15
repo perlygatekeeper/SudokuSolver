@@ -7,17 +7,23 @@ use JSON::PP ();
 
 use Sudoku::Render::GridCharacters;
 use Sudoku::Render::GridBuilder;
+use Sudoku::Render::Document;
 use Sudoku::Render::Theme;
 
 my @RESULT_FORMAT_ORDER = qw(json csv tsv);
 
 my @GRID_FORMAT_ORDER = qw(
-    pretty compact puzzle-line grid-line solution-line
+    pretty compact markdown html svg png pdf puzzle-line grid-line solution-line
     candidates candidate-list candidate-line candidate-json
 );
 my %GRID_FORMAT_METHOD = (
     pretty  => 'pretty_grid',
     compact         => 'compact_grid',
+    markdown        => 'markdown_grid',
+    html            => 'html_grid',
+    svg             => 'svg_grid',
+    png             => 'png_grid',
+    pdf             => 'pdf_grid',
     'puzzle-line'   => 'puzzle_line',
     'grid-line'     => 'grid_line',
     'solution-line' => 'solution_line',
@@ -269,6 +275,12 @@ sub render_grid {
     my $method = $GRID_FORMAT_METHOD{$format};
     return $self->$method($grid, %args);
 }
+
+sub markdown_grid { return Sudoku::Render::Document->new->markdown($_[1]) }
+sub html_grid     { return Sudoku::Render::Document->new->html($_[1]) }
+sub svg_grid      { return Sudoku::Render::Document->new->svg($_[1]) }
+sub png_grid      { return Sudoku::Render::Document->new->png($_[1]) }
+sub pdf_grid      { return Sudoku::Render::Document->new->pdf($_[1]) }
 
 sub grid_builder {
     my ($self) = @_;
@@ -561,6 +573,9 @@ sub _candidate_cell_line {
 sub pretty_grid {
     my ($self, $grid) = @_;
 
+    return $self->_mixed_pretty_grid($grid)
+        if $self->character_set eq 'UNICODE_MIXED';
+
     die "pretty_grid requires a grid object\n"
         if !defined $grid || !$grid->can('cells');
 
@@ -632,6 +647,49 @@ sub pretty_grid {
         }
     }
 
+    return join("\n", @lines) . "\n";
+}
+
+sub _mixed_pretty_grid {
+    my ($self, $grid) = @_;
+    die "pretty_grid requires a grid object\n"
+        if !defined $grid || !$grid->can('cells');
+
+    my $c = $self->grid_characters;
+    my @values = map {
+        $_->value
+            ? $self->style($_->can('given') && $_->given ? 'given' : 'solved', $_->value)
+            : $self->style('empty', q{})
+    } @{ $grid->cells };
+
+    my $top = $c->{corner_down_right}
+        . join(q{}, map { ($c->{horizontal} x 3) . ($_ == 8 ? q{} : ($_ == 2 || $_ == 5 ? $c->{tee_down} : $c->{top_minor})) } 0 .. 8)
+        . $c->{corner_down_left};
+    my $bottom = $c->{corner_up_right}
+        . join(q{}, map { ($c->{horizontal} x 3) . ($_ == 8 ? q{} : ($_ == 2 || $_ == 5 ? $c->{tee_up} : $c->{bottom_minor})) } 0 .. 8)
+        . $c->{corner_up_left};
+    my $minor = $c->{minor_left}
+        . join(q{}, map { ($c->{horizontal_minor} x 3) . ($_ == 8 ? q{} : ($_ == 2 || $_ == 5 ? $c->{minor_major_cross} : $c->{minor_cross})) } 0 .. 8)
+        . $c->{minor_right};
+    my $major = $c->{tee_right}
+        . join(q{}, map { ($c->{horizontal} x 3) . ($_ == 8 ? q{} : ($_ == 2 || $_ == 5 ? $c->{cross} : $c->{major_minor_cross})) } 0 .. 8)
+        . $c->{tee_left};
+
+    my @lines = ('     1   2   3   4   5   6   7   8   9  ', '   ' . $top);
+    for my $row (0 .. 8) {
+        my @v = @values[$row * 9 .. $row * 9 + 8];
+        my $line = $c->{vertical};
+        for my $col (0 .. 8) {
+            my $display = $v[$col] // q{};
+            my $visible = $display;
+            $visible =~ s/\e\[[0-9;]*m//g;
+            $line .= ' ' . $display . (' ' x (2 - length($visible)));
+            $line .= $col == 8 ? $c->{vertical}
+                : ($col == 2 || $col == 5 ? $c->{vertical} : $c->{vertical_minor});
+        }
+        push @lines, sprintf('%2d %s', $row + 1, $line);
+        push @lines, '   ' . ($row == 8 ? $bottom : ($row == 2 || $row == 5 ? $major : $minor));
+    }
     return join("\n", @lines) . "\n";
 }
 

@@ -65,6 +65,30 @@ my %GRID_CHARACTER_SETS = (
         corner_up_left     => '╝',
     },
 
+
+    UNICODE_MIXED => {
+        horizontal         => '━',
+        vertical           => '┃',
+        vertical_minor     => '│',
+        cross              => '╋',
+        tee_down           => '┳',
+        tee_up             => '┻',
+        tee_right          => '┣',
+        tee_left           => '┫',
+        corner_down_right  => '┏',
+        corner_down_left   => '┓',
+        corner_up_right    => '┗',
+        corner_up_left     => '┛',
+        horizontal_minor   => '─',
+        top_minor          => '┯',
+        bottom_minor       => '┷',
+        minor_left         => '┠',
+        minor_right        => '┨',
+        minor_cross        => '┼',
+        minor_major_cross  => '╂',
+        major_minor_cross  => '┿',
+    },
+
     UNICODE_HEAVY => {
         horizontal         => '━',
         vertical           => '┃',

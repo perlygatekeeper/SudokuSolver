@@ -54,3 +54,12 @@
 - [x] String-returning candidate grid
 - [x] Named grid-format registry and dispatcher
 - [x] CLI grid-format selection and discovery
+
+## Extended document renderers
+
+- [x] Markdown grid output
+- [x] Standalone HTML grid output
+- [x] SVG grid output
+- [x] PNG grid output
+- [x] PDF grid output
+- [x] Mixed-weight Unicode grid character set

@@ -967,3 +967,43 @@ carriage returns, and newlines within fields. Nested strategy statistics remain
 available without flattening through the canonical JSON value in
 `statistics_json`. Contradiction columns are empty for solved and stalled
 results.
+
+Document and image grid renderers
+---------------------------------
+
+The named grid-format registry also provides export-oriented renderers:
+
+- `markdown` emits a pipe-table suitable for README files and issue reports.
+- `html` emits a standalone UTF-8 HTML document with an accessible table.
+- `svg` emits a standalone scalable vector image.
+- `png` emits a 450 by 450 pixel PNG image.
+- `pdf` emits a one-page vector PDF using a standard built-in font.
+
+PNG and PDF are binary formats and therefore require `--output-file` at the
+command line. Markdown, HTML, and SVG may be written to standard output or to a
+file. These renderers deliberately do not contain ANSI terminal styling.
+
+Examples:
+
+    bin/sudoku.pl --output quiet --grid-format markdown \
+        --file Puzzles/Puzzle3.txt
+
+    bin/sudoku.pl --output quiet --grid-format html \
+        --output-file puzzle.html --file Puzzles/Puzzle3.txt
+
+    bin/sudoku.pl --output quiet --grid-format svg \
+        --output-file puzzle.svg --file Puzzles/Puzzle3.txt
+
+    bin/sudoku.pl --output quiet --grid-format png \
+        --output-file puzzle.png --file Puzzles/Puzzle3.txt
+
+    bin/sudoku.pl --output quiet --grid-format pdf \
+        --output-file puzzle.pdf --file Puzzles/Puzzle3.txt
+
+Mixed-weight Unicode grids
+--------------------------
+
+`UNICODE_MIXED` uses heavy lines for the outside border and 3-by-3 box
+boundaries, with light lines between individual cells. The implementation uses
+the corresponding mixed-weight Unicode junction characters, so all crossings
+and tees join correctly.

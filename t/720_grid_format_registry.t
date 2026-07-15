@@ -44,7 +44,7 @@ my $grid = Local::Grid->new(1, (0) x 80);
 
 is_deeply(
     [ $renderer->available_grid_formats ],
-    [ qw(pretty compact puzzle-line grid-line solution-line candidates candidate-list candidate-line candidate-json) ],
+    [ qw(pretty compact markdown html svg png pdf puzzle-line grid-line solution-line candidates candidate-list candidate-line candidate-json) ],
     'available_grid_formats returns formats in discovery order',
 );
 
@@ -88,7 +88,7 @@ eval { $renderer->render_grid($grid, format => 'json') };
 $error = $@;
 like(
     $error,
-    qr/Unknown grid format 'json'; available formats: pretty, compact, puzzle-line, grid-line, solution-line, candidates, candidate-list, candidate-line/,
+    qr/Unknown grid format 'json'; available formats: pretty, compact, markdown, html, svg, png, pdf, puzzle-line, grid-line, solution-line, candidates, candidate-list, candidate-line/,
     'render_grid reports an unknown format and lists available formats',
 );
 
