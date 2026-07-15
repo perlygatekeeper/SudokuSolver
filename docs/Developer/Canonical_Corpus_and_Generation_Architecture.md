@@ -180,9 +180,23 @@ T.compose(U).apply(P)       == U.apply(T.apply(P))
 T.compose(T.inverse)        == identity
 ```
 
-Later Phase 2 increments add shorthand parsing and deterministic seeded
-generation. The full phase must support application, inversion, composition,
-serialization, replay, and deterministic random construction.
+The final Phase 2 increment adds shorthand parsing and deterministic seeded
+generation:
+
+```perl
+my $replayed = Sudoku::Symmetry->from_shorthand($transform->serialize);
+my $random   = Sudoku::Symmetry->random(seed => 384729184);
+```
+
+Shorthand parsing is strict and must reproduce the same transform byte for
+byte when serialized again. Seeded generation uses a private deterministic
+32-bit PRNG and must not read from or modify Perl's global `rand()` state.
+The generated transform is pinned by regression tests so a given integer seed
+continues to produce the same shorthand throughout the v1.2.x line.
+
+Phase 2 is complete when transforms support application, inversion,
+composition, serialization, parsing/replay, and deterministic random
+construction.
 
 ## Phase 3: Canonization and Identity
 

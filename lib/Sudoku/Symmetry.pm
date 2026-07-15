@@ -25,6 +25,49 @@ sub identity {
     return $class->new;
 }
 
+sub from_shorthand {
+    my ($class, $text) = @_;
+
+    die "symmetry shorthand is required\n"
+        unless defined $text && !ref($text) && length $text;
+
+    my $digit = qr/[1-9]{9}/;
+    my $small = qr/[0-2]{3}/;
+    my $locals = qr/[0-2]{3}\|[0-2]{3}\|[0-2]{3}/;
+
+    die "invalid symmetry shorthand\n"
+        unless $text =~ /\AD=($digit);B=($small);R=($locals);S=($small);C=($locals)\z/;
+
+    my ($digits, $bands, $rows, $stacks, $cols) = ($1, $2, $3, $4, $5);
+
+    return $class->new(
+        digits => [ map { 0 + $_ } split //, $digits ],
+        bands  => [ map { 0 + $_ } split //, $bands ],
+        rows   => [ map { [ map { 0 + $_ } split // ] } split /\|/, $rows ],
+        stacks => [ map { 0 + $_ } split //, $stacks ],
+        cols   => [ map { [ map { 0 + $_ } split // ] } split /\|/, $cols ],
+    );
+}
+
+sub random {
+    my ($class, %args) = @_;
+
+    die "random symmetry generation requires an integer seed\n"
+        unless defined $args{seed}
+            && !ref($args{seed})
+            && $args{seed} =~ /\A-?\d+\z/;
+
+    my $rng = Sudoku::Symmetry::_PRNG->new($args{seed});
+
+    return $class->new(
+        digits => _shuffled($rng, [ 1 .. 9 ]),
+        bands  => _shuffled($rng, [ 0 .. 2 ]),
+        rows   => [ map { _shuffled($rng, [ 0 .. 2 ]) } 0 .. 2 ],
+        stacks => _shuffled($rng, [ 0 .. 2 ]),
+        cols   => [ map { _shuffled($rng, [ 0 .. 2 ]) } 0 .. 2 ],
+    );
+}
+
 sub apply_puzzle {
     my ($self, $puzzle) = @_;
     $puzzle = validate_puzzle_string($puzzle);
@@ -215,6 +258,18 @@ sub _compose_absolute_permutations {
     return [ map { $second->[ $first->[$_] ] } 0 .. $#$first ];
 }
 
+sub _shuffled {
+    my ($rng, $values) = @_;
+    my @copy = @$values;
+
+    for (my $index = $#copy; $index > 0; $index--) {
+        my $swap = $rng->integer($index + 1);
+        @copy[$index, $swap] = @copy[$swap, $index];
+    }
+
+    return \@copy;
+}
+
 sub _validate {
     my ($self) = @_;
 
@@ -264,5 +319,42 @@ sub _validate_permutation {
 
     return 1;
 }
+
+
+package Sudoku::Symmetry::_PRNG;
+
+use strict;
+use warnings;
+
+sub new {
+    my ($class, $seed) = @_;
+
+    # Normalize to an unsigned 32-bit state. Xorshift32 cannot use zero.
+    my $state = $seed & 0xffffffff;
+    $state = 0x6d2b79f5 if $state == 0;
+
+    return bless { state => $state }, $class;
+}
+
+sub integer {
+    my ($self, $limit) = @_;
+    die "random integer limit must be positive\n" unless $limit > 0;
+    return $self->_next_u32 % $limit;
+}
+
+sub _next_u32 {
+    my ($self) = @_;
+    my $x = $self->{state};
+
+    $x ^= ($x << 13) & 0xffffffff;
+    $x ^= ($x >> 17);
+    $x ^= ($x << 5) & 0xffffffff;
+    $x &= 0xffffffff;
+
+    $self->{state} = $x;
+    return $x;
+}
+
+package Sudoku::Symmetry;
 
 1;

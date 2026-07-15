@@ -146,8 +146,10 @@ Development increments:
 * [x] Serialize a transform into stable human-readable shorthand.
 * [x] Invert transforms and verify exact restoration.
 * [x] Compose transforms and verify equivalence to sequential application.
-* [ ] Parse serialized transforms for replay.
-* [ ] Generate deterministic random transforms from a supplied seed.
+* [x] Parse serialized transforms for replay.
+* [x] Generate deterministic random transforms from a supplied seed.
+
+Status: complete
 
 Definition of done:
 

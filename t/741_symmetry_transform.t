@@ -122,4 +122,60 @@ ok !$compose_ok, 'compose rejects non-transform arguments';
 like $@, qr/another Sudoku::Symmetry transform/,
     'compose rejection has a useful error';
 
+# Phase 2 shorthand parsing and seeded generation guarantees.
+my $parsed = Sudoku::Symmetry->from_shorthand($combined->serialize);
+ok $parsed->equals($combined),
+    'serialized shorthand parses back into the same transform';
+is $parsed->serialize, $combined->serialize,
+    'parsed transform reserializes byte-for-byte identically';
+is $parsed->apply_puzzle($puzzle), $combined->apply_puzzle($puzzle),
+    'parsed transform replays the same puzzle transformation';
+
+for my $bad (
+    undef,
+    q{},
+    'D=123456789;B=012;R=012|012|012;S=012',
+    'D=123456788;B=012;R=012|012|012;S=012;C=012|012|012',
+    'D=123456789;B=013;R=012|012|012;S=012;C=012|012|012',
+    'D=123456789;B=012;R=012|012;S=012;C=012|012|012',
+) {
+    my $ok = eval { Sudoku::Symmetry->from_shorthand($bad); 1 };
+    ok !$ok, 'malformed or invalid shorthand is rejected';
+    like $@, qr/(?:required|invalid|permutation)/,
+        'shorthand rejection has a useful error';
+}
+
+my $random_a = Sudoku::Symmetry->random(seed => 123456789);
+my $random_b = Sudoku::Symmetry->random(seed => 123456789);
+my $random_c = Sudoku::Symmetry->random(seed => 123456790);
+
+ok $random_a->equals($random_b),
+    'the same seed produces the same transform';
+is $random_a->serialize,
+    'D=746123859;B=102;R=210|210|120;S=102;C=021|012|102',
+    'seeded transform generation has a pinned reproducible result';
+ok !$random_a->equals($random_c),
+    'a nearby seed produces a different transform';
+is clue_count($random_a->apply_puzzle($puzzle)), clue_count($puzzle),
+    'seeded random transform preserves clue count';
+is $random_a->inverse->apply_puzzle($random_a->apply_puzzle($puzzle)),
+    $puzzle,
+    'seeded random transform remains exactly invertible';
+
+srand 24680;
+my $global_first = rand();
+Sudoku::Symmetry->random(seed => 97531);
+my $global_after = rand();
+srand 24680;
+rand();
+my $global_expected = rand();
+is $global_after, $global_expected,
+    'seeded symmetry generation does not disturb Perl global rand state';
+
+for my $bad_seed (undef, q{}, 'seed', '1.5', []) {
+    my $ok = eval { Sudoku::Symmetry->random(seed => $bad_seed); 1 };
+    ok !$ok, 'invalid random seed is rejected';
+    like $@, qr/integer seed/, 'seed rejection has a useful error';
+}
+
 done_testing();
