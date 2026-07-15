@@ -428,7 +428,7 @@ my %FONT = (
 sub _digit {
     my ($rows,$w,$h,$x,$y,$digit,$scale,$rgb)=@_;
     my $glyph=$FONT{$digit} || return;
-    for my $gy (0..$#$glyph) { for my $gx (0..19) { next if substr($glyph->[$gy],$gx,1) ne '1';
+    for my $gy (0..$#$glyph) { for my $gx (0..4) { next if substr($glyph->[$gy],$gx,1) ne '1';
         for my $dy (0..$scale-1) { for my $dx (0..$scale-1) { _pixel($rows,$w,$h,$x+$gx*$scale+$dx,$y+$gy*$scale+$dy,$rgb) } }
     } }
 }
