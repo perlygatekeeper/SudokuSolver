@@ -6,6 +6,7 @@
 PERL          ?= perl5.34
 PROVE         := prove
 SCRIPT        := bin/sudoku.pl
+SCRIPTS       := $(shell ls bin/*.pl)
 MODS          := $(shell find lib -name '*.pm' | sort)
 PUZZLE        := Puzzles/Puzzle3.txt
 PUZZLEDIR     := Puzzles/
@@ -105,17 +106,17 @@ benchmark-first50:
 
 benchmark-first100:
 	@echo "== Canonical 17-Clue Benchmark (First 100) =="
-	@$(PERL) -Ilib $(SCRIPT) --benchmark Puzzles/sudoku17-first100.txt
+	@$(PERL) -Ilib $(SCRIPT) --benchmark Puzzles/Benchmarks_Corpus/sudoku17-first100.txt
 
 benchmark-first1000:
 	@echo "== Canonical 17-Clue Benchmark (First 1000) =="
-	@$(PERL) -Ilib $(SCRIPT) --benchmark Puzzles/sudoku17-first1000.txt
+	@$(PERL) -Ilib $(SCRIPT) --benchmark Puzzles/Benchmarks_Corpus/sudoku17-first1000.txt
 
 
 benchmark-all-1000:
 	@set -e; \
 	found=0; \
-	for puzzle in Puzzles/Benchmarks_Corpus/sudoku17-??-158.txt; do \
+	for puzzle in Puzzles/Benchmarks_Corpus/sudoku17-??-1000.txt; do \
 		[ -f "$$puzzle" ] || continue; \
 		found=1; \
 		report="$${puzzle%.txt}-benchmark.txt"; \
@@ -139,7 +140,7 @@ benchmark-all-1000:
 
 benchmark-final4:
 	@echo "== Canonical 17-Clue Benchmark (Final 4 Stalled Puzzles) =="
-	@$(PERL) -Ilib $(SCRIPT) --benchmark Puzzles/sudoku17-final4.txt
+	@$(PERL) -Ilib $(SCRIPT) --benchmark Puzzles/Benchmarks_Corpus/sudoku17-final4.txt
 
 corpus-audit:
 	@$(PERL) -Ilib bin/audit-coordinate-encoding.pl
@@ -232,7 +233,7 @@ backup:
 	$(TAR) -cvzf ./$(NAME)-`date +%Y%m%d-%H%M`.tgz \
 		Makefile \
 		Readme.md \
-		$(SCRIPT) \
+		$(SCRIPTS) \
 		$(MODS) \
 		$(THEMESDIR) \
 		$(TESTDIR)*.t \
@@ -251,7 +252,7 @@ version:
 
 gitadd:
 	git add Makefile Readme.md \
-		$(SCRIPT) $(MODS) $(VERSION_MOD) \
+		$(SCRIPTS) $(MODS) $(VERSION_MOD) \
 		$(THEMEDIR)*.theme $(TESTDIR)*.t $(DOCSDIR)*.txt \
 		$(DOCSDIR)Developer/*.md \
 		$(DOCSDIR)benchmark_*.txt \

@@ -135,16 +135,50 @@ sub canonical_form {
     $puzzle = validate_puzzle_string($puzzle);
 
     my @source_rows = map { substr($puzzle, $_ * 9, 9) } 0 .. 8;
+    my @row_specs = _spatial_specs('row');
+    my @col_specs = _spatial_specs('column');
+
+    # The canonical representative must have the lexicographically smallest
+    # possible first row.  Determine that row before entering the full
+    # row-family x column-family search, then retain only column transforms
+    # capable of producing it for each possible source row.  This is exact
+    # pruning: every discarded candidate already loses within its first nine
+    # characters and therefore cannot be the global minimum.
+    my ($best_first_row, %first_row_columns);
+    for my $source_row_index (0 .. 8) {
+        my $row = $source_rows[$source_row_index];
+        for my $col_index (0 .. $#col_specs) {
+            my $first_row = _normalized_row(
+                $row,
+                $col_specs[$col_index]{target_to_source},
+            );
+
+            if (!defined($best_first_row) || $first_row lt $best_first_row) {
+                $best_first_row = $first_row;
+                %first_row_columns = (
+                    $source_row_index => [ $col_index ],
+                );
+            }
+            elsif ($first_row eq $best_first_row) {
+                push @{ $first_row_columns{$source_row_index} }, $col_index;
+            }
+        }
+    }
+
     my $best_puzzle;
     my ($best_row_spec, $best_col_spec, $best_digits);
 
-    for my $row_spec (_spatial_specs('row')) {
+    for my $row_spec (@row_specs) {
+        my $first_source_row = $row_spec->{target_to_source}[0];
+        my $eligible_columns = $first_row_columns{$first_source_row} || next;
         my @rows = map { $source_rows[$_] } @{ $row_spec->{target_to_source} };
 
-        for my $col_spec (_spatial_specs('column')) {
+        for my $col_index (@$eligible_columns) {
+            my $col_spec = $col_specs[$col_index];
             my @digit_map = (0) x 10;
             my $next_digit = 1;
             my $candidate = q{};
+            my $lost = 0;
 
             for my $target_row (0 .. 8) {
                 my $row = $rows[$target_row];
@@ -158,15 +192,16 @@ sub canonical_form {
 
                     if (defined $best_puzzle) {
                         my $prefix_length = length $candidate;
-                        my $best_prefix = substr($best_puzzle, 0, $prefix_length);
-                        last if $candidate gt $best_prefix;
+                        if ($candidate gt substr($best_puzzle, 0, $prefix_length)) {
+                            $lost = 1;
+                            last;
+                        }
                     }
                 }
-                last if defined($best_puzzle)
-                    && length($candidate) < (($target_row + 1) * 9);
+                last if $lost;
             }
 
-            next if length($candidate) != 81;
+            next if $lost || length($candidate) != 81;
             next if defined($best_puzzle) && $candidate ge $best_puzzle;
 
             for my $source_digit (1 .. 9) {
@@ -194,6 +229,25 @@ sub canonical_form {
         transform => $combined,
         stage     => 'canonical',
     );
+}
+
+sub _normalized_row {
+    my ($row, $target_to_source) = @_;
+
+    my @digit_map = (0) x 10;
+    my $next_digit = 1;
+    my $normalized = q{};
+
+    for my $source_col (@$target_to_source) {
+        my $digit = substr($row, $source_col, 1);
+        if ($digit ne '0') {
+            $digit_map[$digit] ||= $next_digit++;
+            $digit = $digit_map[$digit];
+        }
+        $normalized .= $digit;
+    }
+
+    return $normalized;
 }
 
 my %SPATIAL_SPECS;

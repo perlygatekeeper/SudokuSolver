@@ -182,7 +182,7 @@ form across stack and within-stack column permutations. The fourth increment com
 an exhaustive correctness baseline spanning 1,679,616 spatial candidates. It
 returns an exact witness transform and establishes idempotence and full symmetry
 invariance. This baseline is not yet fast enough for the complete corpus;
-performance pruning remains required before Phase 4 generation.
+the first-row pruning pass now removes every transform pair that cannot match the globally minimal first row before full candidate construction. Further profiling may continue, but corpus-scale optimization is now underway.
 
 ### Phase 4 — Definitive Master Corpus
 

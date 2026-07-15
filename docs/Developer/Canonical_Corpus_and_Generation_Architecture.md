@@ -367,3 +367,14 @@ It is intentionally retained as a baseline while later Phase 3 work introduces
 pruning or indexing suitable for all 49,158 corpus records. Optimized
 implementations must produce byte-identical canonical strings and equivalent
 witness transforms.
+
+
+## Canonical Search Pruning
+
+The exhaustive full canonical form remains the correctness definition. The
+optimized search first determines the globally smallest possible digit-normalized
+first row across all source rows and legal column-family transforms. During the
+full search, it considers only transform pairs capable of producing that first
+row. This pruning is exact: a candidate with a larger first row cannot be the
+lexicographically smallest 81-character representative. Prefix comparison then
+stops remaining candidates as soon as they exceed the current best result.
