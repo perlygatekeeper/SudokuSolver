@@ -256,6 +256,25 @@ canonicalize(transform(P))    == canonicalize(P)
 Permanent canonical IDs are assigned only after canonical ordering is stable.
 The canonical coordinate encoding becomes the content-derived fingerprint.
 
+
+### Column-side normal form
+
+`Sudoku::Canonical->column_normal_form($puzzle)` enumerates all 1,296
+combinations of stack order and column order within each stack. Every candidate
+is digit-normalized before lexical comparison. The result stage is
+`column-normal`, and the result records the exact composed transform that maps
+the source puzzle to the selected representative.
+
+The column-normal layer guarantees:
+
+- idempotence;
+- invariance under digit permutations;
+- invariance under stack and column-within-stack permutations; and
+- an exact invertible witness transform.
+
+This remains a one-sided normalization layer. Full canonization must search or
+otherwise reconcile both row-side and column-side symmetry families.
+
 ## Phase 4: Definitive Master Corpus
 
 The authoritative corpus contains one record for every canonical 17-clue

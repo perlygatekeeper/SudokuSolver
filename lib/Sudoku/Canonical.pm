@@ -9,7 +9,7 @@ use Sudoku::Canonical::Result;
 use Sudoku::CoordinateEncoding qw(validate_puzzle_string);
 use Sudoku::Symmetry;
 
-our @EXPORT_OK = qw(normalize_digits normalize_rows);
+our @EXPORT_OK = qw(normalize_digits normalize_rows normalize_columns);
 
 sub normalize_digits {
     my ($puzzle) = @_;
@@ -19,6 +19,11 @@ sub normalize_digits {
 sub normalize_rows {
     my ($puzzle) = @_;
     return __PACKAGE__->row_normal_form($puzzle)->puzzle;
+}
+
+sub normalize_columns {
+    my ($puzzle) = @_;
+    return __PACKAGE__->column_normal_form($puzzle)->puzzle;
 }
 
 sub digit_normal_form {
@@ -76,6 +81,40 @@ sub row_normal_form {
                         puzzle    => $digit->puzzle,
                         transform => $combined,
                         stage     => 'row-normal',
+                    );
+                }
+            }
+        }
+    }
+
+    return $best;
+}
+
+sub column_normal_form {
+    my ($class, $puzzle) = @_;
+    $puzzle = validate_puzzle_string($puzzle);
+
+    my $best;
+
+    for my $stacks (_permutations([ 0 .. 2 ])) {
+        for my $cols0 (_permutations([ 0 .. 2 ])) {
+            for my $cols1 (_permutations([ 0 .. 2 ])) {
+                for my $cols2 (_permutations([ 0 .. 2 ])) {
+                    my $spatial = Sudoku::Symmetry->new(
+                        stacks => $stacks,
+                        cols   => [ $cols0, $cols1, $cols2 ],
+                    );
+
+                    my $moved = $spatial->apply_puzzle($puzzle);
+                    my $digit = $class->digit_normal_form($moved);
+                    my $combined = $spatial->compose($digit->transform);
+
+                    next if defined $best && $digit->puzzle ge $best->puzzle;
+
+                    $best = Sudoku::Canonical::Result->new(
+                        puzzle    => $digit->puzzle,
+                        transform => $combined,
+                        stage     => 'column-normal',
                     );
                 }
             }

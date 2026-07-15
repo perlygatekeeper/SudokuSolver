@@ -168,7 +168,7 @@ Development increments:
 * [x] Add deterministic digit normalization by row-major first appearance.
 * [x] Record the exact invertible digit transform in a canonical-result object.
 * [x] Minimize row permutations within bands and band permutations.
-* [ ] Minimize column permutations within stacks and stack permutations.
+* [x] Minimize column permutations within stacks and stack permutations.
 * [ ] Combine spatial and digit normalization into one deterministic representative.
 * [ ] Require idempotent full canonization and invariance under every supported symmetry.
 * [ ] Produce stable canonical fingerprints from canonical coordinate encodings.
@@ -177,7 +177,9 @@ Development increments:
 The first increment established the digit-normal form. The second increment
 adds exhaustive row-side normalization across all 1,296 band and within-band
 row permutations, digit-normalizing every candidate before lexical comparison.
-Column-side and full spatial canonization remain incomplete.
+The third increment adds the corresponding 1,296-candidate column-side normal
+form across stack and within-stack column permutations. Full spatial
+canonization, which must combine both families, remains incomplete.
 
 ### Phase 4 — Definitive Master Corpus
 
