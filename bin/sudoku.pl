@@ -11,6 +11,7 @@ $name =~ s'.*/''; # remove path--like basename
 use Getopt::Long qw(GetOptions);
 use Pod::Usage qw(pod2usage);
 use Sudoku ();
+use Sudoku::CLI::Suggestion qw(suggest_value);
 
 my $puzzle_file;
 my $puzzle_index;
@@ -134,7 +135,6 @@ if (defined $positional_arg) {
   }
 }
 
-require Solver;
 require Sudoku::Render::Text;
 
 $grid_format = lc $grid_format if defined $grid_format;
@@ -146,13 +146,48 @@ if (defined $character_set) {
   $character_set =~ tr/-/_/;
 }
 
-die "Unknown color mode '$color'; available modes: auto, always, never\n"
-  if $color !~ /\A(?:auto|always|never)\z/;
+my @output_modes = qw(quiet normal explain trace debug);
+my @color_modes = qw(auto always never);
+my @color_themes = Sudoku::Render::Text->available_color_themes;
+my @character_sets = Sudoku::Render::Text->available_character_sets;
 
-my %known_color_theme = map { $_ => 1 } Sudoku::Render::Text->available_color_themes;
-die "Unknown color theme '$color_theme'; available themes: "
-  . join(', ', Sudoku::Render::Text->available_color_themes) . "\n"
-  if !$known_color_theme{$color_theme};
+_validate_cli_value(
+  label   => 'output mode',
+  value   => $output_mode,
+  choices => \@output_modes,
+) if defined $output_mode;
+
+_validate_cli_value(
+  label   => 'color mode',
+  value   => $color,
+  choices => \@color_modes,
+);
+
+_validate_cli_value(
+  label   => 'color theme',
+  value   => $color_theme,
+  choices => \@color_themes,
+);
+
+_validate_cli_value(
+  label   => 'character set',
+  value   => $character_set,
+  choices => \@character_sets,
+) if defined $character_set;
+
+my @grid_formats = Sudoku::Render::Text->available_grid_formats;
+_validate_cli_value(
+  label   => 'grid format',
+  value   => $grid_format,
+  choices => \@grid_formats,
+) if defined $grid_format;
+
+my @result_formats = Sudoku::Render::Text->available_result_formats;
+_validate_cli_value(
+  label   => 'result format',
+  value   => $result_format,
+  choices => \@result_formats,
+) if defined $result_format;
 
 my $color_enabled = $color eq 'always' ? 1
   : $color eq 'never' ? 0
@@ -164,16 +199,6 @@ my $renderer = Sudoku::Render::Text->new(
   color_theme    => $color_theme,
 );
 $renderer->color_enabled($color_enabled);
-
-if (defined $grid_format && !$renderer->supports_grid_format($grid_format)) {
-  my $available = join ', ', $renderer->available_grid_formats;
-  die "Unknown grid format '$grid_format'; available formats: $available\n";
-}
-
-if (defined $result_format && !$renderer->supports_result_format($result_format)) {
-  my $available = join ', ', $renderer->available_result_formats;
-  die "Unknown result format '$result_format'; available formats: $available\n";
-}
 
 if (defined $result_format && $color eq 'always') {
   die "--color always cannot be combined with --result-format; machine-readable output is never colored\n";
@@ -188,6 +213,8 @@ if (defined $result_format && (defined $grid_format || defined $character_set)) 
 }
 
 $output_mode = 'quiet' if defined $result_format;
+
+require Solver;
 
 my $solver = Solver->new(
   renderer => $renderer,
@@ -221,6 +248,27 @@ elsif (defined $grid_format || defined $character_set) {
     $grid,
     format => $grid_format,
   );
+}
+
+
+sub _validate_cli_value {
+  my (%args) = @_;
+  my %known = map { $_ => 1 } @{ $args{choices} };
+  return if $known{ $args{value} };
+  _unknown_cli_value(%args);
+}
+
+sub _unknown_cli_value {
+  my (%args) = @_;
+
+  my $available = join ', ', @{ $args{choices} };
+  my $message = "Unknown $args{label} '$args{value}'; available values: $available\n";
+  my $suggestion = suggest_value(
+    input   => $args{value},
+    choices => $args{choices},
+  );
+  $message .= "Did you mean '$suggestion'?\n" if defined $suggestion;
+  die $message;
 }
 
 1;
