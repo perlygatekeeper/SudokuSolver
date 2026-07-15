@@ -8,14 +8,18 @@ use JSON::PP ();
 use Sudoku::Render::GridCharacters;
 use Sudoku::Render::GridBuilder;
 
-my @RESULT_FORMAT_ORDER = qw(json);
+my @RESULT_FORMAT_ORDER = qw(json csv tsv);
 
 my @GRID_FORMAT_ORDER = qw(
-    pretty compact candidates candidate-list candidate-line candidate-json
+    pretty compact puzzle-line grid-line solution-line
+    candidates candidate-list candidate-line candidate-json
 );
 my %GRID_FORMAT_METHOD = (
     pretty  => 'pretty_grid',
-    compact    => 'compact_grid',
+    compact         => 'compact_grid',
+    'puzzle-line'   => 'puzzle_line',
+    'grid-line'     => 'grid_line',
+    'solution-line' => 'solution_line',
     candidates     => 'candidate_grid',
     'candidate-list' => 'candidate_list',
     'candidate-line' => 'candidate_line',
@@ -69,16 +73,110 @@ sub supports_result_format {
     return defined $format && grep { $_ eq $format } @RESULT_FORMAT_ORDER;
 }
 
+sub render_result {
+    my ($self, $solver, $grid, %args) = @_;
+
+    my $format = delete $args{format};
+    $format //= 'json';
+
+    if (!$self->supports_result_format($format)) {
+        my $available = join ', ', $self->available_result_formats;
+        die "Unknown result format '$format'; available formats: $available\n";
+    }
+
+    my $method = "result_$format";
+    return $self->$method($solver, $grid, %args);
+}
+
 sub result_json {
     my ($self, $solver, $grid) = @_;
+    my $document = $self->_result_document($solver, $grid);
+    return JSON::PP->new->canonical(1)->pretty(1)->encode($document);
+}
 
-    die "result_json requires a solver object\n"
+sub result_csv {
+    my ($self, $solver, $grid) = @_;
+    return $self->_result_delimited($solver, $grid, q{,});
+}
+
+sub result_tsv {
+    my ($self, $solver, $grid) = @_;
+    return $self->_result_delimited($solver, $grid, "\t");
+}
+
+sub _result_delimited {
+    my ($self, $solver, $grid, $delimiter) = @_;
+
+    my $document = $self->_result_document($solver, $grid);
+    my @columns = qw(
+        status puzzle current_grid solution solved_cells remaining_cells
+        deductions difficulty_label difficulty_score difficulty_rating_version
+        statistics_json contradiction_kind contradiction_message
+        contradiction_location contradiction_explanation
+    );
+
+    my %values = (
+        status                    => $document->{status},
+        puzzle                    => $document->{puzzle},
+        current_grid              => $document->{current_grid},
+        solution                  => $document->{solution},
+        solved_cells              => $document->{solved_cells},
+        remaining_cells           => $document->{remaining_cells},
+        deductions                => $document->{deductions},
+        difficulty_label          => $document->{difficulty}{label},
+        difficulty_score          => $document->{difficulty}{score},
+        difficulty_rating_version => $document->{difficulty}{rating_version},
+        statistics_json           => JSON::PP->new->canonical(1)->encode(
+            $document->{statistics},
+        ),
+        contradiction_kind        => $document->{contradiction}
+            ? $document->{contradiction}{kind} : undef,
+        contradiction_message     => $document->{contradiction}
+            ? $document->{contradiction}{message} : undef,
+        contradiction_location    => $document->{contradiction}
+            ? $document->{contradiction}{location} : undef,
+        contradiction_explanation => $document->{contradiction}
+            ? $document->{contradiction}{explanation} : undef,
+    );
+
+    my $header = join $delimiter, map {
+        _delimited_field($_, $delimiter)
+    } @columns;
+    my $row = join $delimiter, map {
+        _delimited_field($values{$_}, $delimiter)
+    } @columns;
+
+    return "$header\n$row\n";
+}
+
+sub _delimited_field {
+    my ($value, $delimiter) = @_;
+    $value = q{} if !defined $value;
+    $value = "$value";
+
+    if ($delimiter eq q{,}) {
+        $value =~ s/"/""/g;
+        return qq{"$value"} if $value =~ /[",\r\n]/;
+        return $value;
+    }
+
+    $value =~ s/\\/\\\\/g;
+    $value =~ s/\t/\\t/g;
+    $value =~ s/\r/\\r/g;
+    $value =~ s/\n/\\n/g;
+    return $value;
+}
+
+sub _result_document {
+    my ($self, $solver, $grid) = @_;
+
+    die "result output requires a solver object\n"
         if !defined $solver || !$solver->can('deduction_count');
-    die "result_json requires a grid object\n"
+    die "result output requires a grid object\n"
         if !defined $grid || !$grid->can('cells');
 
     my $cells = $grid->cells;
-    die "result_json requires exactly 81 cells\n"
+    die "result output requires exactly 81 cells\n"
         if ref($cells) ne 'ARRAY' || @$cells != 81;
 
     my $status = $solver->has_contradiction ? 'contradiction'
@@ -117,7 +215,7 @@ sub result_json {
         };
     }
 
-    return JSON::PP->new->canonical(1)->pretty(1)->encode($document);
+    return $document;
 }
 
 
@@ -147,6 +245,55 @@ sub grid_builder {
     return Sudoku::Render::GridBuilder->new(
         character_set => $self->{character_set},
     );
+}
+
+sub puzzle_line {
+    my ($self, $grid, %args) = @_;
+    my $empty = _line_empty_character(%args);
+    my $cells = _line_cells($grid, 'puzzle_line');
+
+    return join(q{}, map {
+        $_->can('given') && $_->given ? ($_->value || $empty) : $empty
+    } @$cells) . "\n";
+}
+
+sub grid_line {
+    my ($self, $grid, %args) = @_;
+    my $empty = _line_empty_character(%args);
+    my $cells = _line_cells($grid, 'grid_line');
+
+    return join(q{}, map { $_->value || $empty } @$cells) . "\n";
+}
+
+sub solution_line {
+    my ($self, $grid) = @_;
+    my $cells = _line_cells($grid, 'solution_line');
+
+    die "solution_line requires a solved grid\n"
+        if grep { !$_->value } @$cells;
+
+    return join(q{}, map { $_->value } @$cells) . "\n";
+}
+
+sub _line_cells {
+    my ($grid, $context) = @_;
+    die "$context requires a grid object\n"
+        if !defined $grid || !$grid->can('cells');
+
+    my $cells = $grid->cells;
+    die "$context requires exactly 81 cells\n"
+        if ref($cells) ne 'ARRAY' || @$cells != 81;
+    return $cells;
+}
+
+sub _line_empty_character {
+    my (%args) = @_;
+    my $empty = exists $args{empty_cell_character}
+        ? $args{empty_cell_character}
+        : '0';
+    die "empty_cell_character must be exactly one character\n"
+        if !defined $empty || length($empty) != 1;
+    return $empty;
 }
 
 sub compact_grid {

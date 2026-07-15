@@ -161,7 +161,11 @@ my $grid = $solver->run(
 );
 
 if (defined $result_format) {
-  print $renderer->result_json($solver, $grid);
+  print $renderer->render_result(
+    $solver,
+    $grid,
+    format => $result_format,
+  );
 }
 elsif (defined $grid_format || defined $character_set) {
   binmode STDOUT, ':encoding(UTF-8)'
@@ -194,6 +198,8 @@ sudoku.pl - solve a Sudoku puzzle
   sudoku.pl --list-grid-formats
   sudoku.pl --list-character-sets
   sudoku.pl --result-format json --file Puzzles/Puzzle3.txt
+  sudoku.pl --result-format csv --file Puzzles/Puzzle3.txt
+  sudoku.pl --output quiet --grid-format solution-line --file Puzzles/Puzzle3.txt
   sudoku.pl --list-result-formats
   sudoku.pl --output-file result.txt --file Puzzles/Puzzle3.txt
   sudoku.pl --help
@@ -238,8 +244,9 @@ Select human output style. Current modes are quiet, normal, explain, trace, and 
 
 =item B<--grid-format FORMAT>
 
-Render the final grid using a named format. Current formats are pretty, compact, candidates,
-candidate-list, candidate-line, and candidate-json. This is opt-in and does not alter the existing default output.
+Render the final grid using a named format. Current formats are pretty, compact,
+puzzle-line, grid-line, solution-line, candidates, candidate-list, candidate-line,
+and candidate-json. This is opt-in and does not alter the existing default output.
 Use C<--output quiet> when only the grid should be printed.
 
 =item B<--character-set SET>
@@ -255,7 +262,9 @@ List the available named grid formats and exit.
 
 =item B<--result-format FORMAT>
 
-Render a structured solve result. Current format: json. This suppresses human narration and cannot be combined with grid-format options.
+Render a structured solve result. Current formats are json, csv, and tsv.
+This suppresses human narration and cannot be combined with grid-format options.
+CSV and TSV output contain one header row followed by one solve-result row.
 
 =item B<--list-result-formats>
 

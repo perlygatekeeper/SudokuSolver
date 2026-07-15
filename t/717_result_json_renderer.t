@@ -38,6 +38,7 @@ ok(!defined $d->{solution},'no solution when stalled');
 ok(!defined $d->{contradiction},'no contradiction when stalled');
 is(substr($json,-1),"\n",'newline');
 ok($r->supports_result_format('json'),'json supported');
-is_deeply([$r->available_result_formats],['json'],'result discovery');
+is_deeply([$r->available_result_formats],[qw(json csv tsv)],'result discovery');
+is($r->render_result($solver,$grid,format=>'json'),$json,'dispatcher renders JSON');
 my $e=''; eval {$r->result_json(undef,$grid)}; $e=$@; like($e,qr/requires a solver/,'solver required');
 done_testing;

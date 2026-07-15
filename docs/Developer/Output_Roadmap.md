@@ -11,12 +11,12 @@
 - [x] Compact grid renderer (configurable empty-cell character).
 - [x] Pretty grid renderer (string-returning).
 - [x] Named grid-format registry and dispatcher.
-- [ ] Expose grid-format discovery through the command line.
+- [x] Expose grid-format discovery through the command line.
 
 ## Phase 3
 
 - [x] Candidate grid renderer (string-returning).
-- [ ] Candidate exports
+- [x] Candidate exports
   - [x] Human-readable
   - [x] Single-line
   - [x] JSON
@@ -24,8 +24,8 @@
 ## Phase 4
 
 - [x] General JSON solve-result output
-- [ ] CSV / TSV output
-- [ ] One-line puzzle / solution output
+- [x] CSV / TSV output
+- [x] One-line puzzle / solution output
 
 ## Phase 5
 

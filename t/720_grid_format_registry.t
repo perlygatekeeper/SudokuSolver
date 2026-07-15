@@ -44,13 +44,16 @@ my $grid = Local::Grid->new(1, (0) x 80);
 
 is_deeply(
     [ $renderer->available_grid_formats ],
-    [ qw(pretty compact candidates candidate-list candidate-line candidate-json) ],
+    [ qw(pretty compact puzzle-line grid-line solution-line candidates candidate-list candidate-line candidate-json) ],
     'available_grid_formats returns formats in discovery order',
 );
 
 is($renderer->default_grid_format, 'pretty', 'pretty is the default grid format');
 ok($renderer->supports_grid_format('pretty'), 'pretty format is supported');
 ok($renderer->supports_grid_format('compact'), 'compact format is supported');
+ok($renderer->supports_grid_format('puzzle-line'), 'puzzle-line format is supported');
+ok($renderer->supports_grid_format('grid-line'), 'grid-line format is supported');
+ok($renderer->supports_grid_format('solution-line'), 'solution-line format is supported');
 ok($renderer->supports_grid_format('candidates'), 'candidates format is supported');
 ok($renderer->supports_grid_format('candidate-list'), 'candidate-list format is supported');
 ok($renderer->supports_grid_format('candidate-line'), 'candidate-line format is supported');
@@ -85,7 +88,7 @@ eval { $renderer->render_grid($grid, format => 'json') };
 $error = $@;
 like(
     $error,
-    qr/Unknown grid format 'json'; available formats: pretty, compact, candidates, candidate-list, candidate-line/,
+    qr/Unknown grid format 'json'; available formats: pretty, compact, puzzle-line, grid-line, solution-line, candidates, candidate-list, candidate-line/,
     'render_grid reports an unknown format and lists available formats',
 );
 

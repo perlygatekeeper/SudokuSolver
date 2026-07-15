@@ -911,3 +911,59 @@ sudoku.pl --result-format json --file puzzle.sdk
 ```
 
 This option suppresses human narration so standard output remains valid JSON.
+
+
+## One-Line Puzzle, Grid, and Solution Formats
+
+Three named grid formats provide newline-terminated 81-character records:
+
+- `puzzle-line` emits only the original givens and uses `0` for every other cell.
+- `grid-line` emits the current grid state and uses `0` for unsolved cells.
+- `solution-line` emits all 81 solved values and rejects an unsolved grid.
+
+```bash
+sudoku.pl --output quiet --grid-format puzzle-line --file puzzle.sdk
+sudoku.pl --output quiet --grid-format grid-line --file puzzle.sdk
+sudoku.pl --output quiet --grid-format solution-line --file puzzle.sdk
+```
+
+The library methods `puzzle_line` and `grid_line` accept an optional
+`empty_cell_character` argument when a character other than `0` is required.
+`solution-line` never contains an empty-cell marker.
+
+
+## CSV and TSV Solve Results
+
+Use `--result-format csv` or `--result-format tsv` to produce a stable tabular
+solve record. Each document contains one header row and one result row.
+
+```bash
+sudoku.pl --result-format csv --file puzzle.sdk
+sudoku.pl --result-format tsv --file puzzle.sdk
+```
+
+The columns are:
+
+```text
+status
+puzzle
+current_grid
+solution
+solved_cells
+remaining_cells
+deductions
+difficulty_label
+difficulty_score
+difficulty_rating_version
+statistics_json
+contradiction_kind
+contradiction_message
+contradiction_location
+contradiction_explanation
+```
+
+CSV follows standard double-quote escaping. TSV escapes backslashes, tabs,
+carriage returns, and newlines within fields. Nested strategy statistics remain
+available without flattening through the canonical JSON value in
+`statistics_json`. Contradiction columns are empty for solved and stalled
+results.
