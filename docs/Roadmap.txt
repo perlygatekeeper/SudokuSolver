@@ -163,10 +163,19 @@ Definition of done:
 
 ### Phase 3 — Canonization and Stable Identity
 
-* Reduce symmetry-equivalent puzzles to one deterministic representative.
-* Require idempotent canonization.
-* Produce stable canonical fingerprints from canonical coordinate encodings.
-* Assign permanent corpus IDs only after canonical ordering is stable.
+Development increments:
+
+* [x] Add deterministic digit normalization by row-major first appearance.
+* [x] Record the exact invertible digit transform in a canonical-result object.
+* [ ] Minimize row permutations within bands and band permutations.
+* [ ] Minimize column permutations within stacks and stack permutations.
+* [ ] Combine spatial and digit normalization into one deterministic representative.
+* [ ] Require idempotent full canonization and invariance under every supported symmetry.
+* [ ] Produce stable canonical fingerprints from canonical coordinate encodings.
+* [ ] Assign permanent corpus IDs only after canonical ordering is stable.
+
+The first increment deliberately establishes only the digit-normal form. It is
+not yet the complete canonical representative under spatial Sudoku symmetries.
 
 ### Phase 4 — Definitive Master Corpus
 

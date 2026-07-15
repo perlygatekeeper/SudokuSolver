@@ -201,7 +201,33 @@ construction.
 ## Phase 3: Canonization and Identity
 
 Canonization maps every symmetry-equivalent puzzle to one deterministic
-representative. Required invariants include:
+representative. It is implemented incrementally so each normalization layer is
+independently testable.
+
+The first layer is the digit-normal form. The normalized puzzle is scanned in
+row-major order. The first previously unseen clue digit is renamed to 1, the
+next unseen digit to 2, and so on. Digits absent from the puzzle receive the
+remaining target values in source-digit order so the recorded mapping is still
+a complete, invertible permutation.
+
+`Sudoku::Canonical->digit_normal_form($puzzle)` returns a
+`Sudoku::Canonical::Result` containing:
+
+- `puzzle` — the normalized 81-character puzzle string;
+- `transform` — the exact `Sudoku::Symmetry` transform that produced it; and
+- `stage` — currently `digit-normal`.
+
+The digit layer guarantees:
+
+```text
+normalize_digits(normalize_digits(P)) == normalize_digits(P)
+normalize_digits(D.apply(P))          == normalize_digits(P)
+```
+
+for every valid digit permutation `D`. It does not yet canonicalize spatial
+row, column, band, or stack equivalents.
+
+Full canonization must ultimately guarantee:
 
 ```text
 canonicalize(canonicalize(P)) == canonicalize(P)
