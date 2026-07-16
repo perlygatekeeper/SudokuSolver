@@ -172,7 +172,8 @@ Development increments:
 * [x] Combine spatial and digit normalization into one deterministic representative.
 * [x] Require idempotent full canonization and invariance under every supported symmetry.
 * [x] Produce stable canonical fingerprints from canonical coordinate encodings.
-* [ ] Assign permanent corpus IDs only after canonical ordering is stable.
+* [x] Add a deterministic, parallel canonical staging-index generator.
+* [ ] Assign permanent corpus IDs from verified canonical ordering in Phase 4.
 
 The first increment established the digit-normal form. The second increment
 adds exhaustive row-side normalization across all 1,296 band and within-band
@@ -183,6 +184,10 @@ an exhaustive correctness baseline spanning 1,679,616 spatial candidates. It
 returns an exact witness transform and establishes idempotence and full symmetry
 invariance. This baseline is not yet fast enough for the complete corpus;
 the first-row pruning pass removes every transform pair that cannot match the globally minimal first row before full candidate construction. A second exact pruning stage evaluates only the 18 distinct leading-band row arrangements and selects the globally minimal first 27 characters. A third exact pruning stage evaluates the 216 distinct ordered two-band arrangements and selects the globally minimal first 54 characters before complete-grid construction. This removes the sixfold duplication caused by the final band row order. A dedicated canonicalization benchmark target tracks corpus-scale performance.
+A deterministic canonical staging-index generator now records each source puzzle,
+its canonical representative, 42-character fingerprint, and replayable witness
+transform. Output order is stable across worker counts, and duplicate fingerprints
+are rejected before Phase 4 assigns permanent corpus IDs.
 
 The canonical fingerprint is now defined as the Phase 1 digit-grouped coordinate
 encoding of the fully canonical 81-character puzzle. It is content-derived,

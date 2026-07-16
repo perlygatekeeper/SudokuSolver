@@ -256,6 +256,27 @@ canonicalize(transform(P))    == canonicalize(P)
 Permanent canonical IDs are assigned only after canonical ordering is stable.
 The canonical coordinate encoding becomes the content-derived fingerprint.
 
+### Canonical staging index
+
+Before Phase 4 assigns permanent IDs, `bin/build-canonical-index.pl` creates a
+reproducible TSV staging index. Each record contains:
+
+```text
+source ordinal
+source puzzle
+canonical puzzle
+canonical fingerprint
+witness transform shorthand
+```
+
+The builder may use multiple forked workers, but its output must be byte-for-byte
+identical for the same input regardless of worker count. The parent process sorts
+records by source ordinal, replays every witness transform, verifies every
+fingerprint, rejects duplicate canonical fingerprints, and replaces the output
+atomically only after all checks pass. The staging index is an intermediate
+verification artifact; Phase 4 derives stable `17C-NNNNNN` IDs from canonical
+ordering rather than source order.
+
 
 ### Full canonical search and exact pruning
 
