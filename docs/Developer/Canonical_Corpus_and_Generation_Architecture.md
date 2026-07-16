@@ -278,6 +278,25 @@ verification artifact; Phase 4 derives stable `17C-NNNNNN` IDs from canonical
 ordering rather than source order.
 
 
+### Permanent canonical identity assignment
+
+Phase 4 assigns stable IDs only after staging records have been verified.
+`bin/build-canonical-identities.pl` sorts records by the complete canonical
+81-character puzzle string and assigns sequential IDs in that order:
+
+```text
+17C-000001
+17C-000002
+...
+17C-049158
+```
+
+Source-file order, worker count, difficulty, strategy metadata, and later corpus
+enrichment must not affect these IDs. Reordering staging records therefore
+produces byte-identical identity output. The identity index retains source
+ordinal, source puzzle, and witness transform as provenance, but canonical
+ordering alone determines the permanent ID.
+
 ### Full canonical search and exact pruning
 
 The correctness baseline considers all 1,296 row-family transforms crossed with

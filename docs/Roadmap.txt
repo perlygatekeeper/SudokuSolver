@@ -173,7 +173,7 @@ Development increments:
 * [x] Require idempotent full canonization and invariance under every supported symmetry.
 * [x] Produce stable canonical fingerprints from canonical coordinate encodings.
 * [x] Add a deterministic, parallel canonical staging-index generator.
-* [ ] Assign permanent corpus IDs from verified canonical ordering in Phase 4.
+* [x] Assign permanent corpus IDs from verified canonical ordering in Phase 4.
 
 The first increment established the digit-normal form. The second increment
 adds exhaustive row-side normalization across all 1,296 band and within-band
@@ -196,6 +196,15 @@ symmetry transforms. Sequential `17C-NNNNNN` corpus IDs remain deferred until
 canonical ordering is generated and verified in Phase 4.
 
 ### Phase 4 — Definitive Master Corpus
+
+Development increments:
+
+* [x] Assign stable `17C-NNNNNN` IDs by canonical puzzle ordering.
+* [ ] Add complete solutions.
+* [ ] Add versioned difficulty scores and labels.
+* [ ] Add highest required strategies.
+* [ ] Add human-identifiable clue-pattern symmetries.
+* [ ] Publish the definitive streamable master artifact and derived views.
 
 Build one authoritative record for each of the 49,158 canonical 17-clue
 puzzles. Each record includes:
