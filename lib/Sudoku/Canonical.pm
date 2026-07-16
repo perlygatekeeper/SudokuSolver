@@ -6,10 +6,16 @@ use warnings;
 use Exporter qw(import);
 
 use Sudoku::Canonical::Result;
-use Sudoku::CoordinateEncoding qw(validate_puzzle_string);
+use Sudoku::CoordinateEncoding qw(encode_puzzle validate_puzzle_string);
 use Sudoku::Symmetry;
 
-our @EXPORT_OK = qw(normalize_digits normalize_rows normalize_columns canonicalize);
+our @EXPORT_OK = qw(
+    normalize_digits
+    normalize_rows
+    normalize_columns
+    canonicalize
+    canonical_fingerprint
+);
 
 sub normalize_digits {
     my ($puzzle) = @_;
@@ -29,6 +35,11 @@ sub normalize_columns {
 sub canonicalize {
     my ($puzzle) = @_;
     return __PACKAGE__->canonical_form($puzzle)->puzzle;
+}
+
+sub canonical_fingerprint {
+    my ($puzzle) = @_;
+    return encode_puzzle(canonicalize($puzzle));
 }
 
 sub digit_normal_form {

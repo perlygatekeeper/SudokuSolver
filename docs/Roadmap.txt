@@ -171,7 +171,7 @@ Development increments:
 * [x] Minimize column permutations within stacks and stack permutations.
 * [x] Combine spatial and digit normalization into one deterministic representative.
 * [x] Require idempotent full canonization and invariance under every supported symmetry.
-* [ ] Produce stable canonical fingerprints from canonical coordinate encodings.
+* [x] Produce stable canonical fingerprints from canonical coordinate encodings.
 * [ ] Assign permanent corpus IDs only after canonical ordering is stable.
 
 The first increment established the digit-normal form. The second increment
@@ -183,6 +183,12 @@ an exhaustive correctness baseline spanning 1,679,616 spatial candidates. It
 returns an exact witness transform and establishes idempotence and full symmetry
 invariance. This baseline is not yet fast enough for the complete corpus;
 the first-row pruning pass now removes every transform pair that cannot match the globally minimal first row before full candidate construction. Further profiling may continue, but corpus-scale optimization is now underway.
+
+The canonical fingerprint is now defined as the Phase 1 digit-grouped coordinate
+encoding of the fully canonical 81-character puzzle. It is content-derived,
+42 characters for every 17-clue puzzle, and invariant under all supported
+symmetry transforms. Sequential `17C-NNNNNN` corpus IDs remain deferred until
+canonical ordering is generated and verified in Phase 4.
 
 ### Phase 4 — Definitive Master Corpus
 

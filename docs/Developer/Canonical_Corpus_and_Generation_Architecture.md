@@ -256,6 +256,31 @@ canonicalize(transform(P))    == canonicalize(P)
 Permanent canonical IDs are assigned only after canonical ordering is stable.
 The canonical coordinate encoding becomes the content-derived fingerprint.
 
+### Canonical fingerprint
+
+The canonical fingerprint is the digit-grouped coordinate encoding of the fully
+canonical puzzle:
+
+```text
+fingerprint(P) = encode_puzzle(canonicalize(P))
+```
+
+For a 17-clue puzzle it is exactly 42 characters. Unlike a shortened hash, the
+fingerprint is collision-free for the encoded puzzle representation,
+human-readable, and directly derived from clue locations and values. It is
+invariant under every supported digit, row, column, band, and stack symmetry.
+
+The fingerprint and the permanent corpus ID serve different purposes:
+
+- the fingerprint is content-derived and remains stable when corpus ordering or
+  metadata changes;
+- the corpus ID is a compact sequential label assigned only after canonical
+  ordering has been generated and verified.
+
+`Sudoku::Canonical::Result->fingerprint` is valid only for results whose stage
+is `canonical`. Intermediate digit-, row-, and column-normal forms may expose a
+coordinate encoding, but must not present it as a canonical fingerprint.
+
 
 ### Column-side normal form
 
