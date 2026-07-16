@@ -272,8 +272,11 @@ in stages:
    arrangements: three possible source bands times six row orders. The full
    1,296 row-family list repeats each leading arrangement 72 times while
    arranging the remaining bands, so avoiding those repetitions is exact.
-3. Construct complete 81-character candidates only for transform pairs tied
-   through the globally minimal first band.
+3. Evaluate the first 54 characters using only the 216 distinct ordered
+   two-band arrangements. Complete row-family specifications repeat each such
+   prefix six times while arranging the final band.
+4. Construct complete 81-character candidates only for transform pairs tied
+   through the globally minimal first two bands.
 
 The optimized result must remain byte-for-byte identical to the exhaustive
 baseline and retain the exact invertible witness transform. Performance can be

@@ -30,15 +30,15 @@ my $expected =
     . '950000000';
 
 is canonicalize($puzzle), $expected,
-    'first-row pruning preserves the established canonical representative';
+    'staged prefix pruning preserves the established canonical representative';
 
-for my $seed (3, 19, 384729184) {
+for my $seed (3, 19, 27182818, 384729184) {
     my $transform = Sudoku::Symmetry->random(seed => $seed);
     is canonicalize($transform->apply_puzzle($puzzle)), $expected,
-        "pruned canonization remains symmetry-invariant for seed $seed";
+        "staged pruning remains symmetry-invariant for seed $seed";
 }
 
 is canonicalize($expected), $expected,
-    'pruned canonization remains idempotent';
+    'staged pruning remains idempotent';
 
 done_testing();

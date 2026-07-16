@@ -207,58 +207,92 @@ sub canonical_form {
         }
     }
 
-    # Stage 3: construct complete candidates only for row/column pairs tied
-    # through the globally minimal first band.  Prefix comparison against the
-    # current best still stops losing candidates as soon as possible.
+    # Stage 3: among candidates tied through the first band, determine the
+    # globally smallest possible first two bands (the first 54 characters).
+    # Only 216 distinct two-band arrangements exist: choose and order the
+    # first source band, then choose and order a different second source band.
+    # Complete row specifications repeat each such prefix six times while
+    # arranging the final band, so evaluate each distinct prefix only once.
+    my $best_first_two_bands;
+    my %best_first_two_band_pairs;
+
+    for my $leading_rows (_leading_two_band_specs()) {
+        my @first_band_rows = @$leading_rows[0 .. 2];
+        my $first_band_key = join(',', @first_band_rows);
+        my @rows = map { $source_rows[$_] } @$leading_rows;
+
+        for my $col_index (0 .. $#col_specs) {
+            next unless $best_first_band_pairs{"$first_band_key:$col_index"};
+
+            my $first_two_bands = _normalized_prefix(
+                \@rows,
+                $col_specs[$col_index]{target_to_source},
+                6,
+            );
+            my $pair_key = join(',', @$leading_rows) . ":$col_index";
+
+            if (!defined($best_first_two_bands)
+                || $first_two_bands lt $best_first_two_bands) {
+                $best_first_two_bands = $first_two_bands;
+                %best_first_two_band_pairs = ($pair_key => 1);
+            }
+            elsif ($first_two_bands eq $best_first_two_bands) {
+                $best_first_two_band_pairs{$pair_key} = 1;
+            }
+        }
+    }
+
+    # Stage 4: construct complete candidates only for row/column pairs tied
+    # through the globally minimal first 54 characters. Prefix comparison
+    # against the current best still stops losing candidates immediately.
     my $best_puzzle;
     my ($best_row_spec, $best_col_spec, $best_digits);
 
     for my $row_spec (@row_specs) {
-        my @leading_rows = @{ $row_spec->{target_to_source} }[0 .. 2];
+        my @leading_rows = @{ $row_spec->{target_to_source} }[0 .. 5];
         my $leading_key = join(',', @leading_rows);
         my @rows = map { $source_rows[$_] } @{ $row_spec->{target_to_source} };
 
         for my $col_index (0 .. $#col_specs) {
-            next unless $best_first_band_pairs{"$leading_key:$col_index"};
+            next unless $best_first_two_band_pairs{"$leading_key:$col_index"};
             my $col_spec = $col_specs[$col_index];
-        my @rows = map { $source_rows[$_] } @{ $row_spec->{target_to_source} };
-        my @digit_map = (0) x 10;
-        my $next_digit = 1;
-        my $candidate = q{};
-        my $lost = 0;
+            my @digit_map = (0) x 10;
+            my $next_digit = 1;
+            my $candidate = q{};
+            my $lost = 0;
 
-        for my $target_row (0 .. 8) {
-            my $row = $rows[$target_row];
-            for my $source_col (@{ $col_spec->{target_to_source} }) {
-                my $digit = substr($row, $source_col, 1);
-                if ($digit ne '0') {
-                    $digit_map[$digit] ||= $next_digit++;
-                    $digit = $digit_map[$digit];
-                }
-                $candidate .= $digit;
+            for my $target_row (0 .. 8) {
+                my $row = $rows[$target_row];
+                for my $source_col (@{ $col_spec->{target_to_source} }) {
+                    my $digit = substr($row, $source_col, 1);
+                    if ($digit ne '0') {
+                        $digit_map[$digit] ||= $next_digit++;
+                        $digit = $digit_map[$digit];
+                    }
+                    $candidate .= $digit;
 
-                if (defined $best_puzzle) {
-                    my $prefix_length = length $candidate;
-                    if ($candidate gt substr($best_puzzle, 0, $prefix_length)) {
-                        $lost = 1;
-                        last;
+                    if (defined $best_puzzle) {
+                        my $prefix_length = length $candidate;
+                        if ($candidate gt substr($best_puzzle, 0, $prefix_length)) {
+                            $lost = 1;
+                            last;
+                        }
                     }
                 }
+                last if $lost;
             }
-            last if $lost;
-        }
 
-        next if $lost || length($candidate) != 81;
-        next if defined($best_puzzle) && $candidate ge $best_puzzle;
+            next if $lost || length($candidate) != 81;
+            next if defined($best_puzzle) && $candidate ge $best_puzzle;
 
-        for my $source_digit (1 .. 9) {
-            $digit_map[$source_digit] ||= $next_digit++;
-        }
+            for my $source_digit (1 .. 9) {
+                $digit_map[$source_digit] ||= $next_digit++;
+            }
 
-        $best_puzzle = $candidate;
-        $best_row_spec = $row_spec;
-        $best_col_spec = $col_spec;
-        $best_digits = [ @digit_map[1 .. 9] ];
+            $best_puzzle = $candidate;
+            $best_row_spec = $row_spec;
+            $best_col_spec = $col_spec;
+            $best_digits = [ @digit_map[1 .. 9] ];
         }
     }
 
@@ -284,6 +318,26 @@ sub _leading_band_specs {
     for my $source_band (0 .. 2) {
         for my $row_order (_permutations([ 0 .. 2 ])) {
             push @specs, [ map { $source_band * 3 + $_ } @$row_order ];
+        }
+    }
+
+    return @specs;
+}
+
+sub _leading_two_band_specs {
+    my @specs;
+
+    for my $first_band (0 .. 2) {
+        for my $first_order (_permutations([ 0 .. 2 ])) {
+            my @first_rows = map { $first_band * 3 + $_ } @$first_order;
+
+            for my $second_band (grep { $_ != $first_band } 0 .. 2) {
+                for my $second_order (_permutations([ 0 .. 2 ])) {
+                    my @second_rows =
+                        map { $second_band * 3 + $_ } @$second_order;
+                    push @specs, [ @first_rows, @second_rows ];
+                }
+            }
         }
     }
 
