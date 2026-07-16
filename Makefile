@@ -2,7 +2,7 @@
     all help check syntax test run clean status \
     deps deps-notest version gitadd perl-version \
     backup tarball report solved echo examples \
-    corpus-audit canonical-benchmark canonical-index canonical-identities canonical-solutions master-corpus
+    corpus-audit canonical-benchmark canonical-index canonical-identities canonical-solutions master-corpus corpus-views
 
 PERL          ?= perl5.34
 PROVE         := prove
@@ -76,7 +76,8 @@ help:
 	@echo "  make canonical-index    - build deterministic canonical staging index (LIMIT/JOBS/OUTPUT supported)"
 	@echo "  make canonical-identities - assign permanent IDs from canonical ordering (INPUT/OUTPUT supported)"
 	@echo "  make canonical-solutions  - solve and validate permanent canonical identities (INPUT/OUTPUT/LIMIT supported)"
-	@echo "  make master-corpus       - publish authoritative JSONL corpus (INPUT/OUTPUT/LIMIT supported)"
+	@echo "  make master-corpus       - publish authoritative JSONL corpus (INPUT/OUTPUT/LIMIT/JOBS supported)"
+	@echo "  make corpus-views        - derive TSV and summary views from the master JSONL (INPUT/TSV/SUMMARY/LIMIT supported)"
 	@echo ""
 	@echo "Variables:"
 	@echo "  make run PUZZLE=Puzzles/Puzzle.txt"
@@ -132,6 +133,14 @@ master-corpus:
 	@$(PERL) -Ilib bin/build-master-corpus.pl \
 		--input $${INPUT:-Puzzles/Benchmarks_Corpus/sudoku17-canonical-solutions.tsv} \
 		--output $${OUTPUT:-Puzzles/Master/sudoku17-master.jsonl} \
+		--limit $${LIMIT:-0} \
+		--jobs $${JOBS:-1}
+
+corpus-views:
+	@$(PERL) -Ilib bin/export-master-corpus-views.pl \
+		--input $${INPUT:-Puzzles/Master/sudoku17-master.jsonl} \
+		--tsv $${TSV:-Puzzles/Master/sudoku17-master.tsv} \
+		--summary $${SUMMARY:-Puzzles/Master/sudoku17-master-summary.txt} \
 		--limit $${LIMIT:-0}
 
 examples:

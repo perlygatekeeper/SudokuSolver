@@ -9,34 +9,153 @@ use Getopt::Long qw(GetOptions);
 use JSON::PP;
 
 use lib 'lib';
-use Sudoku::CoordinateEncoding qw(encode_puzzle clue_count validate_puzzle_string);
+use Solver;
+use Sudoku::CoordinateEncoding qw(
+    decode_encoding
+    encode_puzzle
+    clue_count
+    validate_puzzle_string
+);
+use Sudoku::PatternSymmetry qw(pattern_symmetries);
 use Sudoku::Symmetry;
 
 my $input  = 'Puzzles/Benchmarks_Corpus/sudoku17-canonical-solutions.tsv';
 my $output = 'Puzzles/Master/sudoku17-master.jsonl';
 my $limit  = 0;
+my $jobs   = 1;
 
 GetOptions(
     'input=s'  => \$input,
     'output=s' => \$output,
     'limit=i'  => \$limit,
+    'jobs=i'   => \$jobs,
 ) or die _usage();
 
 die "--limit must be zero or a positive integer\n" if $limit < 0;
+die "--jobs must be a positive integer\n" unless $jobs =~ /\A[1-9]\d*\z/;
 
 my @records = _read_solution_index($input);
 splice @records, $limit if $limit && @records > $limit;
 die "No canonical solution records were read from '$input'\n" unless @records;
 
-my $json = JSON::PP->new->canonical(1)->utf8(1);
 my $directory = dirname($output);
 make_path($directory) if length($directory) && !-d $directory;
 my $temporary_output = "$output.tmp.$$";
-open my $out, '>:raw', $temporary_output
-    or die "Cannot create '$temporary_output': $!\n";
 
-for my $record (@records) {
-    my $master_record = {
+if ($jobs == 1 || @records == 1) {
+    _write_master_records($temporary_output, \@records);
+}
+else {
+    _write_master_records_parallel($temporary_output, \@records, $jobs);
+}
+
+rename $temporary_output, $output
+    or die "Cannot replace '$output' with '$temporary_output': $!\n";
+
+printf "Master Corpus JSONL\n";
+printf "===================\n\n";
+printf "Input records       : %d\n", scalar @records;
+printf "First canonical ID  : %s\n", $records[0]{canonical_id};
+printf "Last canonical ID   : %s\n", $records[-1]{canonical_id};
+printf "Schema version      : 1.0\n";
+printf "Jobs                : %d\n", $jobs;
+printf "Output              : %s\n", $output;
+printf "Result              : PASS\n";
+
+sub _write_master_records {
+    my ($path, $records) = @_;
+
+    my $json = JSON::PP->new->canonical(1)->utf8(1);
+    my $solver = Solver->new(output_mode => 'quiet');
+
+    open my $out, '>:raw', $path
+        or die "Cannot create '$path': $!\n";
+
+    for my $record (@{$records}) {
+        print {$out} $json->encode(_master_record($solver, $record)), "\n"
+            or die "Cannot write '$path': $!\n";
+    }
+
+    close $out or die "Cannot close '$path': $!\n";
+}
+
+sub _write_master_records_parallel {
+    my ($path, $records, $jobs) = @_;
+
+    my @chunks = _record_chunks($records, $jobs);
+    my @part_files = map { "$path.part.$_" } 0 .. $#chunks;
+    my @children;
+
+    for my $index (0 .. $#chunks) {
+        my $pid = fork();
+        die "Cannot fork worker $index: $!\n" unless defined $pid;
+
+        if ($pid == 0) {
+            eval {
+                _write_master_records($part_files[$index], $chunks[$index]);
+                1;
+            } or do {
+                warn $@;
+                exit 1;
+            };
+            exit 0;
+        }
+
+        push @children, $pid;
+    }
+
+    my $failed = 0;
+    for my $pid (@children) {
+        waitpid($pid, 0);
+        $failed ||= $?;
+    }
+
+    if ($failed) {
+        unlink @part_files;
+        die "One or more master-corpus workers failed\n";
+    }
+
+    open my $out, '>:raw', $path
+        or die "Cannot create '$path': $!\n";
+
+    for my $part (@part_files) {
+        open my $in, '<:raw', $part
+            or die "Cannot open worker output '$part': $!\n";
+        while (my $line = <$in>) {
+            print {$out} $line or die "Cannot write '$path': $!\n";
+        }
+        close $in or die "Cannot close '$part': $!\n";
+    }
+
+    close $out or die "Cannot close '$path': $!\n";
+    unlink @part_files;
+}
+
+sub _record_chunks {
+    my ($records, $jobs) = @_;
+
+    $jobs = @$records if $jobs > @$records;
+    my @chunks;
+    my $base = int(@$records / $jobs);
+    my $extra = @$records % $jobs;
+    my $offset = 0;
+
+    for my $index (0 .. $jobs - 1) {
+        my $size = $base + ($index < $extra ? 1 : 0);
+        push @chunks, [ @$records[$offset .. $offset + $size - 1] ];
+        $offset += $size;
+    }
+
+    return @chunks;
+}
+
+sub _master_record {
+    my ($solver, $record) = @_;
+
+    my $difficulty = _difficulty_for_record($solver, $record);
+    my @pattern_symmetries = pattern_symmetries($record->{canonical_puzzle});
+
+    return {
         schema => {
             name    => 'SudokuSolver canonical corpus',
             version => '1.0',
@@ -54,35 +173,19 @@ for my $record (@records) {
         },
         difficulty => {
             scheme           => 'SudokuSolver',
-            scheme_version   => undef,
-            score            => undef,
-            label            => undef,
-            highest_strategy => undef,
+            scheme_version   => $difficulty->{rating_version},
+            score            => $difficulty->{score},
+            label            => $difficulty->{label},
+            highest_strategy => $difficulty->{highest_strategy},
         },
-        pattern_symmetries => undef,
+        pattern_symmetries => \@pattern_symmetries,
         provenance => {
-            source_ordinal   => $record->{source_ordinal},
-            source_puzzle    => $record->{source_puzzle},
+            source_ordinal    => $record->{source_ordinal},
+            source_puzzle     => $record->{source_puzzle},
             witness_transform => $record->{transform},
         },
     };
-
-    print {$out} $json->encode($master_record), "\n"
-        or die "Cannot write '$temporary_output': $!\n";
 }
-
-close $out or die "Cannot close '$temporary_output': $!\n";
-rename $temporary_output, $output
-    or die "Cannot replace '$output' with '$temporary_output': $!\n";
-
-printf "Master Corpus JSONL\n";
-printf "===================\n\n";
-printf "Input records       : %d\n", scalar @records;
-printf "First canonical ID  : %s\n", $records[0]{canonical_id};
-printf "Last canonical ID   : %s\n", $records[-1]{canonical_id};
-printf "Schema version      : 1.0\n";
-printf "Output              : %s\n", $output;
-printf "Result              : PASS\n";
 
 sub _read_solution_index {
     my ($path) = @_;
@@ -120,6 +223,8 @@ sub _read_solution_index {
             unless clue_count($canonical) == 17;
         die "Fingerprint mismatch for canonical ID $id\n"
             unless $fingerprint eq encode_puzzle($canonical);
+        die "Fingerprint decode mismatch for canonical ID $id\n"
+            unless decode_encoding($fingerprint) eq $canonical;
         die "Invalid solution for canonical ID $id\n"
             unless defined($solution) && $solution =~ /\A[1-9]{81}\z/;
 
@@ -150,6 +255,25 @@ sub _read_solution_index {
     return @items;
 }
 
+sub _difficulty_for_record {
+    my ($solver, $record) = @_;
+
+    $solver->clear_deductions;
+    my $grid = $solver->run(
+        puzzle_string => $record->{canonical_puzzle},
+        output_mode   => 'quiet',
+    );
+
+    die "Canonical puzzle $record->{canonical_id} did not solve completely\n"
+        unless $grid->solved == 81 && !$solver->has_contradiction;
+
+    my $solved_grid = join q{}, map { $_->value || 0 } @{ $grid->cells };
+    die "Solver result differs from stored solution for $record->{canonical_id}\n"
+        unless $solved_grid eq $record->{solution};
+
+    return $solver->difficulty->as_hash;
+}
+
 sub _usage {
     return <<'USAGE';
 Usage: build-master-corpus.pl [options]
@@ -157,5 +281,6 @@ Usage: build-master-corpus.pl [options]
   --input FILE      Solution-enriched canonical TSV
   --output FILE     Destination authoritative JSONL corpus
   --limit N         Process only the first N records (0 means all)
+  --jobs N          Number of parallel enrichment workers
 USAGE
 }

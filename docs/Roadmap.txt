@@ -202,10 +202,10 @@ Development increments:
 * [x] Assign stable `17C-NNNNNN` IDs by canonical puzzle ordering.
 * [x] Add complete solutions.
 * [x] Define and publish the authoritative JSONL master-corpus schema.
-* [ ] Add versioned difficulty scores and labels to the JSONL records.
-* [ ] Add highest required strategies to the JSONL records.
-* [ ] Add human-identifiable clue-pattern symmetries to the JSONL records.
-* [ ] Publish derived TSV and human-readable views.
+* [x] Add versioned difficulty scores and labels to the JSONL records.
+* [x] Add highest required strategies to the JSONL records.
+* [x] Add human-identifiable clue-pattern symmetries to the JSONL records.
+* [x] Publish derived TSV and human-readable views.
 
 Build one authoritative record for each of the 49,158 canonical 17-clue
 puzzles. Each record includes:
@@ -228,8 +228,11 @@ partial development build must be requested explicitly with `LIMIT=N`.
 The solution-enrichment increment reads the permanent identity index, solves each
 canonical puzzle in quiet mode, requires all 81 cells to be filled without a
 contradiction, verifies every original clue against the solved grid, and writes
-a deterministic solution-enriched TSV. Difficulty and strategy metadata are
-added only after the solution layer is complete.
+a deterministic solution-enriched TSV. The master-corpus builder then enriches
+the JSONL records with versioned difficulty metadata, highest strategy, and
+clue-mask symmetries without changing canonical identity or solution records.
+Derived TSV and human-readable summary views are generated from the JSONL
+master.
 
 ### Phase 5 — Corpus Query API
 

@@ -26,7 +26,7 @@ print {$out} join("\t",
 close $out;
 
 is system($^X, '-Ilib', 'bin/build-master-corpus.pl',
-        '--input', $solutions, '--output', $master),
+        '--input', $solutions, '--output', $master, '--jobs', 2),
     0, 'master corpus builder succeeds';
 
 open my $fh, '<:raw', $master or die "Cannot open '$master': $!";
@@ -44,11 +44,16 @@ is $record->{clue_count}, 17, 'clue count stored';
 is $record->{canonicalization}{scheme_version}, '1.0',
     'canonicalization scheme version is independent';
 is $record->{difficulty}{scheme}, 'SudokuSolver', 'difficulty scheme named';
-ok !defined($record->{difficulty}{scheme_version}),
-    'difficulty scheme version remains null until rating enrichment';
-ok !defined($record->{difficulty}{score}), 'difficulty score remains null';
-ok !defined($record->{pattern_symmetries}),
-    'pattern symmetries remain null until analysis';
+ok defined($record->{difficulty}{scheme_version}),
+    'difficulty scheme version is populated';
+like $record->{difficulty}{scheme_version}, qr/\A\d+(?:\.\d+)*\z/,
+    'difficulty scheme version looks versioned';
+ok defined($record->{difficulty}{score}), 'difficulty score is populated';
+ok defined($record->{difficulty}{label}), 'difficulty label is populated';
+ok exists($record->{difficulty}{highest_strategy}),
+    'highest strategy field is present';
+isa_ok $record->{pattern_symmetries}, 'ARRAY',
+    'pattern symmetries are emitted as an array';
 is $record->{provenance}{source_ordinal}, 1, 'source ordinal stored';
 is $record->{provenance}{source_puzzle}, $puzzle, 'source puzzle stored';
 is $record->{provenance}{witness_transform}, $transform,

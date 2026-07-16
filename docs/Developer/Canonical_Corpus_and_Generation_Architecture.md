@@ -405,9 +405,10 @@ complete 81-digit solution for every canonical puzzle. It must:
 - replace its output atomically only after every requested record succeeds.
 
 The solution-enriched TSV adds `solution` immediately after `canonical_puzzle`.
-Difficulty, highest-strategy, and clue-pattern symmetry metadata remain separate
-later enrichment stages so a change in those analyses cannot affect identity or
-solution records.
+Difficulty, highest-strategy, and clue-pattern symmetry metadata are added when
+the authoritative JSONL master is built. These analyses do not affect identity
+or solution records, so future rating-method changes can be published as corpus
+metadata revisions without reassigning canonical IDs.
 
 ### Authoritative JSONL master corpus
 
@@ -419,8 +420,8 @@ regenerable build artifacts.
 
 Every JSON record separates identity from provenance and reserves independent
 scheme versions for canonicalization and difficulty. The difficulty
-`scheme_version` is deliberately `null` until difficulty enrichment runs; it
-must never be inferred from the SudokuSolver release version.
+`scheme_version` records the rating method used to compute the score and label;
+it must never be inferred from the SudokuSolver release version.
 
 The initial schema contains:
 
@@ -429,13 +430,16 @@ The initial schema contains:
   `identity.canonical_puzzle`;
 - `solution` and `clue_count`;
 - `canonicalization.scheme` and `canonicalization.scheme_version`;
-- a fixed-shape `difficulty` object whose analysis fields begin as `null`;
-- `pattern_symmetries`, initially `null`; and
+- a fixed-shape `difficulty` object containing the rating-method version,
+  score, label, and highest strategy;
+- `pattern_symmetries`, an array of clue-mask symmetry names; and
 - `provenance.source_ordinal`, `provenance.source_puzzle`, and
   `provenance.witness_transform`.
 
-The master builder validates IDs, ordering, fingerprints, clue count, solutions,
-and witness replay before atomically replacing its output.
+The master builder validates IDs, ordering, fingerprints, coordinate decoding,
+clue count, solutions, and witness replay before atomically replacing its
+output. Derived TSV and human-readable summary views are generated from the
+JSONL master and are not authoritative corpus formats.
 
 ## Phase 5: Corpus Query Contract
 

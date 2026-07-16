@@ -6,6 +6,7 @@ use warnings;
 use Exporter qw(import);
 
 our @EXPORT_OK = qw(
+    decode_encoding
     encode_puzzle
     clue_count
     clue_locations
@@ -71,6 +72,43 @@ sub encode_puzzle {
     _validate_generated_encoding($puzzle, $encoding);
 
     return $encoding;
+}
+
+sub decode_encoding {
+    my ($encoding) = @_;
+
+    die "Coordinate encoding is required\n"
+        unless defined $encoding && !ref($encoding);
+
+    my @groups = split /-/, $encoding, -1;
+    die "Coordinate encoding must contain exactly nine digit groups\n"
+        unless @groups == 9;
+
+    my @cells = ('0') x 81;
+
+    for my $digit_index (0 .. 8) {
+        my $group = $groups[$digit_index];
+        die "Coordinate group " . ($digit_index + 1)
+            . " must contain row/column pairs\n"
+            unless length($group) % 2 == 0;
+        die "Coordinate group " . ($digit_index + 1)
+            . " must contain only digits 1 through 9\n"
+            unless $group =~ /\A[1-9]*\z/;
+
+        while ($group =~ /([1-9])([1-9])/g) {
+            my ($row, $column) = ($1, $2);
+            my $index = ($row - 1) * 9 + ($column - 1);
+            die "Coordinate encoding assigns more than one digit to R${row}C${column}\n"
+                unless $cells[$index] eq '0';
+            $cells[$index] = $digit_index + 1;
+        }
+    }
+
+    my $puzzle = join q{}, @cells;
+    die "Coordinate encoding did not round-trip after decoding\n"
+        unless encode_puzzle($puzzle) eq $encoding;
+
+    return $puzzle;
 }
 
 sub _validate_generated_encoding {
