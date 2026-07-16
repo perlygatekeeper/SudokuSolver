@@ -1,7 +1,8 @@
 .PHONY: \
     all help check syntax test run clean status \
     deps deps-notest version gitadd perl-version \
-    backup tarball report solved echo 17-50 benchmark benchmark-first50 benchmark-all-1000 examples corpus-audit canonical-benchmark canonical-index canonical-identities canonical-solutions master-corpus
+    backup tarball report solved echo examples \
+    corpus-audit canonical-benchmark canonical-index canonical-identities canonical-solutions master-corpus
 
 PERL          ?= perl5.34
 PROVE         := prove
@@ -69,8 +70,6 @@ help:
 	@echo "  make status   - git status"
 	@echo "  make deps     - install CPAN dependencies from cpanfile"
 	@echo "  make version  - show project version"
-	@echo "  make benchmark          - run canonical 17-clue benchmark"
-	@echo "  make benchmark-all-1000 - benchmark every Puzzles/Benchmarks_Corpus/sudoku17-??-1000.txt file"
 	@echo "  make examples     - run solved, stalled, contradiction, and output examples"
 	@echo "  make corpus-audit       - validate coordinate encodings for all 49,158 canonical puzzles"
 	@echo "  make canonical-benchmark - benchmark full canonization (LIMIT=50 by default)"
@@ -103,49 +102,6 @@ deps:
 
 deps-notest:
 	cpanm --notest --installdeps .
-
-benchmark: benchmark-first1000
-
-benchmark-first50:
-	@echo "== Canonical 17-Clue Benchmark (First 50) =="
-
-benchmark-first100:
-	@echo "== Canonical 17-Clue Benchmark (First 100) =="
-	@$(PERL) -Ilib $(SCRIPT) --benchmark Puzzles/Benchmarks_Corpus/sudoku17-first100.txt
-
-benchmark-first1000:
-	@echo "== Canonical 17-Clue Benchmark (First 1000) =="
-	@$(PERL) -Ilib $(SCRIPT) --benchmark Puzzles/Benchmarks_Corpus/sudoku17-first1000.txt
-
-
-benchmark-all-1000:
-	@set -e; \
-	found=0; \
-	for puzzle in Puzzles/Benchmarks_Corpus/sudoku17-??-1000.txt; do \
-		[ -f "$$puzzle" ] || continue; \
-		found=1; \
-		report="$${puzzle%.txt}-benchmark.txt"; \
-		tmp="$$report.tmp"; \
-		echo "== Benchmarking $$puzzle =="; \
-		if $(PERL) -Ilib $(SCRIPT) --benchmark "$$puzzle" | tee "$$tmp"; then \
-			mv "$$tmp" "$$report"; \
-			cat "$$report"; \
-			echo "Report: $$report"; \
-		else \
-			status=$$?; \
-			rm -f "$$tmp"; \
-			exit $$status; \
-		fi; \
-		echo ""; \
-	done; \
-	if [ "$$found" -eq 0 ]; then \
-		echo "No benchmark files matched Puzzles/Benchmarks_Corpus/sudoku17-??-1000.txt" >&2; \
-		exit 1; \
-	fi
-
-benchmark-final4:
-	@echo "== Canonical 17-Clue Benchmark (Final 4 Stalled Puzzles) =="
-	@$(PERL) -Ilib $(SCRIPT) --benchmark Puzzles/Benchmarks_Corpus/sudoku17-final4.txt
 
 corpus-audit:
 	@$(PERL) -Ilib bin/audit-coordinate-encoding.pl
@@ -272,7 +228,7 @@ backup:
 		$(TESTDIR)*.t \
 		$(DOCSDIR)*.txt \
 		$(DOCSDIR)Developer/*.md \
-		$(DOCSDIR)benchmark_*.txt \
+		$(DOCSDIR)Benchmark_history/benchmark_*.txt \
 		$(DOCSDIR)Algorithm_Notes/*.md \
 		$(DOCSDIR)Strategies/*.md \
 		$(PUZZLEDIR)Examples/*.sdk \
@@ -288,7 +244,7 @@ gitadd:
 		$(SCRIPTS) $(MODS) $(VERSION_MOD) \
 		$(THEMEDIR)*.theme $(TESTDIR)*.t $(DOCSDIR)*.txt \
 		$(DOCSDIR)Developer/*.md \
-		$(DOCSDIR)benchmark_*.txt \
+		$(DOCSDIR)Benchmark_history/benchmark_*.txt \
 		$(DOCSDIR)Algorithm_Notes/*.md \
 		$(DOCSDIR)Strategies/*.md \
 		$(PUZZLEDIR)Examples/*.sdk \

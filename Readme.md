@@ -375,31 +375,6 @@ Additional design details are documented in:
 - `docs/Developer/Sudoku_Symmetries.md`
 - `docs/Developer/Master_Corpus_JSONL_Schema.md`
 
-## Benchmarking
-
-Run the standard first-1,000 regression benchmark:
-
-```sh
-make benchmark
-```
-
-Other useful benchmark targets include:
-
-```sh
-make benchmark-first50
-make benchmark-first100
-make benchmark-first1000
-make benchmark-all-1000
-make benchmark-final4
-```
-
-The first 1,000 canonical puzzles are a convenient development regression
-suite. The full 49,158-puzzle canonical corpus is the authoritative capability
-benchmark for version 1.0.0 and later development.
-
-Benchmark reports and supporting files live under `Puzzles/Benchmarks_Corpus/`
-and `docs/`.
-
 ## Testing
 
 Run syntax checks and the full automated test suite:
