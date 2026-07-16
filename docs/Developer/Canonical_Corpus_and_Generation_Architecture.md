@@ -391,6 +391,24 @@ scope.
 
 Phase 4 also adds coordinate decoding and round-trip corpus verification.
 
+
+### Canonical solution enrichment
+
+`bin/build-canonical-solutions.pl` enriches the permanent identity index with a
+complete 81-digit solution for every canonical puzzle. It must:
+
+- retain canonical ordering and permanent IDs unchanged;
+- solve in quiet mode without renderer output;
+- require exactly 81 solved cells and no contradiction;
+- verify that every canonical clue is preserved in the solution;
+- validate fingerprints and replay witness transforms before solving; and
+- replace its output atomically only after every requested record succeeds.
+
+The solution-enriched TSV adds `solution` immediately after `canonical_puzzle`.
+Difficulty, highest-strategy, and clue-pattern symmetry metadata remain separate
+later enrichment stages so a change in those analyses cannot affect identity or
+solution records.
+
 ## Phase 5: Corpus Query Contract
 
 The primary public query interface is composable:

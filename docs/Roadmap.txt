@@ -200,7 +200,7 @@ canonical ordering is generated and verified in Phase 4.
 Development increments:
 
 * [x] Assign stable `17C-NNNNNN` IDs by canonical puzzle ordering.
-* [ ] Add complete solutions.
+* [x] Add complete solutions.
 * [ ] Add versioned difficulty scores and labels.
 * [ ] Add highest required strategies.
 * [ ] Add human-identifiable clue-pattern symmetries.
@@ -217,6 +217,12 @@ puzzles. Each record includes:
 
 The authoritative artifact should be streamable and reproducibly generated.
 Human-readable and tabular views may be derived from it.
+
+The solution-enrichment increment reads the permanent identity index, solves each
+canonical puzzle in quiet mode, requires all 81 cells to be filled without a
+contradiction, verifies every original clue against the solved grid, and writes
+a deterministic solution-enriched TSV. Difficulty and strategy metadata are
+added only after the solution layer is complete.
 
 ### Phase 5 — Corpus Query API
 

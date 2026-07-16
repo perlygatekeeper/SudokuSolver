@@ -1,7 +1,7 @@
 .PHONY: \
     all help check syntax test run clean status \
     deps deps-notest version gitadd perl-version \
-    backup tarball report solved echo 17-50 benchmark benchmark-first50 benchmark-all-1000 examples corpus-audit canonical-benchmark canonical-index canonical-identities
+    backup tarball report solved echo 17-50 benchmark benchmark-first50 benchmark-all-1000 examples corpus-audit canonical-benchmark canonical-index canonical-identities canonical-solutions
 
 PERL          ?= perl5.34
 PROVE         := prove
@@ -76,6 +76,7 @@ help:
 	@echo "  make canonical-benchmark - benchmark full canonization (LIMIT=50 by default)"
 	@echo "  make canonical-index    - build deterministic canonical staging index (LIMIT/JOBS/OUTPUT supported)"
 	@echo "  make canonical-identities - assign permanent IDs from canonical ordering (INPUT/OUTPUT supported)"
+	@echo "  make canonical-solutions  - solve and validate permanent canonical identities (INPUT/OUTPUT/LIMIT supported)"
 	@echo ""
 	@echo "Variables:"
 	@echo "  make run PUZZLE=Puzzles/Puzzle.txt"
@@ -161,6 +162,12 @@ canonical-identities:
 	@$(PERL) -Ilib bin/build-canonical-identities.pl \
 		--input $${INPUT:-Puzzles/Benchmarks_Corpus/sudoku17-canonical-index.tsv} \
 		--output $${OUTPUT:-Puzzles/Benchmarks_Corpus/sudoku17-canonical-identities.tsv}
+
+canonical-solutions:
+	@$(PERL) -Ilib bin/build-canonical-solutions.pl \
+		--input $${INPUT:-Puzzles/Benchmarks_Corpus/sudoku17-canonical-identities.tsv} \
+		--output $${OUTPUT:-Puzzles/Benchmarks_Corpus/sudoku17-canonical-solutions.tsv} \
+		--limit $${LIMIT:-0}
 
 examples:
 	@mkdir -p examples-output

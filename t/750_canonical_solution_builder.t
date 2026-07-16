@@ -1,0 +1,62 @@
+use strict;
+use warnings;
+
+use File::Spec;
+use File::Temp qw(tempdir);
+use Test::More;
+
+use lib 'lib';
+use Grid;
+
+my $tmpdir = tempdir(CLEANUP => 1);
+my $source = File::Spec->catfile($tmpdir, 'puzzles.txt');
+my $staging = File::Spec->catfile($tmpdir, 'staging.tsv');
+my $identities = File::Spec->catfile($tmpdir, 'identities.tsv');
+my $solutions = File::Spec->catfile($tmpdir, 'solutions.tsv');
+
+open my $src, '>', $source or die "Cannot create '$source': $!";
+open my $corpus, '<', 'Puzzles/Benchmarks_Corpus/sudoku17-first50.txt'
+    or die "Cannot open fixture corpus: $!";
+my $count = 0;
+while (my $line = <$corpus>) {
+    next if $line =~ /\A\s*(?:#|\z)/;
+    print {$src} $line;
+    last if ++$count == 3;
+}
+close $corpus;
+close $src;
+is $count, 3, 'created three-puzzle solution fixture';
+
+is system($^X, '-Ilib', 'bin/build-canonical-index.pl',
+        '--file', $source, '--output', $staging, '--jobs', 2),
+    0, 'staging index succeeds';
+is system($^X, '-Ilib', 'bin/build-canonical-identities.pl',
+        '--input', $staging, '--output', $identities),
+    0, 'identity assignment succeeds';
+is system($^X, '-Ilib', 'bin/build-canonical-solutions.pl',
+        '--input', $identities, '--output', $solutions),
+    0, 'solution enrichment succeeds';
+
+open my $fh, '<', $solutions or die "Cannot open '$solutions': $!";
+my @records = grep { $_ !~ /\A#/ && /\S/ } <$fh>;
+close $fh;
+is scalar(@records), 3, 'solution index contains one record per identity';
+
+for my $line (@records) {
+    chomp $line;
+    my ($id, $fingerprint, $puzzle, $solution, $ordinal, $source_puzzle, $transform) =
+        split /\t/, $line, -1;
+    like $id, qr/\A17C-\d{6}\z/, 'permanent ID retained';
+    like $solution, qr/\A[1-9]{81}\z/, 'complete solution stored';
+    my $grid = Grid->new;
+    $grid->load_from_string($solution);
+    is $grid->solved, 81, 'stored solution is a completed grid';
+    for my $i (0 .. 80) {
+        my $clue = substr($puzzle, $i, 1);
+        next if $clue eq '0';
+        is substr($solution, $i, 1), $clue,
+            "$id solution preserves canonical clue at cell " . ($i + 1);
+    }
+}
+
+done_testing();
