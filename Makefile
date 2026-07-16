@@ -1,7 +1,7 @@
 .PHONY: \
     all help check syntax test run clean status \
     deps deps-notest version gitadd perl-version \
-    backup tarball report solved echo 17-50 benchmark benchmark-first50 benchmark-all-1000 examples corpus-audit canonical-benchmark canonical-index canonical-identities canonical-solutions
+    backup tarball report solved echo 17-50 benchmark benchmark-first50 benchmark-all-1000 examples corpus-audit canonical-benchmark canonical-index canonical-identities canonical-solutions master-corpus
 
 PERL          ?= perl5.34
 PROVE         := prove
@@ -77,6 +77,7 @@ help:
 	@echo "  make canonical-index    - build deterministic canonical staging index (LIMIT/JOBS/OUTPUT supported)"
 	@echo "  make canonical-identities - assign permanent IDs from canonical ordering (INPUT/OUTPUT supported)"
 	@echo "  make canonical-solutions  - solve and validate permanent canonical identities (INPUT/OUTPUT/LIMIT supported)"
+	@echo "  make master-corpus       - publish authoritative JSONL corpus (INPUT/OUTPUT/LIMIT supported)"
 	@echo ""
 	@echo "Variables:"
 	@echo "  make run PUZZLE=Puzzles/Puzzle.txt"
@@ -153,8 +154,10 @@ canonical-benchmark:
 	@$(PERL) -Ilib bin/benchmark-canonicalization.pl --limit $${LIMIT:-50}
 
 canonical-index:
-	@$(PERL) -Ilib bin/build-canonical-index.pl \
-		--limit $${LIMIT:-50} \
+	@limit_arg=""; \
+	if [ -n "$$LIMIT" ]; then limit_arg="--limit $$LIMIT"; fi; \
+	$(PERL) -Ilib bin/build-canonical-index.pl \
+		$$limit_arg \
 		--jobs $${JOBS:-1} \
 		--output $${OUTPUT:-Puzzles/Benchmarks_Corpus/sudoku17-canonical-index.tsv}
 
@@ -167,6 +170,12 @@ canonical-solutions:
 	@$(PERL) -Ilib bin/build-canonical-solutions.pl \
 		--input $${INPUT:-Puzzles/Benchmarks_Corpus/sudoku17-canonical-identities.tsv} \
 		--output $${OUTPUT:-Puzzles/Benchmarks_Corpus/sudoku17-canonical-solutions.tsv} \
+		--limit $${LIMIT:-0}
+
+master-corpus:
+	@$(PERL) -Ilib bin/build-master-corpus.pl \
+		--input $${INPUT:-Puzzles/Benchmarks_Corpus/sudoku17-canonical-solutions.tsv} \
+		--output $${OUTPUT:-Puzzles/Master/sudoku17-master.jsonl} \
 		--limit $${LIMIT:-0}
 
 examples:

@@ -201,10 +201,11 @@ Development increments:
 
 * [x] Assign stable `17C-NNNNNN` IDs by canonical puzzle ordering.
 * [x] Add complete solutions.
-* [ ] Add versioned difficulty scores and labels.
-* [ ] Add highest required strategies.
-* [ ] Add human-identifiable clue-pattern symmetries.
-* [ ] Publish the definitive streamable master artifact and derived views.
+* [x] Define and publish the authoritative JSONL master-corpus schema.
+* [ ] Add versioned difficulty scores and labels to the JSONL records.
+* [ ] Add highest required strategies to the JSONL records.
+* [ ] Add human-identifiable clue-pattern symmetries to the JSONL records.
+* [ ] Publish derived TSV and human-readable views.
 
 Build one authoritative record for each of the 49,158 canonical 17-clue
 puzzles. Each record includes:
@@ -215,8 +216,14 @@ puzzles. Each record includes:
 * highest required strategy; and
 * human-identifiable clue-pattern rotation and reflection symmetries.
 
-The authoritative artifact should be streamable and reproducibly generated.
-Human-readable and tabular views may be derived from it.
+The authoritative artifact is `Puzzles/Master/sudoku17-master.jsonl`, with
+one canonical record per line. JSONL is the source of truth. The canonical
+index, identity, and solution TSV files are inspectable intermediate build
+artifacts, not public corpus formats. Human-readable and tabular views are
+derived from the JSONL master.
+
+`make canonical-index` processes the complete input corpus by default. A
+partial development build must be requested explicitly with `LIMIT=N`.
 
 The solution-enrichment increment reads the permanent identity index, solves each
 canonical puzzle in quiet mode, requires all 81 cells to be filled without a

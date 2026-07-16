@@ -409,6 +409,34 @@ Difficulty, highest-strategy, and clue-pattern symmetry metadata remain separate
 later enrichment stages so a change in those analyses cannot affect identity or
 solution records.
 
+### Authoritative JSONL master corpus
+
+`bin/build-master-corpus.pl` promotes the verified solution TSV into
+`Puzzles/Master/sudoku17-master.jsonl`. JSON Lines is the authoritative public
+corpus format: one complete JSON object per canonical puzzle, sorted by
+permanent canonical ID. The staging, identity, and solution TSV files remain
+regenerable build artifacts.
+
+Every JSON record separates identity from provenance and reserves independent
+scheme versions for canonicalization and difficulty. The difficulty
+`scheme_version` is deliberately `null` until difficulty enrichment runs; it
+must never be inferred from the SudokuSolver release version.
+
+The initial schema contains:
+
+- `schema.name` and `schema.version`;
+- `identity.canonical_id`, `identity.fingerprint`, and
+  `identity.canonical_puzzle`;
+- `solution` and `clue_count`;
+- `canonicalization.scheme` and `canonicalization.scheme_version`;
+- a fixed-shape `difficulty` object whose analysis fields begin as `null`;
+- `pattern_symmetries`, initially `null`; and
+- `provenance.source_ordinal`, `provenance.source_puzzle`, and
+  `provenance.witness_transform`.
+
+The master builder validates IDs, ordering, fingerprints, clue count, solutions,
+and witness replay before atomically replacing its output.
+
 ## Phase 5: Corpus Query Contract
 
 The primary public query interface is composable:
