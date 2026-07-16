@@ -149,12 +149,8 @@ sub canonical_form {
     my @row_specs = _spatial_specs('row');
     my @col_specs = _spatial_specs('column');
 
-    # The canonical representative must have the lexicographically smallest
-    # possible first row.  Determine that row before entering the full
-    # row-family x column-family search, then retain only column transforms
-    # capable of producing it for each possible source row.  This is exact
-    # pruning: every discarded candidate already loses within its first nine
-    # characters and therefore cannot be the global minimum.
+    # Stage 1: determine the globally smallest possible first row.  For each
+    # source row, retain only column transforms capable of producing it.
     my ($best_first_row, %first_row_columns);
     for my $source_row_index (0 .. 8) {
         my $row = $source_rows[$source_row_index];
@@ -176,53 +172,93 @@ sub canonical_form {
         }
     }
 
+    # Stage 2: among candidates tied through the first row, determine the
+    # globally smallest possible first band (the first 27 characters).  A
+    # candidate that loses anywhere in this prefix cannot be the full-grid
+    # minimum, so only tied row/column pairs continue to Stage 3.
+    my $best_first_band;
+    my %best_first_band_pairs;
+
+    # Only 18 distinct leading-band arrangements exist: choose one of the
+    # three source bands, then choose one of its six row orders.  The complete
+    # 1,296 row-family specifications repeat each leading arrangement 72
+    # times while arranging the remaining two bands, so evaluating the unique
+    # prefixes avoids that redundant work without changing the search space.
+    for my $leading_rows (_leading_band_specs()) {
+        my $first_source_row = $leading_rows->[0];
+        my $eligible_columns = $first_row_columns{$first_source_row} || next;
+        my @rows = map { $source_rows[$_] } @$leading_rows;
+
+        for my $col_index (@$eligible_columns) {
+            my $first_band = _normalized_prefix(
+                \@rows,
+                $col_specs[$col_index]{target_to_source},
+                3,
+            );
+            my $pair_key = join(',', @$leading_rows) . ":$col_index";
+
+            if (!defined($best_first_band) || $first_band lt $best_first_band) {
+                $best_first_band = $first_band;
+                %best_first_band_pairs = ($pair_key => 1);
+            }
+            elsif ($first_band eq $best_first_band) {
+                $best_first_band_pairs{$pair_key} = 1;
+            }
+        }
+    }
+
+    # Stage 3: construct complete candidates only for row/column pairs tied
+    # through the globally minimal first band.  Prefix comparison against the
+    # current best still stops losing candidates as soon as possible.
     my $best_puzzle;
     my ($best_row_spec, $best_col_spec, $best_digits);
 
     for my $row_spec (@row_specs) {
-        my $first_source_row = $row_spec->{target_to_source}[0];
-        my $eligible_columns = $first_row_columns{$first_source_row} || next;
+        my @leading_rows = @{ $row_spec->{target_to_source} }[0 .. 2];
+        my $leading_key = join(',', @leading_rows);
         my @rows = map { $source_rows[$_] } @{ $row_spec->{target_to_source} };
 
-        for my $col_index (@$eligible_columns) {
+        for my $col_index (0 .. $#col_specs) {
+            next unless $best_first_band_pairs{"$leading_key:$col_index"};
             my $col_spec = $col_specs[$col_index];
-            my @digit_map = (0) x 10;
-            my $next_digit = 1;
-            my $candidate = q{};
-            my $lost = 0;
+        my @rows = map { $source_rows[$_] } @{ $row_spec->{target_to_source} };
+        my @digit_map = (0) x 10;
+        my $next_digit = 1;
+        my $candidate = q{};
+        my $lost = 0;
 
-            for my $target_row (0 .. 8) {
-                my $row = $rows[$target_row];
-                for my $source_col (@{ $col_spec->{target_to_source} }) {
-                    my $digit = substr($row, $source_col, 1);
-                    if ($digit ne '0') {
-                        $digit_map[$digit] ||= $next_digit++;
-                        $digit = $digit_map[$digit];
-                    }
-                    $candidate .= $digit;
+        for my $target_row (0 .. 8) {
+            my $row = $rows[$target_row];
+            for my $source_col (@{ $col_spec->{target_to_source} }) {
+                my $digit = substr($row, $source_col, 1);
+                if ($digit ne '0') {
+                    $digit_map[$digit] ||= $next_digit++;
+                    $digit = $digit_map[$digit];
+                }
+                $candidate .= $digit;
 
-                    if (defined $best_puzzle) {
-                        my $prefix_length = length $candidate;
-                        if ($candidate gt substr($best_puzzle, 0, $prefix_length)) {
-                            $lost = 1;
-                            last;
-                        }
+                if (defined $best_puzzle) {
+                    my $prefix_length = length $candidate;
+                    if ($candidate gt substr($best_puzzle, 0, $prefix_length)) {
+                        $lost = 1;
+                        last;
                     }
                 }
-                last if $lost;
             }
+            last if $lost;
+        }
 
-            next if $lost || length($candidate) != 81;
-            next if defined($best_puzzle) && $candidate ge $best_puzzle;
+        next if $lost || length($candidate) != 81;
+        next if defined($best_puzzle) && $candidate ge $best_puzzle;
 
-            for my $source_digit (1 .. 9) {
-                $digit_map[$source_digit] ||= $next_digit++;
-            }
+        for my $source_digit (1 .. 9) {
+            $digit_map[$source_digit] ||= $next_digit++;
+        }
 
-            $best_puzzle = $candidate;
-            $best_row_spec = $row_spec;
-            $best_col_spec = $col_spec;
-            $best_digits = [ @digit_map[1 .. 9] ];
+        $best_puzzle = $candidate;
+        $best_row_spec = $row_spec;
+        $best_col_spec = $col_spec;
+        $best_digits = [ @digit_map[1 .. 9] ];
         }
     }
 
@@ -240,6 +276,40 @@ sub canonical_form {
         transform => $combined,
         stage     => 'canonical',
     );
+}
+
+sub _leading_band_specs {
+    my @specs;
+
+    for my $source_band (0 .. 2) {
+        for my $row_order (_permutations([ 0 .. 2 ])) {
+            push @specs, [ map { $source_band * 3 + $_ } @$row_order ];
+        }
+    }
+
+    return @specs;
+}
+
+sub _normalized_prefix {
+    my ($rows, $target_to_source, $row_count) = @_;
+
+    my @digit_map = (0) x 10;
+    my $next_digit = 1;
+    my $normalized = q{};
+
+    for my $target_row (0 .. $row_count - 1) {
+        my $row = $rows->[$target_row];
+        for my $source_col (@$target_to_source) {
+            my $digit = substr($row, $source_col, 1);
+            if ($digit ne '0') {
+                $digit_map[$digit] ||= $next_digit++;
+                $digit = $digit_map[$digit];
+            }
+            $normalized .= $digit;
+        }
+    }
+
+    return $normalized;
 }
 
 sub _normalized_row {

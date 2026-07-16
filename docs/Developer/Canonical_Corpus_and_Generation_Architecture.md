@@ -256,6 +256,34 @@ canonicalize(transform(P))    == canonicalize(P)
 Permanent canonical IDs are assigned only after canonical ordering is stable.
 The canonical coordinate encoding becomes the content-derived fingerprint.
 
+
+### Full canonical search and exact pruning
+
+The correctness baseline considers all 1,296 row-family transforms crossed with
+all 1,296 column-family transforms. Each spatial candidate is digit-normalized
+and compared lexicographically.
+
+The optimized implementation preserves that exact search result while pruning
+in stages:
+
+1. Determine the globally minimal possible first row and retain only column
+   transforms capable of producing it for each source row.
+2. Evaluate the first 27 characters using only the 18 distinct leading-band
+   arrangements: three possible source bands times six row orders. The full
+   1,296 row-family list repeats each leading arrangement 72 times while
+   arranging the remaining bands, so avoiding those repetitions is exact.
+3. Construct complete 81-character candidates only for transform pairs tied
+   through the globally minimal first band.
+
+The optimized result must remain byte-for-byte identical to the exhaustive
+baseline and retain the exact invertible witness transform. Performance can be
+measured with:
+
+```bash
+make canonical-benchmark
+make canonical-benchmark LIMIT=100
+```
+
 ### Canonical fingerprint
 
 The canonical fingerprint is the digit-grouped coordinate encoding of the fully

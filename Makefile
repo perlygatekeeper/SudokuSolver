@@ -1,7 +1,7 @@
 .PHONY: \
     all help check syntax test run clean status \
     deps deps-notest version gitadd perl-version \
-    backup tarball report solved echo 17-50 benchmark benchmark-first50 benchmark-all-1000 examples corpus-audit
+    backup tarball report solved echo 17-50 benchmark benchmark-first50 benchmark-all-1000 examples corpus-audit canonical-benchmark
 
 PERL          ?= perl5.34
 PROVE         := prove
@@ -72,7 +72,8 @@ help:
 	@echo "  make benchmark          - run canonical 17-clue benchmark"
 	@echo "  make benchmark-all-1000 - benchmark every Puzzles/Benchmarks_Corpus/sudoku17-??-1000.txt file"
 	@echo "  make examples     - run solved, stalled, contradiction, and output examples"
-	@echo "  make corpus-audit - validate coordinate encodings for all 49,158 canonical puzzles"
+	@echo "  make corpus-audit       - validate coordinate encodings for all 49,158 canonical puzzles"
+	@echo "  make canonical-benchmark - benchmark full canonization (LIMIT=50 by default)"
 	@echo ""
 	@echo "Variables:"
 	@echo "  make run PUZZLE=Puzzles/Puzzle.txt"
@@ -144,6 +145,9 @@ benchmark-final4:
 
 corpus-audit:
 	@$(PERL) -Ilib bin/audit-coordinate-encoding.pl
+
+canonical-benchmark:
+	@$(PERL) -Ilib bin/benchmark-canonicalization.pl --limit $${LIMIT:-50}
 
 examples:
 	@mkdir -p examples-output

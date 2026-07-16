@@ -182,7 +182,7 @@ form across stack and within-stack column permutations. The fourth increment com
 an exhaustive correctness baseline spanning 1,679,616 spatial candidates. It
 returns an exact witness transform and establishes idempotence and full symmetry
 invariance. This baseline is not yet fast enough for the complete corpus;
-the first-row pruning pass now removes every transform pair that cannot match the globally minimal first row before full candidate construction. Further profiling may continue, but corpus-scale optimization is now underway.
+the first-row pruning pass removes every transform pair that cannot match the globally minimal first row before full candidate construction. A second exact pruning stage now evaluates only the 18 distinct leading-band row arrangements, selects the globally minimal first 27 characters, and expands only tied candidates to complete grids. This removes the 72-fold duplicate leading-band work hidden inside the 1,296 row-family specifications. A dedicated canonicalization benchmark target now tracks corpus-scale performance.
 
 The canonical fingerprint is now defined as the Phase 1 digit-grouped coordinate
 encoding of the fully canonical 81-character puzzle. It is content-derived,
