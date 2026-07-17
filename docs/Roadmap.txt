@@ -236,14 +236,21 @@ master.
 
 ### Phase 5 — Corpus Query API
 
-* Provide lookup by canonical ID and coordinate fingerprint.
-* Expose a composable `select(...)` interface accepting multiple criteria at
+Status: complete
+
+* [x] Provide lookup by canonical ID and coordinate fingerprint.
+* [x] Expose a composable `select(...)` interface accepting multiple criteria at
   once with AND semantics.
-* Support difficulty, score, highest strategy, clue count, symmetry, ID, and
+* [x] Support difficulty, score, highest strategy, clue count, symmetry, ID, and
   fingerprint criteria.
-* Support ranges, multiple accepted values, exclusions, sorting, limits, and
+* [x] Support ranges, multiple accepted values, exclusions, sorting, limits, and
   deterministic random selection.
-* Add convenience helpers that delegate to the common selection engine.
+* [x] Add convenience helpers that delegate to the common selection engine.
+
+The public query API is implemented by `Sudoku::Corpus` and
+`Sudoku::Corpus::Query`. It reads the authoritative JSONL master corpus,
+indexes records by canonical ID and fingerprint, and returns chainable query
+results for sorting, limiting, and deterministic random selection.
 
 ### Phase 6 — Symmetry-Randomized Puzzle Creation
 

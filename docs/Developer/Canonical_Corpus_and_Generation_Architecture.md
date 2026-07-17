@@ -446,9 +446,13 @@ JSONL master and are not authoritative corpus formats.
 The primary public query interface is composable:
 
 ```perl
+my $corpus = Sudoku::Corpus->new(
+    file => 'Puzzles/Master/sudoku17-master.jsonl',
+);
+
 my $query = $corpus->select(
     difficulty       => 'Expert',
-    highest_strategy => 'XY-Chain',
+    highest_strategy => 'XY-Chains',
     symmetry         => 'rotation-180',
 );
 ```
@@ -459,6 +463,28 @@ lists of accepted values, and explicit exclusions.
 The query result may then be sorted, limited, or reproducibly randomized.
 Convenience methods such as `puzzles_by_difficulty` delegate to this common
 selection engine.
+
+Implemented lookup methods:
+
+- `find_by_canonical_id($id)`
+- `find_by_id($id)`
+- `find_by_fingerprint($fingerprint)`
+
+Implemented selection criteria:
+
+- `id` / `canonical_id`
+- `fingerprint`
+- `puzzle` / `canonical_puzzle`
+- `difficulty` / `difficulty_label`
+- `score` / `difficulty_score`
+- `highest_strategy`
+- `clue_count`
+- `symmetry` / `pattern_symmetry`
+
+Criterion values may be scalars, array references, or hash specifications such
+as `{ min => 4, max => 7 }`, `{ in => [ ... ] }`, or `{ not => ... }`.
+`Sudoku::Corpus::Query` supports `sort_by`, `limit`, `random(seed => ...)`,
+`records`, `ids`, `puzzles`, `count`, and `first`.
 
 ## Phases 6–9: Generation and Replay
 

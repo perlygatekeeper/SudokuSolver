@@ -138,9 +138,35 @@ Planned enhancements include:
 
 - richer metadata,
 - symmetry classifications,
-- expanded query capabilities,
 - published snapshots,
 - additional research-oriented analysis.
+
+## Query API
+
+`Sudoku::Corpus` provides the public API for reading and querying the
+authoritative JSONL master corpus.
+
+```perl
+my $corpus = Sudoku::Corpus->new;
+my $record = $corpus->find_by_id('17C-000001');
+
+my $query = $corpus->select(
+    difficulty       => [ 'Expert', 'Master' ],
+    score            => { min => 7 },
+    highest_strategy => { not => 'Hidden Singles' },
+);
+
+my $ids = $query
+    ->sort_by('score', direction => 'desc')
+    ->limit(10)
+    ->ids;
+```
+
+The query engine uses AND semantics across criteria and supports exact values,
+sets, exclusions, numeric ranges, sorting, limiting, and deterministic random
+selection. Convenience helpers such as `puzzles_by_difficulty`,
+`puzzles_by_highest_strategy`, `puzzles_by_score`, and
+`puzzles_with_symmetry` delegate to `select`.
 
 ---
 
