@@ -528,12 +528,40 @@ solution.
 
 - generated puzzle;
 - transformed solution;
+- transformed pre-reveal puzzle when controlled reveals are used;
 - canonical ID and fingerprint;
 - corpus seed;
 - symmetry seed; and
 - explicit symmetry transform shorthand.
 
 Phase 6 does not add or remove clues. Controlled clue reveals begin in Phase 7.
+
+### Phase 7: Controlled clue reveals
+
+Controlled clue reveals add solution values to a symmetry-randomized puzzle
+without removing or changing any original transformed clues:
+
+```perl
+my $generated = $generator->controlled_reveals(
+    corpus_seed   => 20260717,
+    symmetry_seed => 12345,
+    reveal_seed   => 67890,
+    clue_count    => 30,
+);
+```
+
+The reveal seed is separate from the corpus and symmetry seeds. The generator
+shuffles only currently empty transformed cells, reveals enough values from the
+transformed solution to reach the exact requested clue count, and rejects any
+request below the transformed base clue count or above 81.
+
+`Sudoku::GeneratedPuzzle` records the final puzzle, the transformed solution,
+the transformed pre-reveal `base_puzzle`, the target clue count, the reveal
+seed, and the explicit reveal-cell list as `RrCc` labels. Replay does not need
+to trust the random generator: it can apply the stored symmetry transform to the
+canonical puzzle and solution, then reveal the stored cells from that
+transformed solution.
+
 The eventual Phase 9 replay invariant remains:
 
 ```text

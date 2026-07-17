@@ -5,6 +5,7 @@ use warnings;
 
 use Scalar::Util qw(blessed);
 
+use Sudoku::CoordinateEncoding qw(clue_count);
 use Sudoku::Corpus;
 use Sudoku::Corpus::Query;
 use Sudoku::GeneratedPuzzle;
@@ -63,6 +64,45 @@ sub symmetry_randomized {
     );
 }
 
+sub controlled_reveals {
+    my ($self, %args) = @_;
+
+    my $target_clue_count = _required_clue_count(\%args);
+    my $reveal_seed = _required_integer_seed(\%args, 'reveal_seed');
+
+    my $generated = $self->symmetry_randomized(%args);
+    my $base_puzzle = $generated->puzzle;
+    my $solution = $generated->solution;
+
+    my $current_clues = clue_count($base_puzzle);
+    die "clue_count cannot be less than the current clue count ($current_clues)\n"
+        if $target_clue_count < $current_clues;
+
+    my $needed = $target_clue_count - $current_clues;
+    my @empty_cells = grep { substr($base_puzzle, $_, 1) eq '0' } 0 .. 80;
+    die "not enough unrevealed cells to reach clue_count $target_clue_count\n"
+        if $needed > @empty_cells;
+
+    my @shuffled = _shuffled_indices($reveal_seed, @empty_cells);
+    my @revealed_indices = $needed ? @shuffled[0 .. $needed - 1] : ();
+    my $puzzle = _reveal_cells($base_puzzle, $solution, @revealed_indices);
+
+    _verify_solution_preserves_puzzle($puzzle, $solution);
+
+    return Sudoku::GeneratedPuzzle->new(
+        canonical_record  => $generated->canonical_record,
+        corpus_seed       => $generated->corpus_seed,
+        symmetry_seed     => $generated->symmetry_seed,
+        transform         => $generated->transform,
+        base_puzzle       => $base_puzzle,
+        puzzle            => $puzzle,
+        solution          => $solution,
+        reveal_seed       => $reveal_seed,
+        reveal_cells      => [ map { _cell_label($_) } @revealed_indices ],
+        target_clue_count => $target_clue_count,
+    );
+}
+
 sub _selection_source {
     my ($self, %args) = @_;
 
@@ -92,6 +132,52 @@ sub _required_integer_seed {
     return 0 + $args->{$name};
 }
 
+sub _required_clue_count {
+    my ($args) = @_;
+
+    die "clue_count is required\n" unless exists $args->{clue_count};
+    die "clue_count must be an integer from 0 through 81\n"
+        unless defined $args->{clue_count}
+            && !ref($args->{clue_count})
+            && $args->{clue_count} =~ /\A\d+\z/
+            && $args->{clue_count} <= 81;
+
+    return 0 + $args->{clue_count};
+}
+
+sub _shuffled_indices {
+    my ($seed, @indices) = @_;
+
+    my $rng = Sudoku::Generator::_PRNG->new($seed);
+    for (my $index = $#indices; $index > 0; $index--) {
+        my $swap = $rng->integer($index + 1);
+        @indices[$index, $swap] = @indices[$swap, $index];
+    }
+
+    return @indices;
+}
+
+sub _reveal_cells {
+    my ($puzzle, $solution, @indices) = @_;
+
+    my @cells = split //, $puzzle;
+    for my $index (@indices) {
+        die "reveal cell index must be between 0 and 80\n"
+            unless defined $index && $index =~ /\A\d+\z/ && $index <= 80;
+        die "reveal cell " . _cell_label($index) . " is already a clue\n"
+            unless $cells[$index] eq '0';
+
+        $cells[$index] = substr($solution, $index, 1);
+    }
+
+    return join q{}, @cells;
+}
+
+sub _cell_label {
+    my ($index) = @_;
+    return sprintf 'R%dC%d', int($index / 9) + 1, ($index % 9) + 1;
+}
+
 sub _verify_solution_preserves_puzzle {
     my ($puzzle, $solution) = @_;
 
@@ -109,6 +195,32 @@ sub _verify_solution_preserves_puzzle {
     }
 
     return 1;
+}
+
+1;
+
+package Sudoku::Generator::_PRNG;
+
+use strict;
+use warnings;
+
+sub new {
+    my ($class, $seed) = @_;
+    return bless { state => _normalize_seed($seed) }, $class;
+}
+
+sub integer {
+    my ($self, $limit) = @_;
+    die "random integer limit must be positive\n" unless $limit > 0;
+    $self->{state} = (1103515245 * $self->{state} + 12345) % 2147483648;
+    return $self->{state} % $limit;
+}
+
+sub _normalize_seed {
+    my ($seed) = @_;
+    my $state = $seed % 2147483648;
+    $state += 2147483648 if $state < 0;
+    return $state;
 }
 
 1;

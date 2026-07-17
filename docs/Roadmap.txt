@@ -269,10 +269,18 @@ future replay.
 
 ### Phase 7 — Controlled Clue Reveals
 
-* Reveal values from the transformed solution without removing original clues.
-* Reach an exact requested clue count.
-* Use a separate reveal seed.
-* Store the explicit reveal-cell list for future-proof replay.
+Status: complete
+
+* [x] Reveal values from the transformed solution without removing original clues.
+* [x] Reach an exact requested clue count.
+* [x] Use a separate reveal seed.
+* [x] Store the explicit reveal-cell list for future-proof replay.
+
+`Sudoku::Generator->controlled_reveals(...)` builds on the Phase 6 symmetry
+pipeline. It accepts the corpus seed, symmetry seed, reveal seed, and requested
+final clue count; preserves the transformed pre-reveal puzzle as
+`base_puzzle`; and records explicit `RrCc` reveal cells so replay can reconstruct
+the final puzzle even if seeded random internals change later.
 
 ### Phase 8 — Difficulty-Targeted Generation
 

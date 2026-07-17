@@ -189,6 +189,31 @@ The generated puzzle is equivalent to its canonical source puzzle. The result
 records the canonical ID, fingerprint, corpus seed, symmetry seed, and explicit
 transform shorthand so later replay can reconstruct the same variant.
 
+## Controlled Clue Reveals
+
+`Sudoku::Generator` can also reveal additional values from the transformed
+solution while preserving every original transformed clue:
+
+```perl
+my $generated = Sudoku::Generator->new->controlled_reveals(
+    corpus_seed   => 20260717,
+    symmetry_seed => 12345,
+    reveal_seed   => 67890,
+    clue_count    => 30,
+    criteria      => { difficulty => 'Master' },
+);
+
+say $generated->base_puzzle;       # transformed 17-clue puzzle
+say $generated->puzzle;            # final puzzle with controlled reveals
+say join ',', @{ $generated->reveal_cells };
+```
+
+The reveal seed is independent from the corpus and symmetry seeds. The result
+stores explicit `RrCc` reveal cells, the requested target clue count, and the
+final clue count so future replay can reconstruct the final puzzle from the
+canonical source, transform shorthand, transformed solution, and stored reveal
+list.
+
 ---
 
 ## Related Documentation
