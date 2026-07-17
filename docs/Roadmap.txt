@@ -284,23 +284,41 @@ the final puzzle even if seeded random internals change later.
 
 ### Phase 8 — Difficulty-Targeted Generation
 
-* Generate within requested difficulty labels or score ranges.
-* Support highest-strategy and strategy-ceiling constraints.
-* Preserve the difficulty-rating version used to accept each puzzle.
+Status: complete
+
+* [x] Generate within requested difficulty labels or score ranges.
+* [x] Support highest-strategy and strategy-ceiling constraints.
+* [x] Preserve the difficulty-rating version used to accept each puzzle.
+
+`Sudoku::Generator->difficulty_targeted(...)` builds controlled-reveal
+candidates, solves each final puzzle quietly, rates it with the versioned
+`Sudoku::Difficulty` engine, and accepts only candidates matching requested
+difficulty labels, score ranges, highest strategies, and strategy ceilings. The
+accepted `Sudoku::GeneratedPuzzle` stores the rating version, label, score,
+highest strategy, statistics snapshot, and number of generation attempts.
 
 ### Phase 9 — Provenance and Replay
 
+Status: complete
+
 Generated puzzle files remain readable in ordinary text editors and record:
 
-* generation date and generator version;
-* canonical ID and coordinate encoding;
-* symmetry seed and explicit transform;
-* reveal seed and explicit reveal list;
-* final clue count; and
-* versioned difficulty metadata.
+* [x] generation date and generator version;
+* [x] canonical ID and coordinate encoding;
+* [x] symmetry seed and explicit transform;
+* [x] reveal seed and explicit reveal list;
+* [x] final clue count; and
+* [x] versioned difficulty metadata.
 
 Replay must reproduce the exact generated puzzle and verify its stored
 provenance.
+
+`Sudoku::GeneratedPuzzle->as_json` and `write_file(...)` produce readable JSON
+artifacts. `Sudoku::Generator->replay(file => ...)` or `replay(data => ...)`
+rebuilds the generated puzzle from the canonical corpus record, explicit
+symmetry transform, and explicit reveal-cell list, then verifies stored puzzle,
+solution, base puzzle, coordinate encoding, final clue count, and difficulty
+metadata.
 
 ## Strategy Policy After 1.0
 

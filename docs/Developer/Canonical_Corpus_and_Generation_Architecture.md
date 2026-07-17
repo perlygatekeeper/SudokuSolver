@@ -562,7 +562,60 @@ to trust the random generator: it can apply the stored symmetry transform to the
 canonical puzzle and solution, then reveal the stored cells from that
 transformed solution.
 
-The eventual Phase 9 replay invariant remains:
+### Phase 8: Difficulty-targeted generation
+
+Difficulty-targeted generation accepts or rejects fully generated puzzles after
+the controlled-reveal step:
+
+```perl
+my $generated = $generator->difficulty_targeted(
+    corpus_seed      => 20260717,
+    symmetry_seed    => 12345,
+    reveal_seed      => 67890,
+    clue_count       => 30,
+    difficulty       => [ 'Easy', 'Medium' ],
+    score            => { min => 2, max => 4 },
+    strategy_ceiling => 'Naked Pairs',
+);
+```
+
+The generator solves each candidate quietly with the normal `Solver`, derives a
+versioned `Sudoku::Difficulty` rating from the solver statistics, and accepts
+only candidates matching the requested label, score, highest-strategy, and
+strategy-ceiling constraints. If a candidate misses, the next deterministic
+attempt increments the corpus, symmetry, and reveal seeds together. The accepted
+generated puzzle records the rating version, label, score, highest strategy,
+statistics snapshot, and number of attempts.
+
+### Phase 9: Provenance and replay
+
+`Sudoku::GeneratedPuzzle` emits a readable JSON artifact:
+
+```perl
+$generated->write_file('generated-puzzle.json');
+```
+
+The artifact records the final puzzle, transformed solution, optional
+pre-reveal base puzzle, versioned difficulty metadata, and provenance:
+
+- generation date and SudokuSolver generator version;
+- canonical ID, canonical fingerprint, and final coordinate encoding;
+- corpus seed, symmetry seed, and explicit symmetry transform;
+- reveal seed, target clue count, and explicit reveal-cell list; and
+- final clue count and generation attempt count.
+
+Replay uses the explicit transform and reveal list as the durable contract:
+
+```perl
+my $replayed = $generator->replay(file => 'generated-puzzle.json');
+```
+
+Replay loads the canonical corpus record by ID, verifies the stored fingerprint,
+applies the stored transform to the canonical puzzle and solution, reveals the
+stored cells, and verifies the stored final puzzle, solution, base puzzle,
+coordinate encoding, final clue count, and difficulty metadata.
+
+The Phase 9 replay invariant is:
 
 ```text
 replay(metadata) == originally generated puzzle

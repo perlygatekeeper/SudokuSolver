@@ -214,6 +214,48 @@ final clue count so future replay can reconstruct the final puzzle from the
 canonical source, transform shorthand, transformed solution, and stored reveal
 list.
 
+## Difficulty-Targeted Generation
+
+Generated puzzles can be filtered by the difficulty of the final puzzle after
+symmetry and clue reveals:
+
+```perl
+my $generated = Sudoku::Generator->new->difficulty_targeted(
+    corpus_seed      => 20260717,
+    symmetry_seed    => 12345,
+    reveal_seed      => 67890,
+    clue_count       => 30,
+    difficulty       => [ 'Easy', 'Medium' ],
+    score            => { min => 2, max => 4 },
+    strategy_ceiling => 'Naked Pairs',
+);
+
+say $generated->difficulty_label;
+say $generated->difficulty_rating_version;
+```
+
+The generator solves and rates each candidate with the versioned
+`Sudoku::Difficulty` engine. Accepted generated puzzles store the rating
+version, label, score, highest strategy, statistics snapshot, and generation
+attempt count.
+
+## Provenance and Replay
+
+Generated puzzles can be saved as readable JSON and replayed later:
+
+```perl
+$generated->write_file('generated-puzzle.json');
+
+my $replayed = Sudoku::Generator->new->replay(
+    file => 'generated-puzzle.json',
+);
+```
+
+Replay reconstructs the puzzle from the canonical corpus record, explicit
+symmetry transform, transformed solution, and explicit reveal-cell list. It
+verifies the stored final puzzle, solution, base puzzle, coordinate encoding,
+final clue count, and difficulty metadata.
+
 ---
 
 ## Related Documentation

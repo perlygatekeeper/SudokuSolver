@@ -3,11 +3,14 @@ package Sudoku::Generator;
 use strict;
 use warnings;
 
+use JSON::PP;
 use Scalar::Util qw(blessed);
 
-use Sudoku::CoordinateEncoding qw(clue_count);
+use Solver;
+use Sudoku::CoordinateEncoding qw(clue_count encode_puzzle);
 use Sudoku::Corpus;
 use Sudoku::Corpus::Query;
+use Sudoku::Difficulty;
 use Sudoku::GeneratedPuzzle;
 use Sudoku::Symmetry;
 
@@ -55,12 +58,14 @@ sub symmetry_randomized {
     _verify_solution_preserves_puzzle($puzzle, $solution);
 
     return Sudoku::GeneratedPuzzle->new(
-        canonical_record => $canonical_record,
-        corpus_seed      => $corpus_seed,
-        symmetry_seed    => $symmetry_seed,
-        transform        => $transform,
-        puzzle           => $puzzle,
-        solution         => $solution,
+        canonical_record  => $canonical_record,
+        corpus_seed       => $corpus_seed,
+        symmetry_seed     => $symmetry_seed,
+        transform         => $transform,
+        puzzle            => $puzzle,
+        solution          => $solution,
+        generation_date   => $args{generation_date},
+        generator_version => $args{generator_version},
     );
 }
 
@@ -100,6 +105,111 @@ sub controlled_reveals {
         reveal_seed       => $reveal_seed,
         reveal_cells      => [ map { _cell_label($_) } @revealed_indices ],
         target_clue_count => $target_clue_count,
+        generation_date   => $args{generation_date},
+        generator_version => $args{generator_version},
+    );
+}
+
+sub difficulty_targeted {
+    my ($self, %args) = @_;
+
+    my $max_attempts = _optional_positive_integer(\%args, 'max_attempts', 100);
+    my $base_corpus_seed = _required_integer_seed(\%args, 'corpus_seed');
+    my $base_symmetry_seed = _required_integer_seed(\%args, 'symmetry_seed');
+    my $base_reveal_seed = _required_integer_seed(\%args, 'reveal_seed');
+
+    for my $attempt (0 .. $max_attempts - 1) {
+        my %candidate_args = %args;
+        $candidate_args{corpus_seed} = $base_corpus_seed + $attempt;
+        $candidate_args{symmetry_seed} = $base_symmetry_seed + $attempt;
+        $candidate_args{reveal_seed} = $base_reveal_seed + $attempt;
+
+        my $generated = $self->controlled_reveals(%candidate_args);
+        my $difficulty = $self->_rate_generated_puzzle($generated);
+        next unless _difficulty_matches($difficulty, %args);
+
+        return _copy_generated(
+            $generated,
+            difficulty          => $difficulty->as_hash,
+            generation_attempts => $attempt + 1,
+        );
+    }
+
+    die "No generated puzzle matched the requested difficulty constraints "
+        . "within $max_attempts attempt(s)\n";
+}
+
+sub replay {
+    my ($self, %args) = @_;
+
+    my $data = _replay_data(%args);
+    my $provenance = $data->{provenance};
+    die "generated puzzle provenance is required\n"
+        unless ref($provenance) eq 'HASH';
+
+    my $canonical_id = $provenance->{canonical_id};
+    die "generated puzzle provenance requires canonical_id\n"
+        unless defined $canonical_id;
+
+    my $canonical_record = $self->corpus->find_by_id($canonical_id);
+    die "canonical ID '$canonical_id' was not found in the corpus\n"
+        unless defined $canonical_record;
+
+    if (defined $provenance->{fingerprint}) {
+        die "stored fingerprint does not match corpus record\n"
+            unless $provenance->{fingerprint}
+                eq $canonical_record->{identity}{fingerprint};
+    }
+
+    my $transform = Sudoku::Symmetry->from_shorthand(
+        $provenance->{symmetry_transform},
+    );
+    my $base_puzzle = $transform->apply_puzzle(
+        $canonical_record->{identity}{canonical_puzzle},
+    );
+    my $solution = $transform->apply_puzzle($canonical_record->{solution});
+    my $puzzle = _reveal_cells_by_label(
+        $base_puzzle,
+        $solution,
+        @{ $provenance->{reveal_cells} // [] },
+    );
+
+    _verify_solution_preserves_puzzle($puzzle, $solution);
+
+    die "replayed puzzle does not match stored puzzle\n"
+        if defined($data->{puzzle}) && $puzzle ne $data->{puzzle};
+    die "replayed solution does not match stored solution\n"
+        if defined($data->{solution}) && $solution ne $data->{solution};
+    die "replayed base puzzle does not match stored base puzzle\n"
+        if defined($data->{base_puzzle}) && $base_puzzle ne $data->{base_puzzle};
+    die "replayed clue count does not match stored final clue count\n"
+        if defined($provenance->{final_clue_count})
+            && clue_count($puzzle) != $provenance->{final_clue_count};
+    die "replayed coordinate encoding does not match stored coordinate encoding\n"
+        if defined($provenance->{coordinate_encoding})
+            && encode_puzzle($puzzle) ne $provenance->{coordinate_encoding};
+
+    if (($args{verify_difficulty} // 1) && ref($data->{difficulty}) eq 'HASH') {
+        my $difficulty = $self->_rate_puzzle_string($puzzle);
+        _verify_difficulty_metadata($data->{difficulty}, $difficulty);
+    }
+
+    return Sudoku::GeneratedPuzzle->new(
+        canonical_record     => $canonical_record,
+        corpus_seed          => $provenance->{corpus_seed},
+        symmetry_seed        => $provenance->{symmetry_seed},
+        transform            => $transform,
+        base_puzzle          => $base_puzzle,
+        puzzle               => $puzzle,
+        solution             => $solution,
+        reveal_seed          => $provenance->{reveal_seed},
+        reveal_cells         => $provenance->{reveal_cells} // [],
+        target_clue_count    => $provenance->{target_clue_count}
+            // $provenance->{final_clue_count},
+        difficulty           => $data->{difficulty},
+        generation_attempts  => $provenance->{generation_attempts},
+        generation_date      => $provenance->{generation_date},
+        generator_version    => $provenance->{generator_version},
     );
 }
 
@@ -129,6 +239,16 @@ sub _required_integer_seed {
         unless defined $args->{$name}
             && !ref($args->{$name})
             && $args->{$name} =~ /\A-?\d+\z/;
+    return 0 + $args->{$name};
+}
+
+sub _optional_positive_integer {
+    my ($args, $name, $default) = @_;
+    return $default unless exists $args->{$name};
+    die "$name must be a positive integer\n"
+        unless defined $args->{$name}
+            && !ref($args->{$name})
+            && $args->{$name} =~ /\A[1-9]\d*\z/;
     return 0 + $args->{$name};
 }
 
@@ -173,9 +293,213 @@ sub _reveal_cells {
     return join q{}, @cells;
 }
 
+sub _reveal_cells_by_label {
+    my ($puzzle, $solution, @labels) = @_;
+    return _reveal_cells(
+        $puzzle,
+        $solution,
+        map { _cell_index_from_label($_) } @labels,
+    );
+}
+
+sub _cell_index_from_label {
+    my ($label) = @_;
+    die "reveal cell label must look like RrCc\n"
+        unless defined $label && !ref($label) && $label =~ /\AR([1-9])C([1-9])\z/;
+    return ($1 - 1) * 9 + ($2 - 1);
+}
+
 sub _cell_label {
     my ($index) = @_;
     return sprintf 'R%dC%d', int($index / 9) + 1, ($index % 9) + 1;
+}
+
+sub _rate_generated_puzzle {
+    my ($self, $generated) = @_;
+    return $self->_rate_puzzle_string($generated->puzzle);
+}
+
+sub _rate_puzzle_string {
+    my ($self, $puzzle) = @_;
+
+    my $solver = Solver->new(output_mode => 'quiet');
+    my $grid = $solver->run(
+        puzzle_string => $puzzle,
+        output_mode   => 'quiet',
+    );
+
+    die "generated puzzle did not solve cleanly for difficulty rating\n"
+        unless $grid->solved == 81 && !$solver->has_contradiction;
+
+    return $solver->difficulty;
+}
+
+sub _difficulty_matches {
+    my ($difficulty, %args) = @_;
+
+    return 0 if exists $args{difficulty}
+        && !_matches_scalar_spec($difficulty->label, $args{difficulty});
+    return 0 if exists $args{difficulty_label}
+        && !_matches_scalar_spec($difficulty->label, $args{difficulty_label});
+    return 0 if exists $args{score}
+        && !_matches_scalar_spec($difficulty->score, $args{score});
+    return 0 if exists $args{difficulty_score}
+        && !_matches_scalar_spec($difficulty->score, $args{difficulty_score});
+    return 0 if exists $args{highest_strategy}
+        && !_matches_scalar_spec(
+            $difficulty->highest_strategy // q{},
+            $args{highest_strategy},
+        );
+
+    if (exists $args{strategy_ceiling}) {
+        my $ceiling = _strategy_ceiling_score($args{strategy_ceiling});
+        return 0 if $difficulty->score > $ceiling;
+    }
+
+    return 1;
+}
+
+sub _matches_scalar_spec {
+    my ($actual, $expected) = @_;
+
+    if (ref($expected) eq 'HASH') {
+        return 0 if exists $expected->{not}
+            && _matches_scalar_spec($actual, $expected->{not});
+        return 0 if exists $expected->{exclude}
+            && _matches_scalar_spec($actual, $expected->{exclude});
+
+        my $has_positive = 0;
+        for my $key (qw(value eq in any min max gt gte lt lte)) {
+            $has_positive ||= exists $expected->{$key};
+        }
+        return 1 unless $has_positive;
+
+        my $ok = 1;
+        $ok &&= _matches_scalar_spec($actual, $expected->{value})
+            if exists $expected->{value};
+        $ok &&= _matches_scalar_spec($actual, $expected->{eq})
+            if exists $expected->{eq};
+        $ok &&= _matches_any($actual, @{ _as_array($expected->{in}) })
+            if exists $expected->{in};
+        $ok &&= _matches_any($actual, @{ _as_array($expected->{any}) })
+            if exists $expected->{any};
+
+        $ok &&= _is_number($actual) && $actual >= $expected->{min}
+            if exists $expected->{min};
+        $ok &&= _is_number($actual) && $actual <= $expected->{max}
+            if exists $expected->{max};
+        $ok &&= _is_number($actual) && $actual >  $expected->{gt}
+            if exists $expected->{gt};
+        $ok &&= _is_number($actual) && $actual >= $expected->{gte}
+            if exists $expected->{gte};
+        $ok &&= _is_number($actual) && $actual <  $expected->{lt}
+            if exists $expected->{lt};
+        $ok &&= _is_number($actual) && $actual <= $expected->{lte}
+            if exists $expected->{lte};
+
+        return $ok ? 1 : 0;
+    }
+
+    if (ref($expected) eq 'ARRAY') {
+        return _matches_any($actual, @{$expected});
+    }
+
+    return defined($actual) && defined($expected) && "$actual" eq "$expected";
+}
+
+sub _matches_any {
+    my ($actual, @expected) = @_;
+    for my $item (@expected) {
+        return 1 if _matches_scalar_spec($actual, $item);
+    }
+    return 0;
+}
+
+sub _as_array {
+    my ($value) = @_;
+    return [] unless defined $value;
+    return $value if ref($value) eq 'ARRAY';
+    return [$value];
+}
+
+sub _is_number {
+    my ($value) = @_;
+    return defined($value) && !ref($value) && $value =~ /\A-?\d+(?:\.\d+)?\z/;
+}
+
+sub _strategy_ceiling_score {
+    my ($ceiling) = @_;
+    die "strategy_ceiling must be a score or strategy name\n"
+        unless defined $ceiling && !ref($ceiling);
+    return 0 + $ceiling if $ceiling =~ /\A\d+\z/;
+
+    my $difficulty = Sudoku::Difficulty->new(
+        label               => 'Unrated',
+        score               => 0,
+        statistics_snapshot => {},
+    );
+    my $score = $difficulty->strategy_score($ceiling);
+    die "Unknown strategy ceiling '$ceiling'\n" unless $score;
+    return $score;
+}
+
+sub _copy_generated {
+    my ($generated, %extra) = @_;
+
+    return Sudoku::GeneratedPuzzle->new(
+        canonical_record     => $generated->canonical_record,
+        corpus_seed          => $generated->corpus_seed,
+        symmetry_seed        => $generated->symmetry_seed,
+        transform            => $generated->transform,
+        base_puzzle          => $generated->base_puzzle,
+        puzzle               => $generated->puzzle,
+        solution             => $generated->solution,
+        reveal_seed          => $generated->reveal_seed,
+        reveal_cells         => $generated->reveal_cells,
+        target_clue_count    => $generated->target_clue_count,
+        difficulty           => $extra{difficulty} // $generated->difficulty,
+        generation_attempts  => $extra{generation_attempts}
+            // $generated->generation_attempts,
+        generation_date      => $extra{generation_date}
+            // $generated->generation_date,
+        generator_version    => $extra{generator_version}
+            // $generated->generator_version,
+    );
+}
+
+sub _replay_data {
+    my (%args) = @_;
+
+    if (exists $args{file}) {
+        open my $in, '<:encoding(UTF-8)', $args{file}
+            or die "Cannot open '$args{file}': $!\n";
+        local $/;
+        my $text = <$in>;
+        close $in
+            or die "Cannot close '$args{file}': $!\n";
+        return JSON::PP->new->decode($text);
+    }
+
+    if (exists $args{data}) {
+        die "replay data must be a hash reference\n"
+            unless ref($args{data}) eq 'HASH';
+        return $args{data};
+    }
+
+    die "replay requires file or data\n";
+}
+
+sub _verify_difficulty_metadata {
+    my ($stored, $actual) = @_;
+
+    for my $field (qw(rating_version label score highest_strategy)) {
+        my $left = defined $stored->{$field} ? "$stored->{$field}" : q{};
+        my $right = defined $actual->$field ? $actual->$field : q{};
+        die "stored difficulty $field does not match replayed difficulty\n"
+            unless $left eq "$right";
+    }
+
+    return 1;
 }
 
 sub _verify_solution_preserves_puzzle {
