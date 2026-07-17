@@ -5,11 +5,9 @@ use warnings;
 
 use Moose;
 use Grid;
-use Solver;
 use Sudoku::Contradiction;
 use Sudoku::Deduction;
 use Sudoku::Hypothetical::Result;
-use Sudoku::Strategy;
 
 has 'grid' => (
     is       => 'ro',
@@ -51,6 +49,7 @@ has 'strategy_classes' => (
     is      => 'ro',
     isa     => 'ArrayRef[Str]',
     default => sub {
+        require Sudoku::Strategy;
         return [
             grep { $_ !~ /(?:Forcing|Nishio|Hypothetical)/ }
                 Sudoku::Strategy->ordered_strategy_classes
@@ -103,6 +102,7 @@ sub run {
     my ($self) = @_;
 
     my $branch = $self->clone_grid;
+    require Solver;
     my $solver = Solver->new(
         strategy_classes => [ @{ $self->strategy_classes } ],
         output_mode      => 'quiet',
