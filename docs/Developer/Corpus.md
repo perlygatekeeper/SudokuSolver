@@ -168,6 +168,27 @@ selection. Convenience helpers such as `puzzles_by_difficulty`,
 `puzzles_by_highest_strategy`, `puzzles_by_score`, and
 `puzzles_with_symmetry` delegate to `select`.
 
+## Symmetry-Randomized Generation
+
+`Sudoku::Generator` can select a canonical corpus record deterministically and
+apply a seeded Sudoku-preserving symmetry transform:
+
+```perl
+my $generated = Sudoku::Generator->new->symmetry_randomized(
+    corpus_seed   => 20260717,
+    symmetry_seed => 12345,
+    criteria      => { difficulty => 'Master' },
+);
+
+say $generated->puzzle;
+say $generated->solution;
+say $generated->transform_shorthand;
+```
+
+The generated puzzle is equivalent to its canonical source puzzle. The result
+records the canonical ID, fingerprint, corpus seed, symmetry seed, and explicit
+transform shorthand so later replay can reconstruct the same variant.
+
 ---
 
 ## Related Documentation

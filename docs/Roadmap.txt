@@ -254,10 +254,18 @@ results for sorting, limiting, and deterministic random selection.
 
 ### Phase 6 — Symmetry-Randomized Puzzle Creation
 
-* Select a canonical corpus seed.
-* Apply a deterministic random symmetry transform.
-* Preserve both transformed puzzle and transformed solution.
-* Record the symmetry seed and explicit transform shorthand.
+Status: complete
+
+* [x] Select a canonical corpus seed.
+* [x] Apply a deterministic random symmetry transform.
+* [x] Preserve both transformed puzzle and transformed solution.
+* [x] Record the symmetry seed and explicit transform shorthand.
+
+`Sudoku::Generator` implements symmetry-randomized creation on top of
+`Sudoku::Corpus` and `Sudoku::Symmetry`. It accepts a corpus seed, a symmetry
+seed, and optional corpus query criteria; returns a `Sudoku::GeneratedPuzzle`;
+and records canonical ID, fingerprint, seeds, and transform shorthand for
+future replay.
 
 ### Phase 7 — Controlled Clue Reveals
 

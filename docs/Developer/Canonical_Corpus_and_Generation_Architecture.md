@@ -502,7 +502,39 @@ Symmetry and clue reveals use separate seeds. The explicit transform and reveal
 list are stored alongside the seeds so replay remains stable even if random
 selection internals change in a later release.
 
-The final replay invariant is:
+### Phase 6: Symmetry-randomized creation
+
+`Sudoku::Generator` creates a puzzle variant from the canonical corpus without
+changing the underlying logical puzzle:
+
+```perl
+my $generator = Sudoku::Generator->new;
+
+my $generated = $generator->symmetry_randomized(
+    corpus_seed   => 20260717,
+    symmetry_seed => 12345,
+    criteria      => { difficulty => 'Master' },
+);
+```
+
+The corpus seed deterministically selects one record from either the full
+corpus or a supplied `Sudoku::Corpus::Query`. The symmetry seed is passed to
+`Sudoku::Symmetry->random`, producing a replayable transform. The generator
+applies the transform to both the canonical puzzle and canonical solution,
+then verifies that every transformed clue agrees with the transformed
+solution.
+
+`Sudoku::GeneratedPuzzle` records:
+
+- generated puzzle;
+- transformed solution;
+- canonical ID and fingerprint;
+- corpus seed;
+- symmetry seed; and
+- explicit symmetry transform shorthand.
+
+Phase 6 does not add or remove clues. Controlled clue reveals begin in Phase 7.
+The eventual Phase 9 replay invariant remains:
 
 ```text
 replay(metadata) == originally generated puzzle
