@@ -217,6 +217,10 @@ perl -Ilib bin/generate-puzzle.pl \
     --output-file generated-puzzle.json
 ```
 
+Difficulty-targeted generation starts from corpus records already at or above
+the requested difficulty floor, then still solves and rates the generated
+puzzle before accepting it.
+
 ## Output Formats
 
 SudokuSolver separates solving from presentation. The solver produces stable

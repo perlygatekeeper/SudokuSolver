@@ -151,6 +151,17 @@ sub strategy_score {
     return $STRATEGY_SCORE{$strategy} // 0;
 }
 
+sub label_min_score {
+    my ( $self, $label ) = @_;
+
+    return unless defined $label;
+
+    my @scores = sort { $a <=> $b }
+        grep { $SCORE_LABEL{$_} eq $label } keys %SCORE_LABEL;
+
+    return @scores ? $scores[0] : undef;
+}
+
 sub summary {
     my ($self) = @_;
 

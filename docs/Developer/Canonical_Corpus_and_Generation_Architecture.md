@@ -592,6 +592,13 @@ attempt increments the corpus, symmetry, and reveal seeds together. The accepted
 generated puzzle records the rating version, label, score, highest strategy,
 statistics snapshot, and number of attempts.
 
+When a target implies a minimum difficulty floor, generation first narrows the
+source corpus to records already at or above that floor. For example, a
+`Medium` target starts from corpus records rated `Medium` or harder before
+revealing additional clues. This prefilter avoids candidates that should not
+become harder after correct clues are added, while the final generated-puzzle
+rating remains the authority.
+
 ### Phase 9: Provenance and replay
 
 `Sudoku::GeneratedPuzzle` emits a readable JSON artifact:

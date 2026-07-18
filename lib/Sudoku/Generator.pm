@@ -117,12 +117,15 @@ sub difficulty_targeted {
     my $base_corpus_seed = _required_integer_seed(\%args, 'corpus_seed');
     my $base_symmetry_seed = _required_integer_seed(\%args, 'symmetry_seed');
     my $base_reveal_seed = _required_integer_seed(\%args, 'reveal_seed');
+    my $source = $self->_difficulty_target_selection_source(%args);
 
     for my $attempt (0 .. $max_attempts - 1) {
         my %candidate_args = %args;
         $candidate_args{corpus_seed} = $base_corpus_seed + $attempt;
         $candidate_args{symmetry_seed} = $base_symmetry_seed + $attempt;
         $candidate_args{reveal_seed} = $base_reveal_seed + $attempt;
+        $candidate_args{query} = $source;
+        delete $candidate_args{criteria};
 
         my $generated = $self->controlled_reveals(%candidate_args);
         my $difficulty = $self->_rate_generated_puzzle($generated);
@@ -230,6 +233,25 @@ sub _selection_source {
     }
 
     return Sudoku::Corpus::Query->new(records => $self->corpus->records);
+}
+
+sub _difficulty_target_selection_source {
+    my ($self, %args) = @_;
+
+    my $source = $self->_selection_source(%args);
+    my $minimum_score = _minimum_base_score_for_difficulty_target(%args);
+    return $source unless defined $minimum_score;
+
+    my @records = grep {
+        defined $_->{difficulty}{score}
+            && $_->{difficulty}{score} >= $minimum_score
+    } @{ $source->records };
+
+    die "No corpus records satisfy the base difficulty prefilter "
+        . "(score >= $minimum_score)\n"
+        unless @records;
+
+    return Sudoku::Corpus::Query->new(records => \@records);
 }
 
 sub _required_integer_seed {
@@ -357,6 +379,141 @@ sub _difficulty_matches {
     }
 
     return 1;
+}
+
+sub _minimum_base_score_for_difficulty_target {
+    my (%args) = @_;
+
+    my @floors;
+
+    push @floors, _minimum_score_from_label_spec($args{difficulty})
+        if exists $args{difficulty};
+    push @floors, _minimum_score_from_label_spec($args{difficulty_label})
+        if exists $args{difficulty_label};
+    push @floors, _minimum_score_from_score_spec($args{score})
+        if exists $args{score};
+    push @floors, _minimum_score_from_score_spec($args{difficulty_score})
+        if exists $args{difficulty_score};
+    push @floors, _minimum_score_from_strategy_spec($args{highest_strategy})
+        if exists $args{highest_strategy};
+
+    @floors = grep { defined } @floors;
+    return unless @floors;
+
+    my $minimum = $floors[0];
+    for my $floor (@floors[1 .. $#floors]) {
+        $minimum = $floor if $floor > $minimum;
+    }
+
+    return $minimum;
+}
+
+sub _minimum_score_from_label_spec {
+    my ($spec) = @_;
+
+    return unless defined $spec;
+
+    if (ref($spec) eq 'HASH') {
+        return _minimum_score_from_label_spec($spec->{value})
+            if exists $spec->{value};
+        return _minimum_score_from_label_spec($spec->{eq})
+            if exists $spec->{eq};
+        return _minimum_defined(
+            map { _minimum_score_from_label_spec($_) } @{ _as_array($spec->{in}) },
+        ) if exists $spec->{in};
+        return _minimum_defined(
+            map { _minimum_score_from_label_spec($_) } @{ _as_array($spec->{any}) },
+        ) if exists $spec->{any};
+
+        return;
+    }
+
+    if (ref($spec) eq 'ARRAY') {
+        return _minimum_defined(map { _minimum_score_from_label_spec($_) } @{$spec});
+    }
+
+    my $difficulty = Sudoku::Difficulty->new(
+        label               => 'Unrated',
+        score               => 0,
+        statistics_snapshot => {},
+    );
+    return $difficulty->label_min_score($spec);
+}
+
+sub _minimum_score_from_score_spec {
+    my ($spec) = @_;
+
+    return unless defined $spec;
+
+    if (ref($spec) eq 'HASH') {
+        return _minimum_score_from_score_spec($spec->{value})
+            if exists $spec->{value};
+        return _minimum_score_from_score_spec($spec->{eq})
+            if exists $spec->{eq};
+        return _minimum_defined(
+            map { _minimum_score_from_score_spec($_) } @{ _as_array($spec->{in}) },
+        ) if exists $spec->{in};
+        return _minimum_defined(
+            map { _minimum_score_from_score_spec($_) } @{ _as_array($spec->{any}) },
+        ) if exists $spec->{any};
+        return $spec->{min} if exists $spec->{min} && _is_number($spec->{min});
+        return $spec->{gte} if exists $spec->{gte} && _is_number($spec->{gte});
+        return $spec->{gt} + 1 if exists $spec->{gt} && _is_number($spec->{gt});
+
+        return;
+    }
+
+    if (ref($spec) eq 'ARRAY') {
+        return _minimum_defined(map { _minimum_score_from_score_spec($_) } @{$spec});
+    }
+
+    return 0 + $spec if _is_number($spec);
+    return;
+}
+
+sub _minimum_score_from_strategy_spec {
+    my ($spec) = @_;
+
+    return unless defined $spec;
+
+    if (ref($spec) eq 'HASH') {
+        return _minimum_score_from_strategy_spec($spec->{value})
+            if exists $spec->{value};
+        return _minimum_score_from_strategy_spec($spec->{eq})
+            if exists $spec->{eq};
+        return _minimum_defined(
+            map { _minimum_score_from_strategy_spec($_) } @{ _as_array($spec->{in}) },
+        ) if exists $spec->{in};
+        return _minimum_defined(
+            map { _minimum_score_from_strategy_spec($_) } @{ _as_array($spec->{any}) },
+        ) if exists $spec->{any};
+
+        return;
+    }
+
+    if (ref($spec) eq 'ARRAY') {
+        return _minimum_defined(map { _minimum_score_from_strategy_spec($_) } @{$spec});
+    }
+
+    my $difficulty = Sudoku::Difficulty->new(
+        label               => 'Unrated',
+        score               => 0,
+        statistics_snapshot => {},
+    );
+    my $score = $difficulty->strategy_score($spec);
+    return $score || undef;
+}
+
+sub _minimum_defined {
+    my @values = grep { defined } @_;
+    return unless @values;
+
+    my $minimum = $values[0];
+    for my $value (@values[1 .. $#values]) {
+        $minimum = $value if $value < $minimum;
+    }
+
+    return $minimum;
 }
 
 sub _matches_scalar_spec {
