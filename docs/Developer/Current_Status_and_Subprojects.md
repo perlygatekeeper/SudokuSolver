@@ -141,6 +141,7 @@ Completed corpus capabilities include:
 - readable generated-puzzle provenance artifacts
 - exact replay verification
 - gzip master-corpus reading for reduced checkouts
+- initial generated-puzzle command-line workflow
 
 ## Active Post-1.2.1 Sub-Projects
 
@@ -223,7 +224,6 @@ Planned work:
 
 Long-term possibilities:
 
-- generated-puzzle command-line workflows
 - generated-puzzle file viewers
 - interactive terminal use
 - desktop GUI or web interface

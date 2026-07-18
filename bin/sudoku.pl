@@ -214,6 +214,14 @@ if (defined $result_format && (defined $grid_format || defined $character_set)) 
 
 $output_mode = 'quiet' if defined $result_format;
 
+my $binary_grid_output = defined $grid_format && $grid_format =~ /\A(?:png|pdf)\z/;
+my $needs_utf8_output =
+     !$binary_grid_output
+  && (   $renderer->character_set ne 'ASCII'
+      || (defined $grid_format && $grid_format =~ /\A(?:markdown|html|svg)\z/));
+
+binmode STDOUT, ':encoding(UTF-8)' if $needs_utf8_output && !defined $output_file;
+
 require Solver;
 
 my $solver = Solver->new(
@@ -236,12 +244,12 @@ if (defined $result_format) {
   );
 }
 elsif (defined $grid_format || defined $character_set) {
-  if (defined $grid_format && $grid_format =~ /\A(?:png|pdf)\z/) {
+  if ($binary_grid_output) {
     binmode STDOUT, ':raw';
   }
   else {
     binmode STDOUT, ':encoding(UTF-8)'
-      if $renderer->character_set ne 'ASCII' || (defined $grid_format && $grid_format =~ /\A(?:markdown|html|svg)\z/);
+      if $needs_utf8_output && !defined $output_file;
   }
 
   print $renderer->render_grid(

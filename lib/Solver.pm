@@ -304,7 +304,7 @@ sub trace_deduction {
   return unless $self->trace_grid_after_deduction;
 
   print $self->renderer->debug_grid_header( $self->deduction_count );
-  $grid->big_print;
+  print $self->renderer->render_grid( $grid, format => 'candidates' );
 
   return $deduction;
 }
@@ -607,7 +607,8 @@ sub run {
 
     if ( $self->output_mode =~ /^(trace|debug)$/ ) {
       print $self->renderer->pass_start($pass);
-      $puzzle->big_print if $self->output_mode eq 'debug';
+      print $self->renderer->render_grid( $puzzle, format => 'candidates' )
+        if $self->output_mode eq 'debug';
     }
 
     my $deduction = $self->step($puzzle);
@@ -665,7 +666,8 @@ sub run {
   print $self->renderer->final_status( $self, $puzzle )
     unless $self->output_mode eq 'quiet';
 
-  $puzzle->big_print if $puzzle->solved != 81 && $self->output_mode eq 'debug';
+  print $self->renderer->render_grid( $puzzle, format => 'candidates' )
+    if $puzzle->solved != 81 && $self->output_mode eq 'debug';
 
   return $puzzle;
 }

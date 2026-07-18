@@ -191,6 +191,32 @@ perl -Ilib bin/sudoku.pl --help
 perl -Ilib bin/sudoku.pl --version
 ```
 
+Generate a reproducible puzzle from the canonical corpus:
+
+```sh
+perl -Ilib bin/generate-puzzle.pl --seed 123 --clues 30
+```
+
+Generate a worksheet-style puzzle without showing candidates:
+
+```sh
+perl -Ilib bin/generate-puzzle.pl \
+    --seed 123 \
+    --clues 30 \
+    --format worksheet
+```
+
+Generate a difficulty-targeted replay artifact:
+
+```sh
+perl -Ilib bin/generate-puzzle.pl \
+    --seed 123 \
+    --clues 30 \
+    --difficulty Medium \
+    --format json \
+    --output-file generated-puzzle.json
+```
+
 ## Output Formats
 
 SudokuSolver separates solving from presentation. The solver produces stable

@@ -626,6 +626,28 @@ The Phase 9 replay invariant is:
 replay(metadata) == originally generated puzzle
 ```
 
+### Command-line generation
+
+`bin/generate-puzzle.pl` exposes the Phase 6-9 generation pipeline as a
+reproducible command-line workflow:
+
+```sh
+perl -Ilib bin/generate-puzzle.pl --seed 123 --clues 30
+perl -Ilib bin/generate-puzzle.pl --seed 123 --clues 30 --format worksheet
+perl -Ilib bin/generate-puzzle.pl \
+    --seed 123 \
+    --clues 30 \
+    --difficulty Medium \
+    --format json \
+    --output-file generated-puzzle.json
+```
+
+The base `--seed` deterministically derives separate corpus, symmetry, and
+reveal seeds. Each seed can also be supplied explicitly when a caller needs
+full control over provenance. The command writes either a human-readable
+summary, an 81-character puzzle or solution line, a replayable JSON artifact,
+or any registered grid renderer format, including `worksheet`.
+
 
 ## Full Canonical Form Baseline
 

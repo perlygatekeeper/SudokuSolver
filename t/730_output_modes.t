@@ -2,7 +2,10 @@
 
 use strict;
 use warnings;
+use utf8;
 
+use IPC::Open3;
+use Symbol qw(gensym);
 use Test::More;
 
 use lib 'lib';
@@ -47,4 +50,47 @@ my $quiet_output = capture_stdout {
 
 is($quiet_output, q{}, 'quiet mode suppresses solver output');
 
+my ($debug_output, $debug_error, $debug_exit) = _run_cli(
+    '--string'        => $puzzle,
+    '--output'        => 'debug',
+    '--grid-format'   => 'worksheet',
+    '--character-set' => 'UNICODE-MIXED',
+);
+
+is($debug_exit, 0, 'debug CLI command with worksheet grid exits successfully');
+is($debug_error, q{}, 'debug CLI command is quiet on stderr');
+
+my ($pass_grid) = $debug_output =~ /^Pass 1\n-+\n(.*?)^\s+Naked Singles:/ms;
+ok(defined $pass_grid, 'debug output includes a per-pass grid before strategy results');
+like($pass_grid, qr/┏/, 'per-pass debug grid honors mixed Unicode corners');
+like($pass_grid, qr/┃/, 'per-pass debug grid honors mixed Unicode major boundaries');
+like($pass_grid, qr/│/, 'per-pass debug grid honors mixed Unicode minor boundaries');
+unlike($pass_grid, qr/^\s*\+/m, 'per-pass debug grid no longer uses ASCII rules');
+
 done_testing();
+
+sub _run_cli {
+    my (@args) = @_;
+
+    my ($stdin, $stdout);
+    my $stderr = gensym;
+    my $pid = open3(
+        $stdin,
+        $stdout,
+        $stderr,
+        $^X,
+        '-Ilib',
+        'bin/sudoku.pl',
+        @args,
+    );
+    close $stdin;
+
+    binmode $stdout, ':encoding(UTF-8)';
+    binmode $stderr, ':encoding(UTF-8)';
+    my $output = do { local $/; <$stdout> // q{} };
+    my $error = do { local $/; <$stderr> // q{} };
+    waitpid $pid, 0;
+    my $exit = $? >> 8;
+
+    return ($output, $error, $exit);
+}

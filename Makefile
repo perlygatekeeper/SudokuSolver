@@ -63,7 +63,7 @@ help:
 	@echo ""
 	@echo "Targets:"
 	@echo "  make check    - run syntax and tests"
-	@echo "  make syntax   - perl -c main script and libraries"
+	@echo "  make syntax   - perl -c scripts and libraries"
 	@echo "  make test     - run Perl tests with prove"
 	@echo "  make run      - run solver"
 	@echo "  make clean    - remove generated output files"
@@ -85,7 +85,10 @@ help:
 check: syntax test
 
 syntax:
-	$(PERL) -Ilib -c $(SCRIPT)
+	@for script in $(SCRIPTS); do \
+	  echo "Checking $$script"; \
+	  $(PERL) -Ilib -c $$script || exit 1; \
+	done
 	@for mod in $(MODS); do \
 	  echo "Checking $$mod"; \
 	  $(PERL) -Ilib -c $$mod || exit 1; \
