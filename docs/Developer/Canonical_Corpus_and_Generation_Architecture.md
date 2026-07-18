@@ -602,6 +602,11 @@ revealing additional clues. This prefilter avoids candidates that should not
 become harder after correct clues are added, while the final generated-puzzle
 rating remains the authority.
 
+The `bin/generate-puzzle.pl --debug` option prints each targeted attempt to
+standard error, including the selected corpus record, starting corpus
+difficulty, generated difficulty after clue reveals, and accept/reject
+decision.
+
 ### Phase 9: Provenance and replay
 
 `Sudoku::GeneratedPuzzle` emits a readable JSON artifact:

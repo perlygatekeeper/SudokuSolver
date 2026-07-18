@@ -221,6 +221,16 @@ Difficulty-targeted generation starts from corpus records already at or above
 the requested difficulty floor, then still solves and rates the generated
 puzzle before accepting it.
 
+Add `--debug` to print each difficulty-targeted attempt to standard error:
+
+```sh
+perl -Ilib bin/generate-puzzle.pl \
+    --seed 123 \
+    --clues 30 \
+    --difficulty Medium \
+    --debug
+```
+
 ## Output Formats
 
 SudokuSolver separates solving from presentation. The solver produces stable

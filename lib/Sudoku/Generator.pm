@@ -129,7 +129,17 @@ sub difficulty_targeted {
 
         my $generated = $self->controlled_reveals(%candidate_args);
         my $difficulty = $self->_rate_generated_puzzle($generated);
-        next unless _difficulty_matches($difficulty, %args);
+        my $accepted = _difficulty_matches($difficulty, %args);
+
+        _notify_attempt(
+            \%args,
+            attempt    => $attempt + 1,
+            generated  => $generated,
+            difficulty => $difficulty,
+            accepted   => $accepted,
+        );
+
+        next unless $accepted;
 
         return _copy_generated(
             $generated,
@@ -379,6 +389,18 @@ sub _difficulty_matches {
     }
 
     return 1;
+}
+
+sub _notify_attempt {
+    my ($args, %event) = @_;
+
+    return unless exists $args->{attempt_callback};
+    my $callback = $args->{attempt_callback};
+    die "attempt_callback must be a code reference\n"
+        unless ref($callback) eq 'CODE';
+
+    $callback->(%event);
+    return;
 }
 
 sub _minimum_base_score_for_difficulty_target {

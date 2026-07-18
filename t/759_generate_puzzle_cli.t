@@ -72,6 +72,63 @@ is($summary_error, q{}, 'difficulty-targeted command is quiet on stderr');
 like($summary_output, qr/^Difficulty:\s+Easy$/m, 'summary includes accepted difficulty');
 like($summary_output, qr/^Generation attempts:\s+1$/m, 'summary includes attempt count');
 
+my ($debug_output, $debug_error, $debug_exit) = _run_generate(
+    '--corpus-file'      => $master,
+    '--seed'             => 1,
+    '--clues'            => 17,
+    '--difficulty'       => 'Easy',
+    '--strategy-ceiling' => 'Hidden Singles',
+    '--format'           => 'summary',
+    '--debug',
+);
+
+is($debug_exit, 0, 'debug difficulty-targeted command exits successfully');
+like($debug_output, qr/^Generated Puzzle$/m, 'debug command keeps normal output on stdout');
+like(
+    $debug_error,
+    qr/^Attempt 1: Starting with Corpus #1 \(17C-000001\), initial difficulty: Easy, after revealing up to 17 clues, final difficulty: Easy, accept\.$/m,
+    'debug command reports accepted attempt on stderr',
+);
+
+my $reject_master = File::Spec->catfile($tmpdir, 'reject-master.jsonl');
+open my $reject_out, '>:raw', $reject_master
+    or die "Cannot create '$reject_master': $!";
+print {$reject_out} JSON::PP->new->canonical(1)->encode(
+    _record(
+        $puzzle,
+        $solution,
+        canonical_id     => '17C-049132',
+        fingerprint      => 'fp-hard',
+        difficulty_label => 'Hard',
+        difficulty_score => 4,
+        highest_strategy => 'Naked Pairs',
+    ),
+), "\n";
+close $reject_out;
+
+my ($reject_output, $reject_error, $reject_exit) = _run_generate(
+    '--corpus-file'  => $reject_master,
+    '--seed'         => 1,
+    '--clues'        => 30,
+    '--difficulty'   => 'Hard',
+    '--max-attempts' => 1,
+    '--format'       => 'summary',
+    '--debug',
+);
+
+isnt($reject_exit, 0, 'debug command exits with failure when attempts are exhausted');
+is($reject_output, q{}, 'rejected debug command emits no stdout');
+like(
+    $reject_error,
+    qr/^Attempt 1: Starting with Corpus #49132 \(17C-049132\), initial difficulty: Hard, after revealing up to 30 clues, final difficulty: \w+, reject\.$/m,
+    'debug command reports rejected attempt on stderr',
+);
+like(
+    $reject_error,
+    qr/No generated puzzle matched the requested difficulty constraints within 1 attempt/,
+    'rejected debug command still reports final failure',
+);
+
 my ($worksheet_output, $worksheet_error, $worksheet_exit) = _run_generate(
     '--corpus-file' => $master,
     '--seed'        => 1,
@@ -142,7 +199,7 @@ sub _run_generate {
 }
 
 sub _record {
-    my ($puzzle, $solution) = @_;
+    my ($puzzle, $solution, %overrides) = @_;
 
     return {
         schema => {
@@ -150,8 +207,8 @@ sub _record {
             version => '1.0',
         },
         identity => {
-            canonical_id     => '17C-000001',
-            fingerprint      => 'fp-001',
+            canonical_id     => $overrides{canonical_id} // '17C-000001',
+            fingerprint      => $overrides{fingerprint} // 'fp-001',
             canonical_puzzle => $puzzle,
         },
         solution => $solution,
@@ -163,9 +220,9 @@ sub _record {
         difficulty => {
             scheme           => 'SudokuSolver',
             scheme_version   => '2.7',
-            score            => 2,
-            label            => 'Easy',
-            highest_strategy => 'Hidden Singles',
+            score            => $overrides{difficulty_score} // 2,
+            label            => $overrides{difficulty_label} // 'Easy',
+            highest_strategy => $overrides{highest_strategy} // 'Hidden Singles',
         },
         pattern_symmetries => [],
         provenance => {

@@ -31,6 +31,7 @@ my $corpus_file;
 my $format = 'summary';
 my $character_set = 'UNICODE_LIGHT';
 my $output_file;
+my $debug;
 my $help;
 
 GetOptions(
@@ -50,6 +51,7 @@ GetOptions(
     'format=s'           => \$format,
     'character-set=s'    => \$character_set,
     'output-file=s'      => \$output_file,
+    'debug'              => \$debug,
     'help|h'             => \$help,
 ) or pod2usage(2);
 
@@ -112,6 +114,8 @@ if (defined $score || defined $min_score || defined $max_score) {
     $score_spec{max} = $max_score if defined $max_score;
     $generator_args{score} = \%score_spec;
 }
+
+$generator_args{attempt_callback} = \&_debug_attempt if $debug;
 
 my $uses_difficulty_targeting =
        defined($difficulty)
@@ -190,6 +194,40 @@ sub _summary {
     return join("\n", @lines);
 }
 
+sub _debug_attempt {
+    my (%event) = @_;
+
+    my $generated = $event{generated};
+    my $difficulty = $event{difficulty};
+    my $record = $generated->canonical_record;
+    my $initial = $record->{difficulty} // {};
+    my $corpus_number = _corpus_number($record);
+    my $target_clues = $generated->target_clue_count;
+    my $decision = $event{accepted} ? 'accept' : 'reject';
+
+    printf STDERR
+        "Attempt %d: Starting with Corpus #%s (%s), initial difficulty: %s, after revealing up to %d clues, final difficulty: %s, %s.\n",
+        $event{attempt},
+        $corpus_number,
+        $generated->canonical_id,
+        $initial->{label} // 'Unknown',
+        $target_clues,
+        $difficulty->label,
+        $decision;
+
+    return;
+}
+
+sub _corpus_number {
+    my ($record) = @_;
+
+    my $canonical_id = $record->{identity}{canonical_id} // q{};
+    return 0 + $1 if $canonical_id =~ /-(\d+)\z/;
+    return $record->{provenance}{source_ordinal}
+        if defined $record->{provenance}{source_ordinal};
+    return '?';
+}
+
 sub _validate_integer {
     my (%args) = @_;
     my ($name) = keys %args;
@@ -231,6 +269,7 @@ generate-puzzle.pl - generate reproducible Sudoku puzzles from the canonical cor
 
   bin/generate-puzzle.pl --seed 123 --clues 30
   bin/generate-puzzle.pl --seed 123 --clues 30 --difficulty Medium --format worksheet
+  bin/generate-puzzle.pl --seed 123 --clues 30 --difficulty Medium --debug
   bin/generate-puzzle.pl --corpus-seed 10 --symmetry-seed 20 --reveal-seed 30 --format json
   bin/generate-puzzle.pl --seed 123 --difficulty Easy --max-score 3 --output-file generated.json --format json
 
@@ -301,6 +340,12 @@ Read a specific master corpus JSONL or JSONL.gz file.
 =item B<--output-file FILE>
 
 Write output to FILE.
+
+=item B<--debug>
+
+When difficulty targeting is active, print each generation attempt to standard
+error with the selected corpus record, starting difficulty, final generated
+difficulty, and accept/reject decision.
 
 =item B<-h, --help>
 
