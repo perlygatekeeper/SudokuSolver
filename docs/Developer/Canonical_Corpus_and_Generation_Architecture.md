@@ -419,6 +419,9 @@ development checkout may keep the master as
 `Puzzles/Master/sudoku17-master.jsonl` or as the smaller
 `Puzzles/Master/sudoku17-master.jsonl.gz`; `Sudoku::Corpus` reads both. The
 staging, identity, and solution TSV files remain regenerable build artifacts.
+Developers may also build an ignored local SQLite cache from the master JSONL
+with `make corpus-cache`; this cache accelerates lookup and filtering but is
+not an authoritative corpus artifact.
 
 Every JSON record separates identity from provenance and reserves independent
 scheme versions for canonicalization and difficulty. The difficulty

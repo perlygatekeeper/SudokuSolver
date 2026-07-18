@@ -424,7 +424,12 @@ make canonical-index
 make canonical-identities
 make canonical-solutions
 make master-corpus
+make corpus-cache
 ```
+
+`make corpus-cache` builds a local SQLite lookup cache from the master corpus.
+The cache is ignored by git; the compressed JSONL corpus remains the
+authoritative checked-in artifact.
 
 Additional design details are documented in:
 

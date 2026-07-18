@@ -2,7 +2,7 @@
     all help check syntax test run clean status \
     deps deps-notest version gitadd perl-version \
     backup tarball report solved echo examples \
-    corpus-audit canonical-benchmark canonical-index canonical-identities canonical-solutions master-corpus corpus-views
+    corpus-audit canonical-benchmark canonical-index canonical-identities canonical-solutions master-corpus corpus-views corpus-cache
 
 PERL          ?= perl5.34
 PROVE         := prove
@@ -78,6 +78,7 @@ help:
 	@echo "  make canonical-solutions  - solve and validate permanent canonical identities (INPUT/OUTPUT/LIMIT supported; staging file required)"
 	@echo "  make master-corpus       - publish authoritative JSONL corpus (INPUT/OUTPUT/LIMIT/JOBS supported; staging file required)"
 	@echo "  make corpus-views        - derive TSV and summary views from the master JSONL (INPUT/TSV/SUMMARY/LIMIT supported)"
+	@echo "  make corpus-cache        - build local SQLite corpus cache (INPUT/OUTPUT/FORCE supported)"
 	@echo ""
 	@echo "Variables:"
 	@echo "  make run PUZZLE=Puzzles/Puzzle.txt"
@@ -159,6 +160,14 @@ corpus-views:
 		--summary $${SUMMARY:-Puzzles/Master/sudoku17-master-summary.txt} \
 		--limit $${LIMIT:-0}
 
+corpus-cache:
+	@force_arg=""; \
+	if [ -n "$$FORCE" ]; then force_arg="--force"; fi; \
+	$(PERL) -Ilib bin/build-corpus-cache.pl \
+		$${INPUT:+--input "$$INPUT"} \
+		$${OUTPUT:+--output "$$OUTPUT"} \
+		$$force_arg
+
 examples:
 	@mkdir -p examples-output
 	@echo "== Solved example =="
@@ -195,6 +204,7 @@ clean:
 	rm -f Puzzles/*.out Puzzles/*.solution
 	rm -f sudoku_solver*.tgz
 	rm -rf examples-output
+	rm -f Puzzles/Master/sudoku17-master.sqlite
 	find . -name '*~' -delete
 	find . -name '*.bak' -delete
 	find . -name '.DS_Store' -delete
@@ -264,7 +274,7 @@ version:
 	@$(PERL) -Ilib -MSudoku -e 'print "SudokuSolver $$Sudoku::VERSION\n"'
 
 gitadd:
-	git add Makefile Readme.md \
+	git add Makefile Readme.md .gitignore \
 		$(SCRIPTS) $(MODS) $(VERSION_MOD) \
 		$(THEMEDIR)*.theme $(TESTDIR)*.t $(DOCSDIR)*.txt \
 		$(DOCSDIR)Developer/*.md \

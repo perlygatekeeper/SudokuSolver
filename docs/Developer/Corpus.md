@@ -177,6 +177,36 @@ By default, `Sudoku::Corpus->new` reads
 generation workflows usable in reduced checkouts that store only the compressed
 master corpus.
 
+## Local SQLite Cache
+
+The master JSONL or JSONL.gz file remains the authoritative corpus artifact.
+For faster local lookup and filtering, a developer can build an ignored SQLite
+cache:
+
+```sh
+make corpus-cache
+```
+
+or:
+
+```sh
+perl -Ilib bin/build-corpus-cache.pl \
+    --input Puzzles/Master/sudoku17-master.jsonl.gz \
+    --output Puzzles/Master/sudoku17-master.sqlite
+```
+
+`Sudoku::Corpus->new` automatically uses the cache when it exists and its
+stored source metadata matches the current master corpus file. If the cache is
+missing or stale, the corpus reader falls back to the JSONL source.
+
+The default generated cache path is:
+
+```text
+Puzzles/Master/sudoku17-master.sqlite
+```
+
+That file is intentionally ignored by git.
+
 ## Symmetry-Randomized Generation
 
 `Sudoku::Generator` can select a canonical corpus record deterministically and

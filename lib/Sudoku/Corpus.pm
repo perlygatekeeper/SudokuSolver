@@ -8,12 +8,16 @@ use JSON::PP;
 use Scalar::Util qw(blessed);
 
 use Sudoku::Corpus::Query;
+use Sudoku::Corpus::SQLiteCache;
 
 sub new {
     my ($class, %args) = @_;
 
+    my $file = $args{file} // _default_corpus_file();
     my $self = bless {
-        file => $args{file} // _default_corpus_file(),
+        file       => $file,
+        cache_file => $args{cache_file} // _default_cache_file($file),
+        use_cache  => exists $args{use_cache} ? $args{use_cache} : 1,
     }, $class;
 
     $self->_load;
@@ -25,19 +29,33 @@ sub file {
     return $self->{file};
 }
 
+sub cache_file {
+    my ($self) = @_;
+    return $self->{cache_file};
+}
+
+sub using_cache {
+    my ($self) = @_;
+    return defined $self->{cache} ? 1 : 0;
+}
+
 sub records {
     my ($self) = @_;
+    return $self->{cache}->records if $self->{cache};
     return [ @{ $self->{records} } ];
 }
 
 sub count {
     my ($self) = @_;
+    return $self->{cache}->count if $self->{cache};
     return scalar @{ $self->{records} };
 }
 
 sub find_by_canonical_id {
     my ($self, $canonical_id) = @_;
     return unless defined $canonical_id;
+    return $self->{cache}->find_by_canonical_id($canonical_id)
+        if $self->{cache};
     return $self->{by_id}{$canonical_id};
 }
 
@@ -49,11 +67,20 @@ sub find_by_id {
 sub find_by_fingerprint {
     my ($self, $fingerprint) = @_;
     return unless defined $fingerprint;
+    return $self->{cache}->find_by_fingerprint($fingerprint)
+        if $self->{cache};
     return $self->{by_fingerprint}{$fingerprint};
 }
 
 sub select {
     my ($self, %criteria) = @_;
+
+    if ($self->{cache}) {
+        my $records = $self->{cache}->select(%criteria);
+        return Sudoku::Corpus::Query->new(records => $records)
+            if defined $records;
+        $self->_load_source unless $self->{records};
+    }
 
     my @records = @{ $self->{records} };
     for my $criterion (sort keys %criteria) {
@@ -88,6 +115,23 @@ sub puzzles_by_score {
 }
 
 sub _load {
+    my ($self) = @_;
+
+    if ($self->{use_cache}
+        && Sudoku::Corpus::SQLiteCache->is_current(
+            source_file => $self->{file},
+            cache_file  => $self->{cache_file},
+        )) {
+        $self->{cache} = Sudoku::Corpus::SQLiteCache->new(
+            file => $self->{cache_file},
+        );
+        return $self;
+    }
+
+    return $self->_load_source;
+}
+
+sub _load_source {
     my ($self) = @_;
 
     my $fh = _open_corpus_file($self->{file});
@@ -136,6 +180,15 @@ sub _default_corpus_file {
     return $jsonl if -e $jsonl;
     return $gzip  if -e $gzip;
     return $jsonl;
+}
+
+sub _default_cache_file {
+    my ($source_file) = @_;
+
+    my $cache_file = $source_file;
+    $cache_file =~ s/\.gz\z//;
+    $cache_file =~ s/\.jsonl\z/.sqlite/;
+    return $cache_file;
 }
 
 sub _open_corpus_file {
