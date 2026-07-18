@@ -101,7 +101,7 @@ document, image, Unicode, color-theme, and CLI usability improvements.
 
 ## Version 1.2.0 — Canonical Corpus and Reproducible Puzzle Generation
 
-Status: complete
+Status: complete and tagged
 
 Version 1.2.0 turns the complete canonical 17-clue collection into a
 queryable, reproducible puzzle corpus and generation platform. Work is divided
@@ -323,6 +323,16 @@ rebuilds the generated puzzle from the canonical corpus record, explicit
 symmetry transform, and explicit reveal-cell list, then verifies stored puzzle,
 solution, base puzzle, coordinate encoding, final clue count, and difficulty
 metadata.
+
+## Version 1.2.1 — Reduced Distribution
+
+Status: complete
+
+Version 1.2.1 keeps the v1.2 corpus and generation capabilities while reducing
+the cost of cloning the repository. The large source and benchmark corpus files
+are removed from normal repository history, the gzip-compressed master JSONL
+corpus remains bundled, and the full pre-reduction history is preserved in a
+separate local mirror archive.
 
 ## Strategy Policy After 1.0
 

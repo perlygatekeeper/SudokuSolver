@@ -14,18 +14,18 @@ my $input = File::Spec->catfile($tmpdir, 'puzzles.txt');
 my $single = File::Spec->catfile($tmpdir, 'single.tsv');
 my $parallel = File::Spec->catfile($tmpdir, 'parallel.tsv');
 
+my @fixture_puzzles = (
+    '003020600900305001001806400008102900700000008006708200002609500800203009005010300',
+    '200080300060070084030500209000105408000000000402706000301007040720040060004010003',
+    '000000907000420180000705026100904000050000040000507009920108000034059000507000000',
+);
+
 open my $source, '>', $input or die "Cannot create '$input': $!";
-open my $corpus, '<', 'Puzzles/Benchmarks_Corpus/sudoku17-first50.txt'
-    or die "Cannot open fixture corpus: $!";
-my $written = 0;
-while (my $line = <$corpus>) {
-    next if $line =~ /\A\s*(?:#|\z)/;
-    print {$source} $line;
-    last if ++$written == 2;
-}
-close $corpus or die "Cannot close fixture corpus: $!";
+my @selected_fixtures = @fixture_puzzles[0, 1];
+print {$source} "$_\n" for @selected_fixtures;
 close $source or die "Cannot close '$input': $!";
-is $written, 2, 'created a two-puzzle canonical-index fixture';
+is scalar(@selected_fixtures), 2,
+    'created a two-puzzle canonical-index fixture';
 
 is system($^X, '-Ilib', 'bin/build-canonical-index.pl',
         '--file', $input, '--output', $single, '--jobs', 1),

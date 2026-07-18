@@ -281,10 +281,10 @@ sudoku.pl - solve a Sudoku puzzle
 =head1 SYNOPSIS
 
   sudoku.pl --file Puzzles/Puzzle3.txt
-  sudoku.pl --file Puzzles/sudoku17-first50.txt --puzzle 7
+  sudoku.pl --file Puzzles/Puzzle_Dispatch_20191209.txt
   sudoku.pl --string 003020600900305001001806400008102900700000008006708200002609500800203009005010300
   sudoku.pl --version
-  sudoku.pl --benchmark Puzzles/sudoku17-first50.txt
+  sudoku.pl --benchmark Puzzles/Puzzle_Dispatch_20191209.txt
   sudoku.pl --trace-grid-after-deduction --file Puzzles/Puzzle3.txt
   sudoku.pl --output explain --file Puzzles/Puzzle3.txt
   sudoku.pl --output quiet --grid-format compact --file Puzzles/Puzzle3.txt

@@ -14,18 +14,16 @@ my $staging = File::Spec->catfile($tmpdir, 'staging.tsv');
 my $identities = File::Spec->catfile($tmpdir, 'identities.tsv');
 my $solutions = File::Spec->catfile($tmpdir, 'solutions.tsv');
 
+my @fixture_puzzles = (
+    '003020600900305001001806400008102900700000008006708200002609500800203009005010300',
+    '200080300060070084030500209000105408000000000402706000301007040720040060004010003',
+    '000000907000420180000705026100904000050000040000507009920108000034059000507000000',
+);
+
 open my $src, '>', $source or die "Cannot create '$source': $!";
-open my $corpus, '<', 'Puzzles/Benchmarks_Corpus/sudoku17-first50.txt'
-    or die "Cannot open fixture corpus: $!";
-my $count = 0;
-while (my $line = <$corpus>) {
-    next if $line =~ /\A\s*(?:#|\z)/;
-    print {$src} $line;
-    last if ++$count == 3;
-}
-close $corpus;
+print {$src} "$_\n" for @fixture_puzzles;
 close $src;
-is $count, 3, 'created three-puzzle solution fixture';
+is scalar(@fixture_puzzles), 3, 'created three-puzzle solution fixture';
 
 is system($^X, '-Ilib', 'bin/build-canonical-index.pl',
         '--file', $source, '--output', $staging, '--jobs', 2),

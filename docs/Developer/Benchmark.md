@@ -5,35 +5,30 @@
 SudokuSolver includes benchmark support so releases can measure solver
 capability against stable puzzle collections.
 
-The first benchmark target is the first 50 canonical 17-clue puzzles:
+The default bundled benchmark target is a small example puzzle file:
 
 ```text
-Puzzles/sudoku17-first50.txt
+Puzzles/Puzzle_Dispatch_20191209.txt
 ```
 
-This collection is useful because it is small enough to run frequently and
-hard enough to expose gaps in the current strategy set.
+This collection is intentionally small enough to run quickly from a reduced
+checkout. Larger benchmark corpora can still be supplied explicitly when you
+have them available outside the repository.
 
 ---
 
 ## Make Targets
 
-Run the default benchmark:
+Run the bundled solver benchmark:
 
 ```bash
-make benchmark
+perl -Ilib ./bin/sudoku.pl --benchmark Puzzles/Puzzle_Dispatch_20191209.txt
 ```
 
-Run the canonical first-50 benchmark explicitly:
+Run the canonicalization timing benchmark:
 
 ```bash
-make benchmark-first50
-```
-
-Both currently run:
-
-```bash
-perl -Ilib ./bin/sudoku.pl --benchmark Puzzles/sudoku17-first50.txt
+make canonical-benchmark
 ```
 
 ---
@@ -68,9 +63,9 @@ The benchmark reports:
 
 ## Release Use
 
-Benchmark output should be captured before each release.
-
-The project goal for the canonical first-50 benchmark is:
+Benchmark output should be captured before each release. When the historical
+first-50 benchmark corpus is available outside the reduced checkout, the
+project goal remains:
 
 ```text
 Solve all 50 puzzles without guessing.

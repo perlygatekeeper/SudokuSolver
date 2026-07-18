@@ -32,6 +32,10 @@ stable corpus IDs, coordinate fingerprints, seeded symmetry transforms,
 controlled clue reveals, difficulty-targeted generation, and replayable
 provenance artifacts.
 
+Version 1.2.1 keeps that corpus functionality while replacing the large
+checked-in source corpus with the compressed master corpus for a much smaller
+clone.
+
 These four ideas define the project:
 
 - **Solve** puzzles using progressively more sophisticated human-style logic.
@@ -167,12 +171,11 @@ perl -Ilib bin/sudoku.pl --string \
 003020600900305001001806400008102900700000008006708200002609500800203009005010300
 ```
 
-Solve the seventh puzzle in a multi-puzzle file:
+Solve a puzzle from a one-line puzzle file:
 
 ```sh
 perl -Ilib bin/sudoku.pl \
-    --file Puzzles/Benchmarks_Corpus/sudoku17-first50.txt \
-    --puzzle 7
+    --file Puzzles/Puzzle_Dispatch_20191209.txt
 ```
 
 Ask for an explanation-oriented solve:
@@ -421,6 +424,7 @@ describe individual topics in more detail.
 | `docs/Release_notes_v1.0.0.txt` | v1.0 solver-completion release notes |
 | `docs/Release_notes_v1.1.0.txt` | v1.1 output-system release notes |
 | `docs/Release_notes_v1.2.0.txt` | v1.2 corpus-generation release notes |
+| `docs/Release_notes_v1.2.1.txt` | v1.2.1 reduced-distribution release notes |
 | `docs/Roadmap.txt` | Current and planned development |
 | `docs/Strategy_Development_Guide.txt` | Guide for adding solver strategies |
 | `docs/Developer/Architecture.md` | Internal architecture notes |
@@ -485,9 +489,12 @@ Version 1.2.0 completes canonical corpus identity and reproducible generation:
 queryable permanent corpus records, seeded symmetry variants, controlled clue
 reveals, difficulty-targeted generation, and replayable provenance.
 
-Post-1.2 development is focused on reducing clone size, aggregate benchmark
-reporting, packaging and release automation, continuous integration, and future
-user interfaces.
+Version 1.2.1 completes the reduced-distribution pass by keeping the compressed
+master corpus in the repository while preserving the full-history archive
+outside the working clone.
+
+Post-1.2.1 development is focused on aggregate benchmark reporting, packaging
+and release automation, continuous integration, and future user interfaces.
 
 ## License
 

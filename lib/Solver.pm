@@ -22,7 +22,7 @@ use Sudoku::Render::EventLog;
 has 'default_puzzle_file' => (
   isa     => 'Str',
   is      => 'rw',
-  default => 'Puzzles/sudoku17-first50.txt',
+  default => 'Puzzles/Puzzle3.txt',
 );
 
 has 'debug' => (

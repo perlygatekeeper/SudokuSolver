@@ -65,7 +65,7 @@ Usage:
   bin/show_puzzle.pl --string PUZZLE
 
 Examples:
-  bin/show_puzzle.pl --file Puzzles/sudoku17-first50.txt --puzzle 21
+  bin/show_puzzle.pl --file Puzzles/Puzzle_Dispatch_20191209.txt
   bin/show_puzzle.pl --string 000000013000800070000502000000400900107000000000000200890000050040000600000010000
 
 Options:

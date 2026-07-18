@@ -1,0 +1,47 @@
+Release Notes v1.2.1
+
+Reduced Distribution
+
+Release Date: 2026-07-18
+
+Version 1.2.1 is a patch release for the v1.2 corpus-generation work. It keeps
+the same solver, canonical corpus, query, generation, difficulty-targeting, and
+provenance capabilities while making the Git repository much lighter to clone.
+
+Highlights
+
+Reduced Repository History
+
+The large historical source and benchmark corpus files have been removed from
+the normal repository history. A full-history mirror archive should be kept
+outside the reduced checkout for archival recovery and provenance reference.
+
+Compressed Master Corpus
+
+The bundled authoritative corpus is now the gzip-compressed master JSONL file:
+
+Puzzles/Master/sudoku17-master.jsonl.gz
+
+`Sudoku::Corpus` continues to load the uncompressed master JSONL when present
+and otherwise falls back to the compressed master corpus automatically.
+
+Reduced-Checkout Tooling
+
+Corpus-facing utilities and Makefile helper targets now work from the reduced
+checkout where practical:
+
+* corpus coordinate auditing reads the compressed master corpus by default
+* canonicalization benchmarking reads the compressed master corpus by default
+* solver and puzzle-display examples reference bundled puzzle files
+* corpus-build targets document when an external staging/source corpus is
+  required
+
+Compatibility
+
+Solver behavior, strategy behavior, canonical IDs, corpus records, generated
+puzzle replay, and the v1.2.0 generation APIs are unchanged.
+
+Verification
+
+The v1.2.1 reduced checkout passes the full automated test suite and validates
+all 49,158 compressed master-corpus records.

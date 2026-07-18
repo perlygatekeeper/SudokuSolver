@@ -667,15 +667,15 @@ Canonical 17-Clue Benchmark
 ===========================
 
 Benchmark file:
-    Puzzles/sudoku17-first1000.txt
+    Puzzles/Puzzle_Dispatch_20191209.txt
 
-Puzzles processed : 1000
-Solved            : 962
-Stalled           : 38
+Puzzles processed : 1
+Solved            : 1
+Stalled           : 0
 Contradictions    : 0
 
-Average solve time: 0.038861 s
-Total time        : 38.860712 s
+Average solve time: 0.006124 s
+Total time        : 0.006124 s
 
 Highest strategy usage
 
@@ -692,7 +692,7 @@ Strategy contributions
 
 Command-line interface:
 
-sudoku.pl --benchmark Puzzles/sudoku17-first1000.txt
+sudoku.pl --benchmark Puzzles/Puzzle_Dispatch_20191209.txt
 
 Programmatic interface:
 

@@ -87,8 +87,8 @@ is_deeply(
 
 is(
     $solver->default_puzzle_file,
-    'Puzzles/sudoku17-first50.txt',
-    'default puzzle file is the bundled sudoku17 puzzle list',
+    'Puzzles/Puzzle3.txt',
+    'default puzzle file is the bundled example puzzle',
 );
 
 $solver->default_puzzle_file('Puzzles/Puzzle3.txt');

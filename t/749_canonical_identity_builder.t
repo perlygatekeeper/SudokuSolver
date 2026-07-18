@@ -16,18 +16,16 @@ my $reversed = File::Spec->catfile($tmpdir, 'reversed.tsv');
 my $identities = File::Spec->catfile($tmpdir, 'identities.tsv');
 my $identities_reversed = File::Spec->catfile($tmpdir, 'identities-reversed.tsv');
 
+my @fixture_puzzles = (
+    '003020600900305001001806400008102900700000008006708200002609500800203009005010300',
+    '200080300060070084030500209000105408000000000402706000301007040720040060004010003',
+    '000000907000420180000705026100904000050000040000507009920108000034059000507000000',
+);
+
 open my $source, '>', $source_file or die "Cannot create '$source_file': $!";
-open my $corpus, '<', 'Puzzles/Benchmarks_Corpus/sudoku17-first50.txt'
-    or die "Cannot open fixture corpus: $!";
-my $written = 0;
-while (my $line = <$corpus>) {
-    next if $line =~ /\A\s*(?:#|\z)/;
-    print {$source} $line;
-    last if ++$written == 3;
-}
-close $corpus;
+print {$source} "$_\n" for @fixture_puzzles;
 close $source;
-is $written, 3, 'created a three-puzzle identity fixture';
+is scalar(@fixture_puzzles), 3, 'created a three-puzzle identity fixture';
 
 is system($^X, '-Ilib', 'bin/build-canonical-index.pl',
         '--file', $source_file, '--output', $staging, '--jobs', 2),

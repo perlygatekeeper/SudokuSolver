@@ -8,7 +8,7 @@ Current primary branch:
 
 Current release milestone:
 
-**v1.2.0 implementation is complete.**
+**v1.2.1 reduced-distribution release is complete.**
 
 The advanced-strategy, enhanced-output, canonical-corpus, and reproducible
 generation work are integrated. Version 1.0.0 solved the complete canonical
@@ -122,6 +122,9 @@ rather than assigned the next globally available number.
 ## Canonical Corpus and Generation Status
 
 The canonical-corpus and reproducible-generation track is complete for v1.2.0.
+The v1.2.1 reduced-distribution pass keeps the compressed master corpus in the
+repository and moves large historical/source corpus files out of the normal
+clone history.
 
 Completed corpus capabilities include:
 
@@ -138,7 +141,7 @@ Completed corpus capabilities include:
 - exact replay verification
 - gzip master-corpus reading for reduced checkouts
 
-## Active Post-1.2 Sub-Projects
+## Active Post-1.2.1 Sub-Projects
 
 ### 1. Performance and Aggregate Benchmarking
 

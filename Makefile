@@ -71,12 +71,12 @@ help:
 	@echo "  make deps     - install CPAN dependencies from cpanfile"
 	@echo "  make version  - show project version"
 	@echo "  make examples     - run solved, stalled, contradiction, and output examples"
-	@echo "  make corpus-audit       - validate coordinate encodings for all 49,158 canonical puzzles"
-	@echo "  make canonical-benchmark - benchmark full canonization (LIMIT=50 by default)"
-	@echo "  make canonical-index    - build deterministic canonical staging index (LIMIT/JOBS/OUTPUT supported)"
-	@echo "  make canonical-identities - assign permanent IDs from canonical ordering (INPUT/OUTPUT supported)"
-	@echo "  make canonical-solutions  - solve and validate permanent canonical identities (INPUT/OUTPUT/LIMIT supported)"
-	@echo "  make master-corpus       - publish authoritative JSONL corpus (INPUT/OUTPUT/LIMIT/JOBS supported)"
+	@echo "  make corpus-audit       - validate coordinate encodings from the bundled compressed corpus"
+	@echo "  make canonical-benchmark - benchmark canonicalization (LIMIT=50 by default)"
+	@echo "  make canonical-index    - build deterministic canonical staging index (FILE/INPUT/OUTPUT supported; external source corpus required)"
+	@echo "  make canonical-identities - assign permanent IDs from canonical ordering (INPUT/OUTPUT supported; staging file required)"
+	@echo "  make canonical-solutions  - solve and validate permanent canonical identities (INPUT/OUTPUT/LIMIT supported; staging file required)"
+	@echo "  make master-corpus       - publish authoritative JSONL corpus (INPUT/OUTPUT/LIMIT/JOBS supported; staging file required)"
 	@echo "  make corpus-views        - derive TSV and summary views from the master JSONL (INPUT/TSV/SUMMARY/LIMIT supported)"
 	@echo ""
 	@echo "Variables:"
@@ -113,7 +113,12 @@ canonical-benchmark:
 canonical-index:
 	@limit_arg=""; \
 	if [ -n "$$LIMIT" ]; then limit_arg="--limit $$LIMIT"; fi; \
+	if [ -z "$$FILE" ]; then \
+	  echo "FILE is required, for example: make canonical-index FILE=/path/to/17puz49158.txt"; \
+	  exit 2; \
+	fi; \
 	$(PERL) -Ilib bin/build-canonical-index.pl \
+		--file "$$FILE" \
 		$$limit_arg \
 		--jobs $${JOBS:-1} \
 		--output $${OUTPUT:-Puzzles/Benchmarks_Corpus/sudoku17-canonical-index.tsv}
@@ -198,40 +203,40 @@ show-compact:
 	perl -Ilib bin/sudoku.pl \
 		--output quiet \
 		--grid-format compact \
-		--file Puzzles/solved_puzzle.txt
+		--file Puzzles/Examples/solved_puzzle.txt
 
 show-pretty:
 	perl -Ilib bin/sudoku.pl \
 		--output quiet \
 		--grid-format pretty \
-		--file Puzzles/solved_puzzle.txt
+		--file Puzzles/Examples/solved_puzzle.txt
 
 show-unicode:
 	perl -Ilib bin/sudoku.pl \
 		--output quiet \
 		--grid-format pretty \
 		--character-set UNICODE_LIGHT \
-		--file Puzzles/solved_puzzle.txt
+		--file Puzzles/Examples/solved_puzzle.txt
 
 show-unicode-double:
 	perl -Ilib bin/sudoku.pl \
 		--output quiet \
 		--grid-format pretty \
 		--character-set UNICODE_DOUBLE \
-		--file Puzzles/solved_puzzle.txt
+		--file Puzzles/Examples/solved_puzzle.txt
 
 show-unicode-heavy:
 	perl -Ilib bin/sudoku.pl \
 		--output quiet \
 		--grid-format pretty \
 		--character-set UNICODE_HEAVY \
-		--file Puzzles/solved_puzzle.txt
+		--file Puzzles/Examples/solved_puzzle.txt
 
 show-candidates:
 	perl -Ilib bin/sudoku.pl \
 		--output quiet \
 		--grid-format candidates \
-		--file Puzzles/solved_puzzle.txt
+		--file Puzzles/Examples/solved_puzzle.txt
 
 tarball: backup
 
@@ -249,7 +254,6 @@ backup:
 		$(DOCSDIR)Algorithm_Notes/*.md \
 		$(DOCSDIR)Strategies/*.md \
 		$(PUZZLEDIR)Examples/*.sdk \
-		$(PUZZLEDIR)Benchmarks_Corpus/*.txt \
 		$(PUZZLEDIR)*.txt \
 		$(CPANFILE)
 
@@ -265,7 +269,6 @@ gitadd:
 		$(DOCSDIR)Algorithm_Notes/*.md \
 		$(DOCSDIR)Strategies/*.md \
 		$(PUZZLEDIR)Examples/*.sdk \
-		$(PUZZLEDIR)Benchmarks_Corpus/*.txt \
 		$(PUZZLEDIR)*.txt $(CPANFILE)
 	git status
 

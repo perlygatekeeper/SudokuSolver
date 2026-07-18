@@ -4,6 +4,8 @@ use strict;
 use warnings;
 
 use FindBin qw($Bin);
+use IO::Uncompress::Gunzip qw(gunzip $GunzipError);
+use JSON::PP;
 use lib "$Bin/../lib";
 
 use Sudoku::CoordinateEncoding qw(
@@ -12,6 +14,12 @@ use Sudoku::CoordinateEncoding qw(
 );
 
 my @files = @ARGV;
+
+if (!@files) {
+    @files = grep { -e $_ }
+        "$Bin/../Puzzles/Master/sudoku17-master.jsonl",
+        "$Bin/../Puzzles/Master/sudoku17-master.jsonl.gz";
+}
 
 if (!@files) {
     @files = sort glob "$Bin/../Puzzles/Benchmarks_Corpus/sudoku17-??-1000.txt";
@@ -25,10 +33,10 @@ my $puzzles = 0;
 my $invalid = 0;
 my $wrong_clue_count = 0;
 my $duplicates = 0;
+my $json = JSON::PP->new->utf8(1);
 
 for my $file (@files) {
-    open my $fh, '<', $file
-        or die "Could not open '$file': $!\n";
+    my $fh = _open_input($file);
 
     my $line_number = 0;
 
@@ -40,7 +48,7 @@ for my $file (@files) {
 
         ++$puzzles;
 
-        my $puzzle = $line;
+        my $puzzle = _puzzle_from_line($line, $json);
         $puzzle =~ s/\s+//g;
         $puzzle =~ s/[^1-9]/0/g;
 
@@ -92,3 +100,31 @@ my $pass =
 print "\nResult                : ", ($pass ? 'PASS' : 'FAIL'), "\n";
 
 exit($pass ? 0 : 1);
+
+sub _open_input {
+    my ($path) = @_;
+
+    if ($path =~ /\.gz\z/) {
+        my $fh = IO::Uncompress::Gunzip->new($path)
+            or die "Could not open compressed '$path': $GunzipError\n";
+        return $fh;
+    }
+
+    open my $fh, '<', $path
+        or die "Could not open '$path': $!\n";
+    return $fh;
+}
+
+sub _puzzle_from_line {
+    my ($line, $json) = @_;
+
+    if ($line =~ /\A\s*\{/) {
+        my $record = $json->decode($line);
+        return $record->{identity}{canonical_puzzle}
+            if exists $record->{identity}
+            && exists $record->{identity}{canonical_puzzle};
+        die "JSONL record does not contain identity.canonical_puzzle\n";
+    }
+
+    return $line;
+}
