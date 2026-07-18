@@ -13,7 +13,6 @@ use Getopt::Long qw(GetOptions);
 use Pod::Usage qw(pod2usage);
 
 use Sudoku::Corpus;
-use Sudoku::Corpus::SQLiteCache;
 
 my $input;
 my $output;
@@ -32,12 +31,14 @@ pod2usage(0) if $help;
 $input //= _default_input();
 $output //= _default_output_for($input);
 
+my $cache_class = _require_sqlite_cache();
+
 if (!$force
-    && Sudoku::Corpus::SQLiteCache->is_current(
+    && $cache_class->is_current(
         source_file => $input,
         cache_file  => $output,
     )) {
-    my $cache = Sudoku::Corpus::SQLiteCache->new(file => $output);
+    my $cache = $cache_class->new(file => $output);
     say "Corpus cache is current: $output";
     say "Records: " . $cache->count;
     exit 0;
@@ -46,7 +47,7 @@ if (!$force
 my $dir = dirname($output);
 make_path($dir) if length($dir) && !-d $dir;
 
-my $cache = Sudoku::Corpus::SQLiteCache->build(
+my $cache = $cache_class->build(
     source_file => $input,
     cache_file  => $output,
 );
@@ -73,6 +74,23 @@ sub _default_input {
     return $jsonl if -e $jsonl;
     return $gzip  if -e $gzip;
     return $jsonl;
+}
+
+sub _require_sqlite_cache {
+    my $ok = eval {
+        require Sudoku::Corpus::SQLiteCache;
+        1;
+    };
+
+    return 'Sudoku::Corpus::SQLiteCache' if $ok;
+
+    die join q{},
+        "SQLite corpus cache support requires DBI and DBD::SQLite.\n",
+        "Install them for your Perl, for example with MacPorts:\n",
+        "    sudo port install p5.34-dbi p5.34-dbd-sqlite\n",
+        "Then rebuild the cache with:\n",
+        "    make corpus-cache\n",
+        "\nOriginal error:\n$@";
 }
 
 __END__

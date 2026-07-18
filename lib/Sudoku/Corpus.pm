@@ -8,7 +8,8 @@ use JSON::PP;
 use Scalar::Util qw(blessed);
 
 use Sudoku::Corpus::Query;
-use Sudoku::Corpus::SQLiteCache;
+
+my ($SQLITE_CACHE_AVAILABLE, $SQLITE_CACHE_ERROR);
 
 sub new {
     my ($class, %args) = @_;
@@ -117,12 +118,14 @@ sub puzzles_by_score {
 sub _load {
     my ($self) = @_;
 
+    my $cache_class = _sqlite_cache_class();
     if ($self->{use_cache}
-        && Sudoku::Corpus::SQLiteCache->is_current(
+        && defined $cache_class
+        && $cache_class->is_current(
             source_file => $self->{file},
             cache_file  => $self->{cache_file},
         )) {
-        $self->{cache} = Sudoku::Corpus::SQLiteCache->new(
+        $self->{cache} = $cache_class->new(
             file => $self->{cache_file},
         );
         return $self;
@@ -189,6 +192,19 @@ sub _default_cache_file {
     $cache_file =~ s/\.gz\z//;
     $cache_file =~ s/\.jsonl\z/.sqlite/;
     return $cache_file;
+}
+
+sub _sqlite_cache_class {
+    if (!defined $SQLITE_CACHE_AVAILABLE) {
+        my $ok = eval {
+            require Sudoku::Corpus::SQLiteCache;
+            1;
+        };
+        $SQLITE_CACHE_AVAILABLE = $ok ? 1 : 0;
+        $SQLITE_CACHE_ERROR = $@ if !$ok;
+    }
+
+    return $SQLITE_CACHE_AVAILABLE ? 'Sudoku::Corpus::SQLiteCache' : undef;
 }
 
 sub _open_corpus_file {
