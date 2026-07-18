@@ -271,4 +271,6 @@ final clue count, and difficulty metadata.
 
 - **Readme.md** — Project overview.
 - **Corpus_Schema.md** — Formal schema.
+- **Corpus_Difficulty_Distribution.md** — Counts by difficulty label, score
+  ceiling, and highest required strategy.
 - **docs/Developer/** — Implementation details.

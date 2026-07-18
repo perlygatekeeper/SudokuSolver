@@ -429,6 +429,7 @@ make master-corpus
 Additional design details are documented in:
 
 - `docs/Developer/Canonical_Corpus_and_Generation_Architecture.md`
+- `docs/Developer/Corpus_Difficulty_Distribution.md`
 - `docs/Developer/Puzzle_Canonicalization.md`
 - `docs/Developer/Sudoku_Symmetries.md`
 - `docs/Developer/Master_Corpus_JSONL_Schema.md`
