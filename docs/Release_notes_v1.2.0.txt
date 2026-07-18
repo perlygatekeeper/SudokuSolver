@@ -1,0 +1,137 @@
+Release Notes v1.2.0
+
+Canonical Corpus and Reproducible Generation
+
+Version 1.2.0 turns SudokuSolver's complete canonical 17-clue collection into
+a queryable, reproducible corpus and puzzle-generation platform.
+
+The release keeps SudokuSolver's logic-first identity intact while adding
+stable corpus identities, canonical fingerprints, deterministic symmetry
+transforms, controlled clue reveals, difficulty-targeted generation, and
+replayable provenance artifacts.
+
+Highlights
+
+Canonical Corpus
+
+The complete 49,158-puzzle canonical 17-clue collection now has permanent
+corpus records.
+
+Each master record includes:
+
+canonical ID
+coordinate fingerprint
+canonical puzzle
+complete solution
+clue count
+versioned difficulty metadata
+highest required strategy
+human-identifiable pattern symmetries
+source provenance
+replayable witness transform
+
+The authoritative corpus is published as JSON Lines. SudokuSolver can also
+read the gzip-compressed master corpus directly, allowing smaller checkouts
+without losing generation capability.
+
+Corpus Query API
+
+`Sudoku::Corpus` and `Sudoku::Corpus::Query` provide a composable public query
+API.
+
+Supported operations include:
+
+lookup by canonical ID
+lookup by coordinate fingerprint
+filtering by difficulty label
+filtering by score range
+filtering by highest strategy
+filtering by clue count
+filtering by pattern symmetry
+sorting
+limiting
+deterministic random selection
+
+Symmetry-Randomized Generation
+
+`Sudoku::Generator->symmetry_randomized(...)` selects a canonical corpus record
+by seed and applies a deterministic Sudoku-preserving symmetry transform.
+
+Generated puzzle objects record:
+
+canonical ID
+coordinate fingerprint
+corpus seed
+symmetry seed
+explicit symmetry transform shorthand
+transformed puzzle
+transformed solution
+
+Controlled Clue Reveals
+
+`Sudoku::Generator->controlled_reveals(...)` builds on symmetry-randomized
+generation and reveals solved cells until the final puzzle reaches an exact
+requested clue count.
+
+The reveal process:
+
+never removes original transformed clues
+uses a reveal seed independent from corpus and symmetry seeds
+records explicit reveal cells as RrCc labels
+preserves the transformed pre-reveal puzzle for replay
+
+Difficulty-Targeted Generation
+
+`Sudoku::Generator->difficulty_targeted(...)` generates candidates, solves each
+candidate quietly, rates it with the versioned `Sudoku::Difficulty` engine, and
+accepts only puzzles matching requested difficulty constraints.
+
+Supported constraints include:
+
+difficulty labels
+difficulty score ranges
+highest required strategy
+strategy ceilings
+maximum generation attempts
+
+Accepted puzzles preserve the difficulty rating version, score, label, highest
+strategy, statistics snapshot, and generation attempt count.
+
+Provenance and Replay
+
+Generated puzzles can be written as readable JSON artifacts with
+`Sudoku::GeneratedPuzzle->write_file(...)`.
+
+Artifacts record:
+
+generation date
+generator version
+canonical ID
+coordinate encoding
+corpus seed
+symmetry seed
+explicit symmetry transform
+reveal seed
+explicit reveal list
+final clue count
+versioned difficulty metadata
+
+`Sudoku::Generator->replay(...)` reconstructs a generated puzzle from corpus
+identity, explicit symmetry transform, and explicit reveal cells. Replay
+verifies the stored puzzle, solution, base puzzle, coordinate encoding, final
+clue count, and difficulty metadata.
+
+Repository Size Preparation
+
+The corpus reader and view exporter can now read gzip-compressed master JSONL
+files. This prepares the project for replacing large checked-in corpus
+artifacts with a much smaller compressed master corpus while keeping normal
+query and generation workflows usable.
+
+Compatibility
+
+Existing solver behavior and solving strategies are unchanged from v1.1.0.
+
+Version 1.2.0 focuses on canonical corpus identity, reproducible generation,
+difficulty-targeted puzzle selection, replayable provenance, and reduced
+corpus-distribution burden.

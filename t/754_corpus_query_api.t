@@ -3,6 +3,7 @@ use warnings;
 
 use File::Spec;
 use File::Temp qw(tempdir);
+use IO::Compress::Gzip qw(gzip $GzipError);
 use JSON::PP;
 use Test::More;
 
@@ -63,6 +64,14 @@ close $out;
 my $corpus = Sudoku::Corpus->new(file => $master);
 is $corpus->count, 4, 'corpus loads JSONL records';
 is $corpus->file, $master, 'corpus remembers source file';
+
+my $gzip_master = "$master.gz";
+gzip $master => $gzip_master
+    or die "Cannot gzip fixture corpus: $GzipError";
+my $gzip_corpus = Sudoku::Corpus->new(file => $gzip_master);
+is $gzip_corpus->count, 4, 'corpus loads gzip-compressed JSONL records';
+is $gzip_corpus->find_by_id('17C-000004')->{identity}{fingerprint},
+    'fp-004', 'gzip corpus supports normal indexed lookups';
 
 is $corpus->find_by_canonical_id('17C-000002')->{identity}{fingerprint},
     'fp-002', 'lookup by canonical ID works';

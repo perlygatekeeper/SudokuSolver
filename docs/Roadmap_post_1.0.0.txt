@@ -7,6 +7,8 @@ The solver and enhanced output subsystem are considered complete and released.
 
 ## Version 1.2.0 — Canonical Corpus and Reproducible Puzzle Generation
 
+Status: Complete
+
 ### Phase 1 — Puzzle Identity
 - Canonical puzzle serialization
 - Digit-grouped coordinate encoding (42-character encoding for 17-clue puzzles)

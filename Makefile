@@ -137,8 +137,16 @@ master-corpus:
 		--jobs $${JOBS:-1}
 
 corpus-views:
-	@$(PERL) -Ilib bin/export-master-corpus-views.pl \
-		--input $${INPUT:-Puzzles/Master/sudoku17-master.jsonl} \
+	@input="$${INPUT:-}"; \
+	if [ -z "$$input" ]; then \
+	  if [ -e Puzzles/Master/sudoku17-master.jsonl ]; then \
+	    input=Puzzles/Master/sudoku17-master.jsonl; \
+	  else \
+	    input=Puzzles/Master/sudoku17-master.jsonl.gz; \
+	  fi; \
+	fi; \
+	$(PERL) -Ilib bin/export-master-corpus-views.pl \
+		--input "$$input" \
 		--tsv $${TSV:-Puzzles/Master/sudoku17-master.tsv} \
 		--summary $${SUMMARY:-Puzzles/Master/sudoku17-master-summary.txt} \
 		--limit $${LIMIT:-0}

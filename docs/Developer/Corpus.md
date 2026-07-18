@@ -148,6 +148,9 @@ authoritative JSONL master corpus.
 
 ```perl
 my $corpus = Sudoku::Corpus->new;
+my $compressed = Sudoku::Corpus->new(
+    file => 'Puzzles/Master/sudoku17-master.jsonl.gz',
+);
 my $record = $corpus->find_by_id('17C-000001');
 
 my $query = $corpus->select(
@@ -167,6 +170,12 @@ sets, exclusions, numeric ranges, sorting, limiting, and deterministic random
 selection. Convenience helpers such as `puzzles_by_difficulty`,
 `puzzles_by_highest_strategy`, `puzzles_by_score`, and
 `puzzles_with_symmetry` delegate to `select`.
+
+By default, `Sudoku::Corpus->new` reads
+`Puzzles/Master/sudoku17-master.jsonl` when it exists and falls back to
+`Puzzles/Master/sudoku17-master.jsonl.gz`. This keeps corpus query and
+generation workflows usable in reduced checkouts that store only the compressed
+master corpus.
 
 ## Symmetry-Randomized Generation
 

@@ -101,6 +101,8 @@ document, image, Unicode, color-theme, and CLI usability improvements.
 
 ## Version 1.2.0 — Canonical Corpus and Reproducible Puzzle Generation
 
+Status: complete
+
 Version 1.2.0 turns the complete canonical 17-clue collection into a
 queryable, reproducible puzzle corpus and generation platform. Work is divided
 into nine phases.
@@ -216,11 +218,13 @@ puzzles. Each record includes:
 * highest required strategy; and
 * human-identifiable clue-pattern rotation and reflection symmetries.
 
-The authoritative artifact is `Puzzles/Master/sudoku17-master.jsonl`, with
-one canonical record per line. JSONL is the source of truth. The canonical
-index, identity, and solution TSV files are inspectable intermediate build
-artifacts, not public corpus formats. Human-readable and tabular views are
-derived from the JSONL master.
+The authoritative logical artifact is the master JSON Lines corpus, with one
+canonical record per line. A development checkout may use either
+`Puzzles/Master/sudoku17-master.jsonl` or the smaller
+`Puzzles/Master/sudoku17-master.jsonl.gz`; the corpus reader accepts both. The
+canonical index, identity, and solution TSV files are inspectable intermediate
+build artifacts, not public corpus formats. Human-readable and tabular views
+are derived from the JSONL master.
 
 `make canonical-index` processes the complete input corpus by default. A
 partial development build must be requested explicitly with `LIMIT=N`.
@@ -387,7 +391,7 @@ Renderer
 [x] Rendering subsystem
 [x] Candidate-state export
 [x] Structured solve-result output
-[~] Canonical corpus and reproducible generation (v1.2.0)
+[x] Canonical corpus and reproducible generation (v1.2.0)
 [ ] Aggregate full-corpus benchmark reporting
 [ ] CI, packaging, and release automation
 [ ] Additional user interfaces

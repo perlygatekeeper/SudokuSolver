@@ -5,10 +5,12 @@
 This document defines schema version `1.0` of the authoritative SudokuSolver
 canonical 17-clue corpus.
 
-The authoritative artifact is:
+The authoritative logical artifact is the master JSONL stream. A checkout may
+store it as plain JSONL or gzip-compressed JSONL:
 
 ```text
 Puzzles/Master/sudoku17-master.jsonl
+Puzzles/Master/sudoku17-master.jsonl.gz
 ```
 
 Each non-blank line is one complete JSON object. Records are sorted by
@@ -16,8 +18,8 @@ Each non-blank line is one complete JSON object. Records are sorted by
 
 ## Authority and build artifacts
 
-The JSONL file is the source of truth. These TSV files are intermediate build
-artifacts:
+The JSONL record stream is the source of truth. These TSV files are
+intermediate build artifacts:
 
 ```text
 sudoku17-canonical-index.tsv

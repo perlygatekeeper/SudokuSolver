@@ -412,11 +412,13 @@ metadata revisions without reassigning canonical IDs.
 
 ### Authoritative JSONL master corpus
 
-`bin/build-master-corpus.pl` promotes the verified solution TSV into
-`Puzzles/Master/sudoku17-master.jsonl`. JSON Lines is the authoritative public
-corpus format: one complete JSON object per canonical puzzle, sorted by
-permanent canonical ID. The staging, identity, and solution TSV files remain
-regenerable build artifacts.
+`bin/build-master-corpus.pl` promotes the verified solution TSV into the master
+JSON Lines corpus. JSON Lines is the authoritative public corpus format: one
+complete JSON object per canonical puzzle, sorted by permanent canonical ID. A
+development checkout may keep the master as
+`Puzzles/Master/sudoku17-master.jsonl` or as the smaller
+`Puzzles/Master/sudoku17-master.jsonl.gz`; `Sudoku::Corpus` reads both. The
+staging, identity, and solution TSV files remain regenerable build artifacts.
 
 Every JSON record separates identity from provenance and reserves independent
 scheme versions for canonicalization and difficulty. The difficulty
@@ -448,6 +450,9 @@ The primary public query interface is composable:
 ```perl
 my $corpus = Sudoku::Corpus->new(
     file => 'Puzzles/Master/sudoku17-master.jsonl',
+);
+my $compressed = Sudoku::Corpus->new(
+    file => 'Puzzles/Master/sudoku17-master.jsonl.gz',
 );
 
 my $query = $corpus->select(

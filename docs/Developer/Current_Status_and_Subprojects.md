@@ -8,10 +8,11 @@ Current primary branch:
 
 Current release milestone:
 
-**v1.0.0 is tagged.**
+**v1.2.0 implementation is complete.**
 
-The advanced-strategy and enhanced-output work are integrated. Version 1.0.0
-solves the complete canonical collection of minimal 17-clue Sudoku puzzles:
+The advanced-strategy, enhanced-output, canonical-corpus, and reproducible
+generation work are integrated. Version 1.0.0 solved the complete canonical
+collection of minimal 17-clue Sudoku puzzles:
 
 ```text
 Puzzles processed : 49,158
@@ -21,7 +22,9 @@ Contradictions    : 0
 ```
 
 The first 1,000 puzzles remain a convenient development regression suite. The
-full 49,158-puzzle corpus is the authoritative capability benchmark.
+full 49,158-puzzle corpus is the authoritative capability benchmark and now
+also supports permanent canonical IDs, coordinate fingerprints, query APIs,
+seeded generation, and replayable provenance.
 
 ## Solver Status
 
@@ -58,7 +61,7 @@ auditable inference over unrestricted search.
 
 ## Enhanced Output Status
 
-The enhanced-output branch has been merged into `main`.
+The enhanced-output track is complete and released as v1.1.0.
 
 Implemented grid formats:
 
@@ -79,6 +82,8 @@ Implemented character sets:
 Implemented structured result formats:
 
 - `json`
+- `csv`
+- `tsv`
 
 Other completed output infrastructure:
 
@@ -88,6 +93,8 @@ Other completed output infrastructure:
 - output-to-file support
 - stable versioned renderer events
 - ordered event logging
+- Markdown, HTML, SVG, PNG, and PDF grid renderers
+- optional terminal color themes
 - output architecture and compatibility-contract documentation
 
 The output subsystem remains intentionally separate from solving logic. New
@@ -112,7 +119,26 @@ This replaces the earlier two-digit numbering, which had accumulated several
 collisions. New tests should be placed in the appropriate functional range
 rather than assigned the next globally available number.
 
-## Active Post-1.0 Sub-Projects
+## Canonical Corpus and Generation Status
+
+The canonical-corpus and reproducible-generation track is complete for v1.2.0.
+
+Completed corpus capabilities include:
+
+- stable `17C-NNNNNN` canonical IDs
+- digit-grouped coordinate fingerprints
+- complete master-corpus solutions
+- versioned difficulty metadata and highest-strategy metadata
+- pattern-symmetry metadata
+- composable corpus query APIs
+- deterministic symmetry-randomized generation
+- controlled clue reveals
+- difficulty-targeted generation
+- readable generated-puzzle provenance artifacts
+- exact replay verification
+- gzip master-corpus reading for reduced checkouts
+
+## Active Post-1.2 Sub-Projects
 
 ### 1. Performance and Aggregate Benchmarking
 
@@ -124,35 +150,31 @@ Planned work:
 - aggregate reports across all canonical benchmark files
 - compare performance reproducibly between releases
 
-### 2. Output and Renderer Expansion
-
-Near-term possibilities:
-
-- CSV and TSV result output
-- explicit one-line puzzle and solution output
-- event-aware text and JSON renderers
-- replay and solution-path formats
-- optional terminal color layer
-
-Longer-term possibilities:
-
-- mixed-weight Unicode grids
-- Markdown, HTML, SVG, GUI, and web renderers
-- benchmark output through common renderer contracts
-- candidate-state interchange import
-
-### 3. Puzzle Input, Canonicalization, and Identity
+### 2. Repository Size Reduction
 
 Planned work:
 
-- canonical 81-character serialization
+- replace large checked-in corpus artifacts with the compressed master corpus
+- keep expanded JSONL, TSV, and summary views as local/generated files
+- rewrite Git history to remove retired large corpus artifacts
+- document reclone/reset expectations after the history rewrite
+
+### 3. Output and Renderer Evolution
+
+Longer-term possibilities:
+
+- additional renderer targets when they serve real workflows
+- benchmark output through common renderer contracts
+- candidate-state interchange import
+
+### 4. Puzzle Input and Validation
+
+Planned work:
+
 - common blank-marker normalization
 - stronger validation and clearer input errors
-- puzzle fingerprints
-- duplicate detection
-- symmetry canonicalization where useful
 
-### 4. Difficulty and Solve Analysis
+### 5. Difficulty and Solve Analysis
 
 Planned work:
 
@@ -162,7 +184,7 @@ Planned work:
 - preserve rating-version metadata
 - support comparative solve reports
 
-### 5. Documentation and Example Corpus
+### 6. Documentation and Example Corpus
 
 Planned work:
 
@@ -172,7 +194,7 @@ Planned work:
 - add installation and troubleshooting material
 - keep release notes, roadmap, README, and current-status documents aligned
 
-### 6. Test Infrastructure and Fixtures
+### 7. Test Infrastructure and Fixtures
 
 Planned work:
 
@@ -183,7 +205,7 @@ Planned work:
 - CLI integration-test utilities
 - practical full-corpus release regression procedures
 
-### 7. Packaging and Developer Tooling
+### 8. Packaging and Developer Tooling
 
 Planned work:
 
@@ -193,12 +215,12 @@ Planned work:
 - documentation consistency checks
 - additional focused Makefile targets where warranted
 
-### 8. Generation and User Interfaces
+### 9. Generation and User Interfaces
 
 Long-term possibilities:
 
-- puzzle generation and uniqueness verification
-- difficulty-targeted generation
+- generated-puzzle command-line workflows
+- generated-puzzle file viewers
 - interactive terminal use
 - desktop GUI or web interface
 - deduction-driven teaching mode

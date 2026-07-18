@@ -3,6 +3,7 @@ package Sudoku::Corpus;
 use strict;
 use warnings;
 
+use IO::Uncompress::Gunzip qw(gunzip $GunzipError);
 use JSON::PP;
 use Scalar::Util qw(blessed);
 
@@ -12,7 +13,7 @@ sub new {
     my ($class, %args) = @_;
 
     my $self = bless {
-        file => $args{file} // 'Puzzles/Master/sudoku17-master.jsonl',
+        file => $args{file} // _default_corpus_file(),
     }, $class;
 
     $self->_load;
@@ -89,8 +90,7 @@ sub puzzles_by_score {
 sub _load {
     my ($self) = @_;
 
-    open my $fh, '<:raw', $self->{file}
-        or die "Cannot open '$self->{file}': $!\n";
+    my $fh = _open_corpus_file($self->{file});
 
     my $json = JSON::PP->new;
     my (@records, %by_id, %by_fingerprint);
@@ -127,6 +127,29 @@ sub _load {
     $self->{by_fingerprint} = \%by_fingerprint;
 
     return $self;
+}
+
+sub _default_corpus_file {
+    my $jsonl = 'Puzzles/Master/sudoku17-master.jsonl';
+    my $gzip = "$jsonl.gz";
+
+    return $jsonl if -e $jsonl;
+    return $gzip  if -e $gzip;
+    return $jsonl;
+}
+
+sub _open_corpus_file {
+    my ($file) = @_;
+
+    if ($file =~ /\.gz\z/) {
+        my $fh = IO::Uncompress::Gunzip->new($file)
+            or die "Cannot open gzip corpus '$file': $GunzipError\n";
+        return $fh;
+    }
+
+    open my $fh, '<:raw', $file
+        or die "Cannot open '$file': $!\n";
+    return $fh;
 }
 
 sub _validate_record {

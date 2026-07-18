@@ -6,6 +6,7 @@ use warnings;
 use File::Basename qw(dirname);
 use File::Path qw(make_path);
 use Getopt::Long qw(GetOptions);
+use IO::Uncompress::Gunzip qw(gunzip $GunzipError);
 use JSON::PP;
 
 my $input   = 'Puzzles/Master/sudoku17-master.jsonl';
@@ -40,7 +41,7 @@ printf "Result              : PASS\n";
 sub _read_master_records {
     my ($path, $limit) = @_;
 
-    open my $fh, '<:raw', $path or die "Cannot open '$path': $!\n";
+    my $fh = _open_master_records($path);
     my $json = JSON::PP->new;
     my @records;
     my %ids;
@@ -63,6 +64,19 @@ sub _read_master_records {
 
     close $fh or die "Cannot close '$path': $!\n";
     return @records;
+}
+
+sub _open_master_records {
+    my ($path) = @_;
+
+    if ($path =~ /\.gz\z/) {
+        my $fh = IO::Uncompress::Gunzip->new($path)
+            or die "Cannot open gzip corpus '$path': $GunzipError\n";
+        return $fh;
+    }
+
+    open my $fh, '<:raw', $path or die "Cannot open '$path': $!\n";
+    return $fh;
 }
 
 sub _validate_record {

@@ -24,8 +24,13 @@ Stalled           : 0
 Contradictions    : 0
 ```
 
-Version 1.1.0 expands the presentation layer with text, document, image, and
+Version 1.1.0 expanded the presentation layer with text, document, image, and
 machine-readable output formats while preserving the same solver behavior.
+
+Version 1.2.0 adds the canonical corpus and reproducible generation platform:
+stable corpus IDs, coordinate fingerprints, seeded symmetry transforms,
+controlled clue reveals, difficulty-targeted generation, and replayable
+provenance artifacts.
 
 These four ideas define the project:
 
@@ -415,6 +420,7 @@ describe individual topics in more detail.
 | `Readme.md` | Project overview and quick start |
 | `docs/Release_notes_v1.0.0.txt` | v1.0 solver-completion release notes |
 | `docs/Release_notes_v1.1.0.txt` | v1.1 output-system release notes |
+| `docs/Release_notes_v1.2.0.txt` | v1.2 corpus-generation release notes |
 | `docs/Roadmap.txt` | Current and planned development |
 | `docs/Strategy_Development_Guide.txt` | Guide for adding solver strategies |
 | `docs/Developer/Architecture.md` | Internal architecture notes |
@@ -439,10 +445,10 @@ SudokuSolver continues to evolve in several complementary directions.
 
 ### Corpus
 
-- Additional difficulty and strategy metadata in master-corpus records.
-- Derived TSV and human-readable corpus views.
-- Corpus query APIs.
-- Symmetry-randomized and difficulty-targeted puzzle generation.
+- Compressed master-corpus distribution.
+- Aggregate full-corpus benchmark reporting.
+- Additional corpus metadata views when they support research or release QA.
+- Long-term compatibility checks for generated-puzzle replay artifacts.
 
 ### Output
 
@@ -471,12 +477,17 @@ Version 1.0.0 marks completion of the original solver vision:
 - output is separated from solving through renderer interfaces; and
 - the project has broad automated regression coverage.
 
-Version 1.1.0 focuses on presentation, export, documentation, and command-line
-usability. Solver behavior and solving techniques are unchanged from v1.0.0.
+Version 1.1.0 completed the presentation, export, documentation, and
+command-line usability track. Solver behavior and solving techniques are
+unchanged from v1.0.0.
 
-Post-1.1 development is focused on canonical corpus identity, reproducible
-puzzle generation, performance work, richer difficulty metadata, packaging, and
-future user interfaces.
+Version 1.2.0 completes canonical corpus identity and reproducible generation:
+queryable permanent corpus records, seeded symmetry variants, controlled clue
+reveals, difficulty-targeted generation, and replayable provenance.
+
+Post-1.2 development is focused on reducing clone size, aggregate benchmark
+reporting, packaging and release automation, continuous integration, and future
+user interfaces.
 
 ## License
 
