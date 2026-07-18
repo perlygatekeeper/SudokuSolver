@@ -356,6 +356,16 @@ One of SudokuSolver's major goals is to provide a stable, reproducible corpus
 of Sudoku puzzles suitable for research, benchmarking, and software
 development.
 
+The 17-clue source material is credited to the McGuire/Royle minimal-clue
+Sudoku research line: Gordon Royle's catalogue of known 17-clue Sudoku puzzles,
+and Gary McGuire, Bastian Tugemann, and Gilles Civario's proof that no
+uniquely-solvable standard Sudoku puzzle exists with 16 clues. See
+[Royle, *Minimum Sudoku*](https://web.archive.org/web/20160113065147/http://staffhome.ecm.uwa.edu.au/~00013890/sudokumin.php)
+and McGuire, Tugemann, and Civario,
+[*There is no 16-Clue Sudoku: Solving the Sudoku Minimum Number of Clues Problem via Hitting Set Enumeration*](https://arxiv.org/abs/1201.0749).
+The 49,158-puzzle source file used for the current corpus was obtained as
+[17puz49158.zip](https://drive.google.com/file/d/1StS_Sm_Eh9ZJTapOsrRJccM6UP6PmQ3B/view).
+
 Many published puzzles differ only by Sudoku-preserving symmetry transforms:
 digit relabelings, row and column permutations, band and stack permutations,
 and related spatial transforms. SudokuSolver's canonicalization system maps
@@ -515,4 +525,6 @@ terms and conditions.
 
 SudokuSolver builds upon decades of published Sudoku research and the wider
 Sudoku community's work on logical solving techniques, benchmark collections,
-and reproducible puzzle analysis.
+and reproducible puzzle analysis. The project's minimal-clue corpus work gives
+particular credit to Gordon Royle's 17-clue Sudoku catalogue and to Gary
+McGuire, Bastian Tugemann, and Gilles Civario's minimum-clue proof.
