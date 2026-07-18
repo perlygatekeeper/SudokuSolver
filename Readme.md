@@ -55,7 +55,7 @@ These four ideas define the project:
 
 ### Flexible Output System
 
-- Traditional, compact, candidate, and Unicode grid layouts.
+- Traditional, compact, worksheet, candidate, and Unicode grid layouts.
 - Markdown, HTML, SVG, PNG, and PDF grid rendering.
 - JSON, CSV, and TSV solve-result exports.
 - Candidate-state exports for fixtures, diffs, and downstream tools.
@@ -221,6 +221,16 @@ Render a Unicode pretty grid:
 perl -Ilib bin/sudoku.pl \
     --output quiet \
     --grid-format pretty \
+    --character-set UNICODE_LIGHT \
+    --file Puzzles/Puzzle3.txt
+```
+
+Render a worksheet grid with candidate-sized cells but blank unsolved cells:
+
+```sh
+perl -Ilib bin/sudoku.pl \
+    --output quiet \
+    --grid-format worksheet \
     --character-set UNICODE_LIGHT \
     --file Puzzles/Puzzle3.txt
 ```

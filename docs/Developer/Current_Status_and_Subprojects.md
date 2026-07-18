@@ -67,6 +67,7 @@ Implemented grid formats:
 
 - `pretty`
 - `compact`
+- `worksheet`
 - `candidates`
 - `candidate-list`
 - `candidate-line`

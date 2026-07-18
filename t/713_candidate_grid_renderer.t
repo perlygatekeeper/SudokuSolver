@@ -36,6 +36,17 @@ use Sudoku::Render::Text;
     sub cells { return $_[0]->{cells} }
 }
 
+{
+    package Local::ValueOnlyCell;
+
+    sub new {
+        my ($class, $value) = @_;
+        return bless { value => $value // 0 }, $class;
+    }
+
+    sub value { return $_[0]->{value} }
+}
+
 my @all_candidates = (9, 1, 2, 3, 4, 5, 6, 7, 8, 9);
 my @cells = (
     Local::CandidateCell->new(value => 5),
@@ -86,14 +97,41 @@ my $heavy = Sudoku::Render::Text->new(
 like($heavy, qr/^    ┏━━━━━━━┳━━━━━━━┳/m,
     'heavy Unicode candidate grid uses heavy characters');
 
+my @worksheet_cells = (
+    Local::ValueOnlyCell->new(5),
+    map { Local::ValueOnlyCell->new(0) } 2 .. 81,
+);
+my $worksheet_grid = Local::CandidateGrid->new(@worksheet_cells);
+my $worksheet = $renderer->worksheet_grid($worksheet_grid);
+my @worksheet_lines = split /\n/, $worksheet, -1;
+is(scalar @worksheet_lines, 40, 'worksheet grid uses candidate-sized layout');
+is(length($worksheet_lines[2]), 79, 'worksheet grid preserves candidate line width');
+like($worksheet, qr/^  1 \|   5   '       '/m,
+    'worksheet grid centers solved values and leaves unsolved cells blank');
+unlike($worksheet, qr/1 2 3|4 5 6|7 8 9/,
+    'worksheet grid does not display unsolved-cell candidates');
+is(
+    $renderer->render_grid($worksheet_grid, format => 'worksheet'),
+    $worksheet,
+    'render_grid dispatches the worksheet format',
+);
+
 my $error = q{};
 eval { $renderer->candidate_grid(undef) };
 $error = $@;
 like($error, qr/requires a grid object/, 'candidate_grid rejects a missing grid');
 
+eval { $renderer->worksheet_grid(undef) };
+$error = $@;
+like($error, qr/requires a grid object/, 'worksheet_grid rejects a missing grid');
+
 my $short_grid = Local::CandidateGrid->new(@cells[0 .. 79]);
 eval { $renderer->candidate_grid($short_grid) };
 $error = $@;
 like($error, qr/requires exactly 81 cells/, 'candidate_grid requires exactly 81 cells');
+
+eval { $renderer->worksheet_grid($short_grid) };
+$error = $@;
+like($error, qr/requires exactly 81 cells/, 'worksheet_grid requires exactly 81 cells');
 
 done_testing();

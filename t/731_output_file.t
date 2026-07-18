@@ -41,6 +41,7 @@ close $fh;
 
 like($text, qr/^Available grid formats\n/m, 'discovery heading is written to file');
 like($text, qr/^    pretty \(default\)$/m, 'default grid format is written to file');
+like($text, qr/^    worksheet$/m, 'worksheet discovery output is written to file');
 like($text, qr/^    candidate-json$/m, 'complete discovery output is written to file');
 
 my $version_output = "$tmpdir/version.txt";

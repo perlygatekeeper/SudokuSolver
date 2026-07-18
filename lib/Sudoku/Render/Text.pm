@@ -14,7 +14,7 @@ my @RESULT_FORMAT_ORDER = qw(json csv tsv);
 
 my @GRID_FORMAT_ORDER = qw(
     pretty compact markdown html svg png pdf puzzle-line grid-line solution-line
-    candidates candidate-list candidate-line candidate-json
+    worksheet candidates candidate-list candidate-line candidate-json
 );
 my %GRID_FORMAT_METHOD = (
     pretty  => 'pretty_grid',
@@ -27,7 +27,8 @@ my %GRID_FORMAT_METHOD = (
     'puzzle-line'   => 'puzzle_line',
     'grid-line'     => 'grid_line',
     'solution-line' => 'solution_line',
-    candidates     => 'candidate_grid',
+    worksheet        => 'worksheet_grid',
+    candidates       => 'candidate_grid',
     'candidate-list' => 'candidate_list',
     'candidate-line' => 'candidate_line',
     'candidate-json' => 'candidate_json',
@@ -460,11 +461,32 @@ sub _candidate_field {
 sub candidate_grid {
     my ($self, $grid) = @_;
 
-    die "candidate_grid requires a grid object\n"
+    return $self->_candidate_sized_grid(
+        $grid,
+        context         => 'candidate_grid',
+        show_candidates => 1,
+    );
+}
+
+sub worksheet_grid {
+    my ($self, $grid) = @_;
+
+    return $self->_candidate_sized_grid(
+        $grid,
+        context         => 'worksheet_grid',
+        show_candidates => 0,
+    );
+}
+
+sub _candidate_sized_grid {
+    my ($self, $grid, %args) = @_;
+    my $context = $args{context};
+
+    die "$context requires a grid object\n"
         if !defined $grid || !$grid->can('cells');
 
     my $cells = $grid->cells;
-    die "candidate_grid requires exactly 81 cells\n"
+    die "$context requires exactly 81 cells\n"
         if ref($cells) ne 'ARRAY' || @$cells != 81;
 
     my $builder = $self->grid_builder;
@@ -513,7 +535,12 @@ sub candidate_grid {
 
         for my $candidate_row (0 .. 2) {
             my @contents = map {
-                _candidate_cell_line($_, $candidate_row)
+                _candidate_cell_line(
+                    $_,
+                    $candidate_row,
+                    show_candidates => $args{show_candidates},
+                    context         => $context,
+                )
             } @row_cells;
 
             my $prefix = $candidate_row == 1
@@ -543,7 +570,7 @@ sub candidate_grid {
 }
 
 sub _candidate_cell_line {
-    my ($cell, $candidate_row) = @_;
+    my ($cell, $candidate_row, %args) = @_;
 
     my @slots = (' ') x 7;
     my $value = $cell->value;
@@ -553,11 +580,15 @@ sub _candidate_cell_line {
         return join q{}, @slots;
     }
 
-    die "candidate_grid cells must provide possibilities\n"
+    return join q{}, @slots if !$args{show_candidates};
+
+    my $context = $args{context} // 'candidate_grid';
+
+    die "$context cells must provide possibilities\n"
         if !$cell->can('possibilities');
 
     my $possibilities = $cell->possibilities;
-    die "candidate_grid possibilities must be an array reference\n"
+    die "$context possibilities must be an array reference\n"
         if ref($possibilities) ne 'ARRAY';
 
     my $first = $candidate_row * 3 + 1;

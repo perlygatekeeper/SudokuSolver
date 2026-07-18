@@ -289,6 +289,7 @@ sudoku.pl - solve a Sudoku puzzle
   sudoku.pl --output explain --file Puzzles/Puzzle3.txt
   sudoku.pl --output quiet --grid-format compact --file Puzzles/Puzzle3.txt
   sudoku.pl --output quiet --grid-format pretty --character-set UNICODE_LIGHT --file Puzzles/Puzzle3.txt
+  sudoku.pl --output quiet --grid-format worksheet --character-set UNICODE_LIGHT --file Puzzles/Puzzle3.txt
   sudoku.pl --list-grid-formats
   sudoku.pl --list-character-sets
   sudoku.pl --result-format json --file Puzzles/Puzzle3.txt
@@ -347,8 +348,9 @@ Select human output style.
 =item B<--grid-format FORMAT>
 
 Render the final grid using a named format. Current formats are pretty, compact,
-markdown, html, svg, png, pdf, puzzle-line, grid-line, solution-line, candidates, candidate-list, candidate-line,
-and candidate-json. PNG and PDF require C<--output-file>. This is opt-in and does not alter the existing default output.
+markdown, html, svg, png, pdf, puzzle-line, grid-line, solution-line, worksheet,
+candidates, candidate-list, candidate-line, and candidate-json. PNG and PDF
+require C<--output-file>. This is opt-in and does not alter the existing default output.
 Use C<--output quiet> when only the grid should be printed.
 
 =item B<--character-set SET>

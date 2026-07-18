@@ -7,7 +7,9 @@ SudokuSolver produces several kinds of textual output. These fall into four broa
 3. Final result summaries
 4. Benchmark and diagnostic reports
 
-Grid representation and solver narration are independent concepts. A grid may be rendered in compact, pretty, or candidate form while the solver uses quiet, normal, explain, trace, or debug narration.
+Grid representation and solver narration are independent concepts. A grid may
+be rendered in compact, pretty, worksheet, or candidate form while the solver
+uses quiet, normal, explain, trace, or debug narration.
 
 ## Grid Representations
 
@@ -32,6 +34,15 @@ The currently available formats are, in discovery order:
 ```text
 pretty
 compact
+markdown
+html
+svg
+png
+pdf
+puzzle-line
+grid-line
+solution-line
+worksheet
 candidates
 candidate-list
 candidate-line
@@ -68,6 +79,7 @@ A final grid may be selected explicitly:
 ```bash
 sudoku.pl --output quiet --grid-format compact --file puzzle.sdk
 sudoku.pl --output quiet --grid-format pretty --character-set UNICODE_LIGHT --file puzzle.sdk
+sudoku.pl --output quiet --grid-format worksheet --character-set UNICODE_LIGHT --file puzzle.sdk
 sudoku.pl --output quiet --grid-format candidates --character-set UNICODE_DOUBLE --file puzzle.sdk
 ```
 
@@ -339,6 +351,31 @@ my $text = $renderer->candidate_grid($grid);
 * Candidate-state inspection
 * Diagnosing stalled puzzles
 * Showing the grid after individual deductions
+
+---
+
+### Worksheet Grid
+
+**Status:** Implemented as `Sudoku::Render::Text::worksheet_grid`.
+
+The worksheet grid uses the same candidate-sized 3×3 miniature-cell layout as
+the candidate grid. Solved cells contain their value in the center. Unsolved
+cells remain blank, making the format useful for printing or sharing a puzzle
+without revealing candidate state.
+
+Renderer interface:
+
+my $text = $renderer->worksheet_grid($grid);
+
+Command-line interface:
+
+sudoku.pl --output quiet --grid-format worksheet --file puzzle.sdk
+
+#### Intended uses
+
+* Printed puzzle worksheets
+* Sharing puzzle state without candidate hints
+* Large-cell terminal display
 
 ---
 
