@@ -1,5 +1,6 @@
 *.out
 *.solution
+generation-difficulty-drops.csv
 .DS_Store
 *.tgz
 Puzzles/Master/sudoku17-master.jsonl

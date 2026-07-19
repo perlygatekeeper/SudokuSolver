@@ -231,6 +231,25 @@ perl -Ilib bin/generate-puzzle.pl \
     --debug
 ```
 
+Analyze how clue reveals affect generated difficulty:
+
+```sh
+perl -Ilib bin/analyze-generation-difficulty.pl \
+    --base-difficulty Medium \
+    --clues 30 \
+    --samples 1000
+```
+
+Measure how many random clue reveals it takes for corpus puzzles to step down
+through easier difficulty labels:
+
+```sh
+perl -Ilib bin/analyze-reveal-difficulty-drops.pl \
+    --samples 1000 \
+    --runs 10 \
+    --output generation-difficulty-drops.csv
+```
+
 ## Output Formats
 
 SudokuSolver separates solving from presentation. The solver produces stable
