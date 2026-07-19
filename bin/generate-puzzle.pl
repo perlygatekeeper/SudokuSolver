@@ -13,6 +13,7 @@ use Pod::Usage qw(pod2usage);
 use Grid;
 use Solver;
 use Sudoku::CLI::Suggestion qw(suggest_value);
+use Sudoku::Config;
 use Sudoku::CoordinateEncoding qw(clue_count);
 use Sudoku::Corpus;
 use Sudoku::GeneratedPuzzle;
@@ -38,6 +39,31 @@ my $character_set = 'UNICODE_LIGHT';
 my $output_file;
 my $debug;
 my $help;
+
+my %config = Sudoku::Config->new->defaults_for(
+    'generate-puzzle' => qw(
+        seed corpus-seed symmetry-seed reveal-seed clues clue-count
+        difficulty min-score max-score score highest-strategy strategy-ceiling
+        max-attempts corpus-file format character-set
+    ),
+);
+
+$seed = $config{seed} if exists $config{seed};
+$corpus_seed = $config{'corpus-seed'} if exists $config{'corpus-seed'};
+$symmetry_seed = $config{'symmetry-seed'} if exists $config{'symmetry-seed'};
+$reveal_seed = $config{'reveal-seed'} if exists $config{'reveal-seed'};
+$clue_count = $config{clues} if exists $config{clues};
+$clue_count = $config{'clue-count'} if exists $config{'clue-count'};
+$difficulty = $config{difficulty} if exists $config{difficulty};
+$min_score = $config{'min-score'} if exists $config{'min-score'};
+$max_score = $config{'max-score'} if exists $config{'max-score'};
+$score = $config{score} if exists $config{score};
+$highest_strategy = $config{'highest-strategy'} if exists $config{'highest-strategy'};
+$strategy_ceiling = $config{'strategy-ceiling'} if exists $config{'strategy-ceiling'};
+$max_attempts = $config{'max-attempts'} if exists $config{'max-attempts'};
+$corpus_file = $config{'corpus-file'} if exists $config{'corpus-file'};
+$format = $config{format} if exists $config{format};
+$character_set = $config{'character-set'} if exists $config{'character-set'};
 
 GetOptions(
     'seed=i'             => \$seed,
@@ -563,3 +589,16 @@ Print each attempt to standard error.
 Show this help.
 
 =back
+
+=head1 CONFIGURATION
+
+Personal defaults may be stored in C<~/.sudoku_solver>:
+
+  [generate-puzzle]
+  clues = 30
+  difficulty = Medium
+  format = summary
+
+Command-line options override config-file defaults. Set
+C<SUDOKU_SOLVER_CONFIG=/path/to/file> to use a different config file, or set it
+to an empty value to disable personal defaults for one command.

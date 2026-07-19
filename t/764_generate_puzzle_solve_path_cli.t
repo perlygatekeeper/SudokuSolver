@@ -39,6 +39,17 @@ open my $out, '>:raw', $master or die "Cannot create '$master': $!";
 print {$out} JSON::PP->new->canonical(1)->encode(_record()), "\n";
 close $out;
 
+my $config = File::Spec->catfile($tmpdir, 'sudoku_solver.conf');
+open my $config_out, '>:raw', $config or die "Cannot create '$config': $!";
+print {$config_out} <<'CONFIG';
+[generate-puzzle]
+seed = 1
+clues = 17
+difficulty = Easy
+format = json
+CONFIG
+close $config_out;
+
 my ($json_output, $json_error, $json_exit) = _run_generate(
     '--corpus-file' => $master,
     '--seed'        => 1,
@@ -59,6 +70,19 @@ is($decoded->{provenance}{symmetry_seed}, 2, 'base seed sets symmetry seed');
 is($decoded->{provenance}{reveal_seed}, 3, 'base seed sets reveal seed');
 is($decoded->{provenance}{final_clue_count}, 17, 'json output records final clue count');
 is($decoded->{difficulty}{label}, 'Easy', 'json output records retained difficulty');
+
+{
+    local $ENV{SUDOKU_SOLVER_CONFIG} = $config;
+    my ($config_output, $config_error, $config_exit) = _run_generate(
+        '--corpus-file' => $master,
+    );
+
+    is($config_exit, 0, 'generate-puzzle config defaults exit successfully');
+    is($config_error, q{}, 'generate-puzzle config defaults are quiet on stderr');
+    my $config_decoded = JSON::PP->new->decode($config_output);
+    is($config_decoded->{provenance}{final_clue_count}, 17, 'config supplies generator clue count');
+    is($config_decoded->{difficulty}{label}, 'Easy', 'config supplies generator difficulty');
+}
 
 my ($summary_output, $summary_error, $summary_exit) = _run_generate(
     '--corpus-file' => $master,

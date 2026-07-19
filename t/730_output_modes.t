@@ -4,6 +4,7 @@ use strict;
 use warnings;
 use utf8;
 
+use File::Temp qw(tempfile);
 use IPC::Open3;
 use Symbol qw(gensym);
 use Test::More;
@@ -70,6 +71,39 @@ my ($puzzle_line_output, $puzzle_line_error, $puzzle_line_exit) = _run_cli(
 is($puzzle_line_exit, 0, 'puzzle output mode exits successfully');
 is($puzzle_line_error, q{}, 'puzzle output mode is quiet on stderr');
 is($puzzle_line_output, "$solvable\n", 'puzzle output mode prints the input puzzle without solving');
+
+my ($config_fh, $config_file) = tempfile();
+print {$config_fh} <<'CONFIG';
+[sudoku]
+output = puzzle
+grid-format = puzzle-line
+color = never
+CONFIG
+close $config_fh;
+
+{
+    local $ENV{SUDOKU_SOLVER_CONFIG} = $config_file;
+    my ($config_output, $config_error, $config_exit) = _run_cli(
+        '--string' => $solvable,
+    );
+
+    is($config_exit, 0, 'sudoku config defaults exit successfully');
+    is($config_error, q{}, 'sudoku config defaults are quiet on stderr');
+    is($config_output, "$solvable\n", 'sudoku config defaults render the puzzle as configured');
+}
+
+{
+    local $ENV{SUDOKU_SOLVER_CONFIG} = $config_file;
+    my ($override_output, $override_error, $override_exit) = _run_cli(
+        '--string' => $solvable,
+        '--output' => 'quiet',
+        '--grid-format' => 'solution-line',
+    );
+
+    is($override_exit, 0, 'CLI options override sudoku config defaults');
+    is($override_error, q{}, 'CLI override is quiet on stderr');
+    isnt($override_output, "$solvable\n", 'CLI override does not keep configured puzzle-line output');
+}
 
 my ($puzzle_grid_output, $puzzle_grid_error, $puzzle_grid_exit) = _run_cli(
     '--string'        => $solvable,

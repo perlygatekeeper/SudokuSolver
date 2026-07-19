@@ -16,6 +16,7 @@ use Getopt::Long qw(GetOptions);
 use Pod::Usage qw(pod2usage);
 use Sudoku ();
 use Sudoku::CLI::Suggestion qw(suggest_value);
+use Sudoku::Config;
 
 my $puzzle_file;
 my $puzzle_index;
@@ -36,6 +37,19 @@ my $output_file;
 my $color = 'auto';
 my $color_theme = 'subtle';
 my $list_color_themes;
+
+my %config = Sudoku::Config->new->defaults_for(
+  sudoku => qw(
+    output grid-format character-set result-format color color-theme
+  ),
+);
+
+$output_mode = $config{output} if exists $config{output};
+$grid_format = $config{'grid-format'} if exists $config{'grid-format'};
+$character_set = $config{'character-set'} if exists $config{'character-set'};
+$result_format = $config{'result-format'} if exists $config{'result-format'};
+$color = $config{color} if exists $config{color};
+$color_theme = $config{'color-theme'} if exists $config{'color-theme'};
 
 GetOptions(
   'file|f=s'     => \$puzzle_file,
@@ -451,6 +465,20 @@ Enable debugging behavior. Currently retained for future diagnostic options.
 Print usage information.
 
 =back
+
+=head1 CONFIGURATION
+
+Personal defaults may be stored in C<~/.sudoku_solver>:
+
+  [sudoku]
+  output = puzzle
+  grid-format = worksheet
+  character-set = UNICODE-MIXED
+  color = always
+
+Command-line options override config-file defaults. Set
+C<SUDOKU_SOLVER_CONFIG=/path/to/file> to use a different config file, or set it
+to an empty value to disable personal defaults for one command.
 
 =cut
 

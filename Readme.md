@@ -267,6 +267,26 @@ perl -Ilib tools/analyze-reveal-difficulty-drops.pl \
     --output generation-difficulty-drops.csv
 ```
 
+## Personal Defaults
+
+SudokuSolver reads optional personal defaults from `~/.sudoku_solver`. Command
+line options always override the file. A useful display-oriented setup is:
+
+```ini
+[sudoku]
+output = puzzle
+grid-format = worksheet
+character-set = UNICODE-MIXED
+color = always
+
+[generate-puzzle]
+clues = 30
+format = summary
+```
+
+Set `SUDOKU_SOLVER_CONFIG=/path/to/file` to use a different config file, or set
+it to an empty value to disable personal defaults for one command.
+
 ## Output Formats
 
 SudokuSolver separates solving from presentation. The solver produces stable
