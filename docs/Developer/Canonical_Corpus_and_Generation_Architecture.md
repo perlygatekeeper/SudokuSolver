@@ -258,7 +258,7 @@ The canonical coordinate encoding becomes the content-derived fingerprint.
 
 ### Canonical staging index
 
-Before Phase 4 assigns permanent IDs, `bin/build-canonical-index.pl` creates a
+Before Phase 4 assigns permanent IDs, `tools/corpus-build/build-canonical-index.pl` creates a
 reproducible TSV staging index. Each record contains:
 
 ```text
@@ -281,7 +281,7 @@ ordering rather than source order.
 ### Permanent canonical identity assignment
 
 Phase 4 assigns stable IDs only after staging records have been verified.
-`bin/build-canonical-identities.pl` sorts records by the complete canonical
+`tools/corpus-build/build-canonical-identities.pl` sorts records by the complete canonical
 81-character puzzle string and assigns sequential IDs in that order:
 
 ```text
@@ -394,7 +394,7 @@ Phase 4 also adds coordinate decoding and round-trip corpus verification.
 
 ### Canonical solution enrichment
 
-`bin/build-canonical-solutions.pl` enriches the permanent identity index with a
+`tools/corpus-build/build-canonical-solutions.pl` enriches the permanent identity index with a
 complete 81-digit solution for every canonical puzzle. It must:
 
 - retain canonical ordering and permanent IDs unchanged;
@@ -412,7 +412,7 @@ metadata revisions without reassigning canonical IDs.
 
 ### Authoritative JSONL master corpus
 
-`bin/build-master-corpus.pl` promotes the verified solution TSV into the master
+`tools/corpus-build/build-master-corpus.pl` promotes the verified solution TSV into the master
 JSON Lines corpus. JSON Lines is the authoritative public corpus format: one
 complete JSON object per canonical puzzle, sorted by permanent canonical ID. A
 development checkout may keep the master as

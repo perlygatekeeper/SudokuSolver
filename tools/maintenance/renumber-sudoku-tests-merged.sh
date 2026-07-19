@@ -4,10 +4,10 @@ set -euo pipefail
 # Renumber the SudokuSolver test suite into stable three-digit functional ranges.
 #
 # Preview only (default):
-#   bash renumber-sudoku-tests-merged.sh
+#   bash tools/maintenance/renumber-sudoku-tests-merged.sh
 #
 # Apply from the SudokuSolver repository root:
-#   bash renumber-sudoku-tests-merged.sh --apply
+#   bash tools/maintenance/renumber-sudoku-tests-merged.sh --apply
 
 MODE="preview"
 case "${1:-}" in

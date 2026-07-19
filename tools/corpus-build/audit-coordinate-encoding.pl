@@ -6,7 +6,7 @@ use warnings;
 use FindBin qw($Bin);
 use IO::Uncompress::Gunzip qw(gunzip $GunzipError);
 use JSON::PP;
-use lib "$Bin/../lib";
+use lib "$Bin/../../lib";
 
 use Sudoku::CoordinateEncoding qw(
     clue_count
@@ -17,13 +17,13 @@ my @files = @ARGV;
 
 if (!@files) {
     @files = grep { -e $_ }
-        "$Bin/../Puzzles/Master/sudoku17-master.jsonl",
-        "$Bin/../Puzzles/Master/sudoku17-master.jsonl.gz";
+        "$Bin/../../Puzzles/Master/sudoku17-master.jsonl",
+        "$Bin/../../Puzzles/Master/sudoku17-master.jsonl.gz";
 }
 
 if (!@files) {
-    @files = sort glob "$Bin/../Puzzles/Benchmarks_Corpus/sudoku17-??-1000.txt";
-    push @files, sort glob "$Bin/../Puzzles/Benchmarks_Corpus/sudoku17-??-158.txt";
+    @files = sort glob "$Bin/../../Puzzles/Benchmarks_Corpus/sudoku17-??-1000.txt";
+    push @files, sort glob "$Bin/../../Puzzles/Benchmarks_Corpus/sudoku17-??-158.txt";
 }
 
 die "No corpus files supplied or found\n" unless @files;

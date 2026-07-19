@@ -25,13 +25,13 @@ print {$src} "$_\n" for @fixture_puzzles;
 close $src;
 is scalar(@fixture_puzzles), 3, 'created three-puzzle solution fixture';
 
-is system($^X, '-Ilib', 'bin/build-canonical-index.pl',
+is system($^X, '-Ilib', 'tools/corpus-build/build-canonical-index.pl',
         '--file', $source, '--output', $staging, '--jobs', 2),
     0, 'staging index succeeds';
-is system($^X, '-Ilib', 'bin/build-canonical-identities.pl',
+is system($^X, '-Ilib', 'tools/corpus-build/build-canonical-identities.pl',
         '--input', $staging, '--output', $identities),
     0, 'identity assignment succeeds';
-is system($^X, '-Ilib', 'bin/build-canonical-solutions.pl',
+is system($^X, '-Ilib', 'tools/corpus-build/build-canonical-solutions.pl',
         '--input', $identities, '--output', $solutions),
     0, 'solution enrichment succeeds';
 

@@ -27,11 +27,11 @@ close $source or die "Cannot close '$input': $!";
 is scalar(@selected_fixtures), 2,
     'created a two-puzzle canonical-index fixture';
 
-is system($^X, '-Ilib', 'bin/build-canonical-index.pl',
+is system($^X, '-Ilib', 'tools/corpus-build/build-canonical-index.pl',
         '--file', $input, '--output', $single, '--jobs', 1),
     0, 'single-worker canonical index succeeds';
 
-is system($^X, '-Ilib', 'bin/build-canonical-index.pl',
+is system($^X, '-Ilib', 'tools/corpus-build/build-canonical-index.pl',
         '--file', $input, '--output', $parallel, '--jobs', 2),
     0, 'two-worker canonical index succeeds';
 

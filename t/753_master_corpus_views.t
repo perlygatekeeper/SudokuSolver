@@ -46,7 +46,7 @@ open my $out, '>:raw', $master or die "Cannot create '$master': $!";
 print {$out} JSON::PP->new->canonical(1)->encode($record), "\n";
 close $out;
 
-is system($^X, 'bin/export-master-corpus-views.pl',
+is system($^X, 'tools/corpus-build/export-master-corpus-views.pl',
         '--input', $master, '--tsv', $tsv, '--summary', $summary),
     0, 'master corpus view exporter succeeds';
 

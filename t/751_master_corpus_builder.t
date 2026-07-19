@@ -25,7 +25,7 @@ print {$out} join("\t",
 ), "\n";
 close $out;
 
-is system($^X, '-Ilib', 'bin/build-master-corpus.pl',
+is system($^X, '-Ilib', 'tools/corpus-build/build-master-corpus.pl',
         '--input', $solutions, '--output', $master, '--jobs', 2),
     0, 'master corpus builder succeeds';
 

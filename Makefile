@@ -7,7 +7,7 @@
 PERL          ?= perl5.34
 PROVE         := prove
 SCRIPT        := bin/sudoku.pl
-SCRIPTS       := $(shell ls bin/*.pl)
+SCRIPTS       := $(shell find bin tools -name '*.pl' | sort)
 MODS          := $(shell find lib -name '*.pm' | sort)
 PUZZLE        := Puzzles/Puzzle3.txt
 PUZZLEDIR     := Puzzles/
@@ -37,7 +37,7 @@ all:
 	done
 
 tidy:
-	@find lib t bin -name '*.pm' -o -name '*.pl' -o -name '*.t' | \
+	@find lib t bin tools -name '*.pm' -o -name '*.pl' -o -name '*.t' | \
 	while read f; do \
 	    perl -pi -e 's/[ \t]+$$//' "$$f"; \
 	done
@@ -109,10 +109,10 @@ deps-notest:
 	cpanm --notest --installdeps .
 
 corpus-audit:
-	@$(PERL) -Ilib bin/audit-coordinate-encoding.pl
+	@$(PERL) -Ilib tools/corpus-build/audit-coordinate-encoding.pl
 
 canonical-benchmark:
-	@$(PERL) -Ilib bin/benchmark-canonicalization.pl --limit $${LIMIT:-50}
+	@$(PERL) -Ilib tools/corpus-build/benchmark-canonicalization.pl --limit $${LIMIT:-50}
 
 canonical-index:
 	@limit_arg=""; \
@@ -121,25 +121,25 @@ canonical-index:
 	  echo "FILE is required, for example: make canonical-index FILE=/path/to/17puz49158.txt"; \
 	  exit 2; \
 	fi; \
-	$(PERL) -Ilib bin/build-canonical-index.pl \
+	$(PERL) -Ilib tools/corpus-build/build-canonical-index.pl \
 		--file "$$FILE" \
 		$$limit_arg \
 		--jobs $${JOBS:-1} \
 		--output $${OUTPUT:-Puzzles/Benchmarks_Corpus/sudoku17-canonical-index.tsv}
 
 canonical-identities:
-	@$(PERL) -Ilib bin/build-canonical-identities.pl \
+	@$(PERL) -Ilib tools/corpus-build/build-canonical-identities.pl \
 		--input $${INPUT:-Puzzles/Benchmarks_Corpus/sudoku17-canonical-index.tsv} \
 		--output $${OUTPUT:-Puzzles/Benchmarks_Corpus/sudoku17-canonical-identities.tsv}
 
 canonical-solutions:
-	@$(PERL) -Ilib bin/build-canonical-solutions.pl \
+	@$(PERL) -Ilib tools/corpus-build/build-canonical-solutions.pl \
 		--input $${INPUT:-Puzzles/Benchmarks_Corpus/sudoku17-canonical-identities.tsv} \
 		--output $${OUTPUT:-Puzzles/Benchmarks_Corpus/sudoku17-canonical-solutions.tsv} \
 		--limit $${LIMIT:-0}
 
 master-corpus:
-	@$(PERL) -Ilib bin/build-master-corpus.pl \
+	@$(PERL) -Ilib tools/corpus-build/build-master-corpus.pl \
 		--input $${INPUT:-Puzzles/Benchmarks_Corpus/sudoku17-canonical-solutions.tsv} \
 		--output $${OUTPUT:-Puzzles/Master/sudoku17-master.jsonl} \
 		--limit $${LIMIT:-0} \
@@ -154,7 +154,7 @@ corpus-views:
 	    input=Puzzles/Master/sudoku17-master.jsonl.gz; \
 	  fi; \
 	fi; \
-	$(PERL) -Ilib bin/export-master-corpus-views.pl \
+	$(PERL) -Ilib tools/corpus-build/export-master-corpus-views.pl \
 		--input "$$input" \
 		--tsv $${TSV:-Puzzles/Master/sudoku17-master.tsv} \
 		--summary $${SUMMARY:-Puzzles/Master/sudoku17-master-summary.txt} \

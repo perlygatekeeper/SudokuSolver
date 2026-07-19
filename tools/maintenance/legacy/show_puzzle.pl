@@ -4,7 +4,7 @@ use strict;
 use warnings;
 
 use FindBin;
-use lib "$FindBin::Bin/../lib";
+use lib "$FindBin::Bin/../../../lib";
 
 use Getopt::Long;
 use Solver;
@@ -61,12 +61,12 @@ exit 0;
 sub usage {
     print <<"USAGE";
 Usage:
-  bin/show_puzzle.pl --file FILE [--puzzle N]
-  bin/show_puzzle.pl --string PUZZLE
+  tools/maintenance/legacy/show_puzzle.pl --file FILE [--puzzle N]
+  tools/maintenance/legacy/show_puzzle.pl --string PUZZLE
 
 Examples:
-  bin/show_puzzle.pl --file Puzzles/Puzzle_Dispatch_20191209.txt
-  bin/show_puzzle.pl --string 000000013000800070000502000000400900107000000000000200890000050040000600000010000
+  tools/maintenance/legacy/show_puzzle.pl --file Puzzles/Puzzle_Dispatch_20191209.txt
+  tools/maintenance/legacy/show_puzzle.pl --string 000000013000800070000502000000400900107000000000000200890000050040000600000010000
 
 Options:
   -f, --file FILE       puzzle file

@@ -27,11 +27,11 @@ print {$source} "$_\n" for @fixture_puzzles;
 close $source;
 is scalar(@fixture_puzzles), 3, 'created a three-puzzle identity fixture';
 
-is system($^X, '-Ilib', 'bin/build-canonical-index.pl',
+is system($^X, '-Ilib', 'tools/corpus-build/build-canonical-index.pl',
         '--file', $source_file, '--output', $staging, '--jobs', 2),
     0, 'canonical staging index succeeds';
 
-is system($^X, '-Ilib', 'bin/build-canonical-identities.pl',
+is system($^X, '-Ilib', 'tools/corpus-build/build-canonical-identities.pl',
         '--input', $staging, '--output', $identities),
     0, 'canonical identity assignment succeeds';
 
@@ -47,7 +47,7 @@ open my $rev, '>', $reversed or die "Cannot create '$reversed': $!";
 print {$rev} @header, reverse @records;
 close $rev;
 
-is system($^X, '-Ilib', 'bin/build-canonical-identities.pl',
+is system($^X, '-Ilib', 'tools/corpus-build/build-canonical-identities.pl',
         '--input', $reversed, '--output', $identities_reversed),
     0, 'identity assignment succeeds for reordered staging input';
 
