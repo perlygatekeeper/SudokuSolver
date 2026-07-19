@@ -9,7 +9,7 @@ SudokuSolver produces several kinds of textual output. These fall into four broa
 
 Grid representation and solver narration are independent concepts. A grid may
 be rendered in compact, pretty, worksheet, or candidate form while the solver
-uses quiet, normal, explain, trace, or debug narration.
+uses quiet, normal, puzzle, explain, trace, or debug narration.
 
 ## Grid Representations
 
@@ -467,9 +467,22 @@ Supported modes are:
 
 quiet
 normal
+puzzle
 explain
 trace
 debug
+
+### Puzzle Mode
+
+**Status:** Implemented
+
+Renders the input puzzle as loaded and exits before solving. It can be combined
+with `--grid-format` and `--character-set` when the caller wants a specific
+view of the original puzzle.
+
+Example:
+
+sudoku.pl --output puzzle --grid-format worksheet --file puzzle.sdk
 
 ### Quiet Mode
 

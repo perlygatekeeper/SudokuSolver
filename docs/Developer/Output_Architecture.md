@@ -39,6 +39,7 @@ Destination
 
 - quiet
 - normal
+- puzzle
 - explain
 - trace
 - debug

@@ -11,15 +11,20 @@ use Getopt::Long qw(GetOptions);
 use Pod::Usage qw(pod2usage);
 
 use Grid;
+use Solver;
 use Sudoku::CLI::Suggestion qw(suggest_value);
+use Sudoku::CoordinateEncoding qw(clue_count);
+use Sudoku::Corpus;
+use Sudoku::GeneratedPuzzle;
 use Sudoku::Generator;
 use Sudoku::Render::Text;
+use Sudoku::Strategy;
 
 my $seed = 1;
 my $corpus_seed;
 my $symmetry_seed;
 my $reveal_seed;
-my $clue_count = 17;
+my $clue_count = 30;
 my $difficulty;
 my $min_score;
 my $max_score;
@@ -95,43 +100,76 @@ _validate_choice(
     choices => \@character_sets,
 );
 
-my %generator_args = (
-    corpus_seed   => $corpus_seed,
-    symmetry_seed => $symmetry_seed,
-    reveal_seed   => $reveal_seed,
-    clue_count    => $clue_count,
-);
-
-$generator_args{max_attempts} = $max_attempts;
-$generator_args{difficulty} = $difficulty if defined $difficulty;
-$generator_args{highest_strategy} = $highest_strategy if defined $highest_strategy;
-$generator_args{strategy_ceiling} = $strategy_ceiling if defined $strategy_ceiling;
+my %criteria;
+$criteria{difficulty} = $difficulty if defined $difficulty;
+$criteria{highest_strategy} = $highest_strategy if defined $highest_strategy;
 
 if (defined $score || defined $min_score || defined $max_score) {
     my %score_spec;
     $score_spec{value} = $score if defined $score;
     $score_spec{min} = $min_score if defined $min_score;
     $score_spec{max} = $max_score if defined $max_score;
-    $generator_args{score} = \%score_spec;
+    $criteria{score} = \%score_spec;
 }
 
-$generator_args{attempt_callback} = \&_debug_attempt if $debug;
-
-my $uses_difficulty_targeting =
-       defined($difficulty)
-    || defined($highest_strategy)
-    || defined($strategy_ceiling)
-    || defined($score)
-    || defined($min_score)
-    || defined($max_score);
-
-my $generator = Sudoku::Generator->new(
-    defined($corpus_file) ? (corpus_file => $corpus_file) : (),
+my $corpus = Sudoku::Corpus->new(
+    defined($corpus_file) ? (file => $corpus_file) : (),
 );
+my $source = %criteria
+    ? $corpus->select(%criteria)
+    : $corpus->select(score => { min => 2 });
+die "No corpus records matched the requested generation criteria\n"
+    unless $source->count;
 
-my $generated = $uses_difficulty_targeting
-    ? $generator->difficulty_targeted(%generator_args)
-    : $generator->controlled_reveals(%generator_args);
+my $generator = Sudoku::Generator->new(corpus => $corpus);
+my ($generated, $metadata);
+
+for my $attempt (1 .. $max_attempts) {
+    my $base = $generator->symmetry_randomized(
+        query         => $source,
+        corpus_seed   => $corpus_seed + $attempt - 1,
+        symmetry_seed => $symmetry_seed + $attempt - 1,
+    );
+
+    my $result = _generate_from_solve_path(
+        generated_base => $base,
+        target_clues   => $clue_count,
+        reveal_seed    => $reveal_seed + $attempt - 1,
+    );
+
+    my $accepted = $result->{status} eq 'candidate'
+        && _difficulty_matches($result->{difficulty});
+
+    _debug_attempt(
+        attempt   => $attempt,
+        base      => $base,
+        result    => $result,
+        accepted  => $accepted,
+    ) if $debug;
+
+    next unless $accepted;
+
+    $generated = Sudoku::GeneratedPuzzle->new(
+        canonical_record     => $base->canonical_record,
+        corpus_seed          => $base->corpus_seed,
+        symmetry_seed        => $base->symmetry_seed,
+        transform            => $base->transform,
+        base_puzzle          => $base->base_puzzle,
+        puzzle               => $result->{puzzle},
+        solution             => $base->solution,
+        reveal_seed          => $reveal_seed + $attempt - 1,
+        reveal_cells         => $result->{reveal_cells},
+        target_clue_count    => $clue_count,
+        difficulty           => $result->{difficulty}->as_hash,
+        generation_attempts  => $attempt,
+    );
+    $metadata = $result;
+    last;
+}
+
+die "No solve-path generated puzzle matched the requested constraints "
+    . "within $max_attempts attempt(s)\n"
+    unless $generated;
 
 if (defined $output_file) {
     my $mode = $format =~ /\A(?:png|pdf)\z/ ? '>:raw' : '>:encoding(UTF-8)';
@@ -146,7 +184,7 @@ elsif ($format eq 'solution') {
     say $generated->solution;
 }
 elsif ($format eq 'summary') {
-    print _summary($generated);
+    print _summary($generated, $metadata);
 }
 elsif ($format eq 'json') {
     print $generated->as_json;
@@ -162,13 +200,166 @@ else {
 
 exit 0;
 
+sub _generate_from_solve_path {
+    my (%args) = @_;
+
+    my $base = $args{generated_base};
+    my $target_clues = $args{target_clues};
+    my $base_puzzle = $base->puzzle;
+    my $current_clues = clue_count($base_puzzle);
+    my $protected_strategy = $base->canonical_record->{difficulty}{highest_strategy};
+
+    die "Source corpus record has no highest_strategy to protect\n"
+        unless defined $protected_strategy && length $protected_strategy;
+    die "clue_count cannot be less than the current clue count ($current_clues)\n"
+        if $target_clues < $current_clues;
+
+    if ($target_clues == $current_clues) {
+        my $difficulty = _rate_puzzle($base_puzzle);
+        return {
+            status             => 'candidate',
+            puzzle             => $base_puzzle,
+            reveal_cells       => [],
+            protected_strategy => $protected_strategy,
+            solve_steps        => 0,
+            placement_reveals  => 0,
+            difficulty         => $difficulty,
+            reason             => 'target clues already present',
+        };
+    }
+
+    my $grid = Grid->new;
+    $grid->load_from_string($base_puzzle);
+    my $solver = Solver->new(output_mode => 'quiet');
+    my @cells = split //, $base_puzzle;
+    my @reveal_cells;
+    my $solve_steps = 0;
+    my $placement_reveals = 0;
+
+    while (clue_count(join q{}, @cells) < $target_clues) {
+        my $deduction = $solver->hint($grid);
+        return {
+            status             => 'rejected',
+            puzzle             => join(q{}, @cells),
+            reveal_cells       => \@reveal_cells,
+            protected_strategy => $protected_strategy,
+            solve_steps        => $solve_steps,
+            placement_reveals  => $placement_reveals,
+            reason             => 'solver stalled before target clues',
+        } unless $deduction;
+
+        if (_strategy_reaches_protected($deduction->strategy, $protected_strategy)) {
+            return {
+                status             => 'rejected',
+                puzzle             => join(q{}, @cells),
+                reveal_cells       => \@reveal_cells,
+                protected_strategy => $protected_strategy,
+                solve_steps        => $solve_steps,
+                placement_reveals  => $placement_reveals,
+                reached_strategy   => $deduction->strategy,
+                reason             => 'protected strategy reached before target clues',
+            };
+        }
+
+        my $progress = $solver->apply_deduction($grid, $deduction);
+        next unless $progress;
+        $solve_steps++;
+
+        next unless $deduction->action eq 'set_value';
+
+        my $index = _deduction_index($deduction);
+        next unless defined $index;
+        next unless $cells[$index] eq '0';
+
+        $cells[$index] = $deduction->value;
+        push @reveal_cells, _cell_label($index);
+        $placement_reveals++;
+    }
+
+    my $puzzle = join q{}, @cells;
+    my $difficulty = _rate_puzzle($puzzle);
+    return {
+        status             => 'candidate',
+        puzzle             => $puzzle,
+        reveal_cells       => \@reveal_cells,
+        protected_strategy => $protected_strategy,
+        solve_steps        => $solve_steps,
+        placement_reveals  => $placement_reveals,
+        difficulty         => $difficulty,
+        reason             => 'target clues reached before protected strategy',
+    };
+}
+
+sub _difficulty_matches {
+    my ($difficulty_rating) = @_;
+
+    return 0 unless $difficulty_rating;
+    return 0 if defined($difficulty) && $difficulty_rating->label ne $difficulty;
+    return 0 if defined($highest_strategy)
+        && ($difficulty_rating->highest_strategy // q{}) ne $highest_strategy;
+    return 0 if defined($score) && $difficulty_rating->score != $score;
+    return 0 if defined($min_score) && $difficulty_rating->score < $min_score;
+    return 0 if defined($max_score) && $difficulty_rating->score > $max_score;
+    return 0 if defined($strategy_ceiling)
+        && !_strategy_at_or_below_ceiling($difficulty_rating, $strategy_ceiling);
+
+    return 1;
+}
+
+sub _strategy_at_or_below_ceiling {
+    my ($difficulty_rating, $ceiling) = @_;
+
+    if ($ceiling =~ /\A\d+\z/) {
+        return $difficulty_rating->score <= $ceiling;
+    }
+
+    my $strategy = $difficulty_rating->highest_strategy;
+    return 1 unless defined $strategy;
+    return _strategy_rank($strategy) <= _strategy_rank($ceiling);
+}
+
+sub _strategy_reaches_protected {
+    my ($strategy, $protected) = @_;
+    return _strategy_rank($strategy) >= _strategy_rank($protected);
+}
+
+sub _strategy_rank {
+    my ($strategy) = @_;
+
+    state %rank = do {
+        my $index = 0;
+        map { $_ => ++$index } Sudoku::Strategy->ordered_strategy_names;
+    };
+
+    die "Unknown strategy '$strategy'\n"
+        unless defined($strategy) && exists $rank{$strategy};
+
+    return $rank{$strategy};
+}
+
+sub _rate_puzzle {
+    my ($puzzle) = @_;
+
+    my $solver = Solver->new(output_mode => 'quiet');
+    my $grid = $solver->run(
+        puzzle_string => $puzzle,
+        output_mode   => 'quiet',
+    );
+
+    die "generated puzzle did not solve cleanly\n"
+        unless $grid->solved == 81 && !$solver->has_contradiction;
+
+    return $solver->difficulty;
+}
+
 sub _summary {
-    my ($generated) = @_;
+    my ($generated, $metadata) = @_;
 
     my @lines = (
         'Generated Puzzle',
         '================',
         q{},
+        'Generation mode:     solve-path',
         'Puzzle:              ' . $generated->puzzle,
         'Solution:            ' . $generated->solution,
         'Canonical ID:        ' . $generated->canonical_id,
@@ -179,6 +370,9 @@ sub _summary {
         'Reveal seed:         ' . ($generated->reveal_seed // q{}),
         'Transform:           ' . $generated->transform_shorthand,
         'Reveal cells:        ' . join(',', @{ $generated->reveal_cells }),
+        'Protected strategy:  ' . ($metadata->{protected_strategy} // q{}),
+        'Solve-path steps:    ' . ($metadata->{solve_steps} // 0),
+        'Placement reveals:   ' . ($metadata->{placement_reveals} // 0),
     );
 
     if (defined $generated->difficulty_label) {
@@ -197,22 +391,26 @@ sub _summary {
 sub _debug_attempt {
     my (%event) = @_;
 
-    my $generated = $event{generated};
-    my $difficulty = $event{difficulty};
-    my $record = $generated->canonical_record;
+    my $base = $event{base};
+    my $result = $event{result};
+    my $record = $base->canonical_record;
     my $initial = $record->{difficulty} // {};
     my $corpus_number = _corpus_number($record);
-    my $target_clues = $generated->target_clue_count;
+    my $final_difficulty = $result->{difficulty}
+        ? $result->{difficulty}->label
+        : 'not rated';
     my $decision = $event{accepted} ? 'accept' : 'reject';
 
     printf STDERR
-        "Attempt %d: Starting with Corpus #%s (%s), initial difficulty: %s, after revealing up to %d clues, final difficulty: %s, %s.\n",
+        "Attempt %d: Starting with Corpus #%s (%s), initial difficulty: %s, protected strategy: %s, %s after %d solve-path step(s), final difficulty: %s, %s.\n",
         $event{attempt},
         $corpus_number,
-        $generated->canonical_id,
+        $base->canonical_id,
         $initial->{label} // 'Unknown',
-        $target_clues,
-        $difficulty->label,
+        $result->{protected_strategy} // 'Unknown',
+        $result->{reason},
+        $result->{solve_steps} // 0,
+        $final_difficulty,
         $decision;
 
     return;
@@ -226,6 +424,22 @@ sub _corpus_number {
     return $record->{provenance}{source_ordinal}
         if defined $record->{provenance}{source_ordinal};
     return '?';
+}
+
+sub _deduction_index {
+    my ($deduction) = @_;
+
+    if ($deduction->has_cell) {
+        return $deduction->cell->row * 9 + $deduction->cell->column;
+    }
+
+    return unless $deduction->has_row && $deduction->has_column;
+    return $deduction->row * 9 + $deduction->column;
+}
+
+sub _cell_label {
+    my ($index) = @_;
+    return sprintf 'R%dC%d', int($index / 9) + 1, ($index % 9) + 1;
 }
 
 sub _validate_integer {
@@ -263,26 +477,25 @@ __END__
 
 =head1 NAME
 
-generate-puzzle.pl - generate reproducible Sudoku puzzles from the canonical corpus
+generate-puzzle.pl - generate Sudoku puzzles by preserving the solve path
 
 =head1 SYNOPSIS
 
-  bin/generate-puzzle.pl --seed 123 --clues 30
-  bin/generate-puzzle.pl --seed 123 --clues 30 --difficulty Medium --format worksheet
-  bin/generate-puzzle.pl --seed 123 --clues 30 --difficulty Medium --debug
-  bin/generate-puzzle.pl --corpus-seed 10 --symmetry-seed 20 --reveal-seed 30 --format json
-  bin/generate-puzzle.pl --seed 123 --difficulty Easy --max-score 3 --output-file generated.json --format json
+  bin/generate-puzzle.pl --difficulty Medium --clues 30
+  bin/generate-puzzle.pl --difficulty Medium --clues 30 --format worksheet
+  bin/generate-puzzle.pl --difficulty Medium --clues 30 --debug
+  bin/generate-puzzle.pl --score 3 --clues 30 --output-file generated.json --format json
 
 =head1 DESCRIPTION
 
-Generates a reproducible Sudoku puzzle from the bundled canonical corpus.
-The generator selects a canonical record, applies a seeded Sudoku-preserving
-symmetry transform, and then reveals solution values until the requested clue
-count is reached.
+Generates puzzles from the canonical corpus by following the source puzzle's
+logical solve path. The selected source puzzle is symmetry-randomized, then
+the solver walks deductions in order. Deductions that place values are promoted
+to givens until the requested clue count is reached. If the source puzzle's
+highest required strategy appears before enough givens are revealed, the
+attempt is rejected so the interesting strategy is not consumed.
 
-When difficulty options are supplied, the command tries deterministic
-successive seeds until a generated puzzle matches the requested difficulty
-constraints or C<--max-attempts> is reached.
+Use C<bin/generate-puzzle-random.pl> for the older random-reveal generator.
 
 =head1 OPTIONS
 
@@ -290,29 +503,31 @@ constraints or C<--max-attempts> is reached.
 
 =item B<--seed N>
 
-Base integer seed. Defaults to 1. Unless overridden, C<--corpus-seed> uses
-N, C<--symmetry-seed> uses N+1, and C<--reveal-seed> uses N+2.
+Base integer seed. Defaults to 1. Unless overridden, C<--corpus-seed> uses N,
+C<--symmetry-seed> uses N+1, and C<--reveal-seed> uses N+2.
 
 =item B<--corpus-seed N>, B<--symmetry-seed N>, B<--reveal-seed N>
 
-Explicit integer seeds for corpus selection, symmetry transform, and clue
-reveals.
+Explicit integer seeds for corpus selection, symmetry transform, and reveal
+provenance.
 
 =item B<--clues N>
 
-Final clue count. Defaults to 17.
+Final clue count. Defaults to 30.
 
 =item B<--difficulty LABEL>
 
-Accept only generated puzzles with this difficulty label.
+Start from corpus records with this difficulty label and accept only generated
+puzzles that retain this label.
 
 =item B<--score N>, B<--min-score N>, B<--max-score N>
 
-Accept only generated puzzles matching the requested difficulty score.
+Restrict source records and final accepted puzzles by difficulty score.
 
 =item B<--highest-strategy NAME>
 
-Accept only generated puzzles whose highest required strategy matches NAME.
+Restrict source records and final accepted puzzles to this highest required
+strategy.
 
 =item B<--strategy-ceiling NAME_OR_SCORE>
 
@@ -320,32 +535,28 @@ Accept only generated puzzles at or below this strategy difficulty.
 
 =item B<--max-attempts N>
 
-Maximum deterministic candidates to try when difficulty targeting is active.
-Defaults to 100.
+Maximum deterministic candidates to try. Defaults to 100.
+
+=item B<--corpus-file FILE>
+
+Use a specific master corpus JSONL or JSONL.gz file.
 
 =item B<--format FORMAT>
 
 Output format. Document formats are C<summary>, C<puzzle>, C<solution>, and
-C<json>. Any registered grid format may also be used, including C<worksheet>,
-C<pretty>, C<candidates>, C<markdown>, C<html>, C<svg>, C<png>, and C<pdf>.
+C<json>. Any registered grid format may also be used, including C<worksheet>.
 
 =item B<--character-set NAME>
 
-Grid character set for text grid formats. Defaults to C<UNICODE_LIGHT>.
-
-=item B<--corpus-file FILE>
-
-Read a specific master corpus JSONL or JSONL.gz file.
+Character set for grid output formats. Defaults to C<UNICODE_LIGHT>.
 
 =item B<--output-file FILE>
 
-Write output to FILE.
+Write output to a file instead of standard output.
 
 =item B<--debug>
 
-When difficulty targeting is active, print each generation attempt to standard
-error with the selected corpus record, starting difficulty, final generated
-difficulty, and accept/reject decision.
+Print each attempt to standard error.
 
 =item B<-h, --help>
 

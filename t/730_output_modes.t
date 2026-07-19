@@ -50,6 +50,40 @@ my $quiet_output = capture_stdout {
 
 is($quiet_output, q{}, 'quiet mode suppresses solver output');
 
+my $solvable =
+      '003020600'
+    . '900305001'
+    . '001806400'
+    . '008102900'
+    . '700000008'
+    . '006708200'
+    . '002609500'
+    . '800203009'
+    . '005010300';
+
+my ($puzzle_line_output, $puzzle_line_error, $puzzle_line_exit) = _run_cli(
+    '--string'      => $solvable,
+    '--output'      => 'puzzle',
+    '--grid-format' => 'puzzle-line',
+);
+
+is($puzzle_line_exit, 0, 'puzzle output mode exits successfully');
+is($puzzle_line_error, q{}, 'puzzle output mode is quiet on stderr');
+is($puzzle_line_output, "$solvable\n", 'puzzle output mode prints the input puzzle without solving');
+
+my ($puzzle_grid_output, $puzzle_grid_error, $puzzle_grid_exit) = _run_cli(
+    '--string'        => $solvable,
+    '--output'        => 'puzzle',
+    '--grid-format'   => 'worksheet',
+    '--character-set' => 'UNICODE-MIXED',
+);
+
+is($puzzle_grid_exit, 0, 'puzzle output mode renders grid formats');
+is($puzzle_grid_error, q{}, 'puzzle grid output is quiet on stderr');
+like($puzzle_grid_output, qr/┏/, 'puzzle grid output honors requested character set');
+unlike($puzzle_grid_output, qr/^Solved$/m, 'puzzle output mode does not solve the puzzle');
+unlike($puzzle_grid_output, qr/^Stalled$/m, 'puzzle output mode does not print solver status');
+
 my ($debug_output, $debug_error, $debug_exit) = _run_cli(
     '--string'        => $puzzle,
     '--output'        => 'debug',

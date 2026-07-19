@@ -602,7 +602,7 @@ revealing additional clues. This prefilter avoids candidates that should not
 become harder after correct clues are added, while the final generated-puzzle
 rating remains the authority.
 
-The `bin/generate-puzzle.pl --debug` option prints each targeted attempt to
+The `bin/generate-puzzle-random.pl --debug` option prints each targeted attempt to
 standard error, including the selected corpus record, starting corpus
 difficulty, generated difficulty after clue reveals, and accept/reject
 decision.
@@ -654,12 +654,22 @@ replay(metadata) == originally generated puzzle
 
 ### Command-line generation
 
-`bin/generate-puzzle.pl` exposes the Phase 6-9 generation pipeline as a
-reproducible command-line workflow:
+`bin/generate-puzzle.pl` exposes solve-path generation as the primary
+command-line workflow. It starts from corpus records matching the requested
+difficulty criteria, applies a deterministic symmetry transform, follows the
+solver one deduction at a time, and promotes solved-value deductions into new
+givens until the requested clue count is reached. If the source puzzle's
+highest required strategy appears before enough givens are available, the
+attempt is rejected so that the generated puzzle does not consume the strategy
+it is trying to preserve.
 
 ```sh
-perl -Ilib bin/generate-puzzle.pl --seed 123 --clues 30
-perl -Ilib bin/generate-puzzle.pl --seed 123 --clues 30 --format worksheet
+perl -Ilib bin/generate-puzzle.pl --seed 123 --difficulty Medium --clues 30
+perl -Ilib bin/generate-puzzle.pl \
+    --seed 123 \
+    --difficulty Medium \
+    --clues 30 \
+    --format worksheet
 perl -Ilib bin/generate-puzzle.pl \
     --seed 123 \
     --clues 30 \
@@ -669,10 +679,14 @@ perl -Ilib bin/generate-puzzle.pl \
 ```
 
 The base `--seed` deterministically derives separate corpus, symmetry, and
-reveal seeds. Each seed can also be supplied explicitly when a caller needs
-full control over provenance. The command writes either a human-readable
-summary, an 81-character puzzle or solution line, a replayable JSON artifact,
-or any registered grid renderer format, including `worksheet`.
+reveal provenance seeds. Each seed can also be supplied explicitly when a
+caller needs full control over provenance. The command writes either a
+human-readable summary, an 81-character puzzle or solution line, a replayable
+JSON artifact, or any registered grid renderer format, including `worksheet`.
+
+`bin/generate-puzzle-random.pl` remains available for the older random-reveal
+generation strategy and for comparing random clue reveals against solve-path
+reveals.
 
 
 ## Full Canonical Form Baseline

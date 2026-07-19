@@ -47,6 +47,9 @@ quiet
 normal
     Default mode. Print only the final solved/stalled/contradiction status.
 
+puzzle
+    Render the input puzzle as loaded, without solving or final status output.
+
 explain
     Print each applied deduction in human-readable form, followed by final status.
 

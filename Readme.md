@@ -184,6 +184,12 @@ Ask for an explanation-oriented solve:
 perl -Ilib bin/sudoku.pl --output explain --file Puzzles/Puzzle3.txt
 ```
 
+Display the input puzzle without solving it:
+
+```sh
+perl -Ilib bin/sudoku.pl --output puzzle --grid-format worksheet --file Puzzles/Puzzle3.txt
+```
+
 Display command-line help or the installed version:
 
 ```sh
@@ -194,7 +200,7 @@ perl -Ilib bin/sudoku.pl --version
 Generate a reproducible puzzle from the canonical corpus:
 
 ```sh
-perl -Ilib bin/generate-puzzle.pl --seed 123 --clues 30
+perl -Ilib bin/generate-puzzle.pl --seed 123 --difficulty Medium --clues 30
 ```
 
 Generate a worksheet-style puzzle without showing candidates:
@@ -202,6 +208,7 @@ Generate a worksheet-style puzzle without showing candidates:
 ```sh
 perl -Ilib bin/generate-puzzle.pl \
     --seed 123 \
+    --difficulty Medium \
     --clues 30 \
     --format worksheet
 ```
@@ -217,11 +224,12 @@ perl -Ilib bin/generate-puzzle.pl \
     --output-file generated-puzzle.json
 ```
 
-Difficulty-targeted generation starts from corpus records already at or above
-the requested difficulty floor, then still solves and rates the generated
-puzzle before accepting it.
+Solve-path generation starts from corpus records at the requested difficulty,
+reveals values found by lower-level solver deductions, and stops before the
+source puzzle's highest required strategy is consumed. The generated puzzle is
+still solved and rated before it is accepted.
 
-Add `--debug` to print each difficulty-targeted attempt to standard error:
+Add `--debug` to print each solve-path attempt to standard error:
 
 ```sh
 perl -Ilib bin/generate-puzzle.pl \
@@ -229,6 +237,15 @@ perl -Ilib bin/generate-puzzle.pl \
     --clues 30 \
     --difficulty Medium \
     --debug
+```
+
+The older random-reveal generator is still available:
+
+```sh
+perl -Ilib bin/generate-puzzle-random.pl \
+    --seed 123 \
+    --clues 30 \
+    --difficulty Medium
 ```
 
 Analyze how clue reveals affect generated difficulty:

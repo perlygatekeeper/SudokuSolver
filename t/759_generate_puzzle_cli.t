@@ -183,7 +183,7 @@ sub _run_generate {
         $stderr,
         $^X,
         '-Ilib',
-        'bin/generate-puzzle.pl',
+        'bin/generate-puzzle-random.pl',
         @args,
     );
     close $stdin;

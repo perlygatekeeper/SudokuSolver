@@ -9,6 +9,7 @@ my $help = qx{$^X -Ilib bin/sudoku.pl --help 2>&1};
 is($? >> 8, 0, '--help exits successfully');
 like($help, qr/quiet\s+- machine-friendly, minimal output\./, 'help explains quiet mode');
 like($help, qr/normal\s+- human-friendly summary \(default\)\./, 'help explains normal mode');
+like($help, qr/puzzle\s+- render the input puzzle as-is without solving\./, 'help explains puzzle mode');
 like($help, qr/explain\s+- show successful logical deductions\./, 'help explains explain mode');
 like($help, qr/trace\s+- show solver decision flow, including unsuccessful strategy attempts\./,
     'help explains trace mode');

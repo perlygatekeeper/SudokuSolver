@@ -146,7 +146,7 @@ if (defined $character_set) {
   $character_set =~ tr/-/_/;
 }
 
-my @output_modes = qw(quiet normal explain trace debug);
+my @output_modes = qw(quiet normal puzzle explain trace debug);
 my @color_modes = qw(auto always never);
 my @color_themes = Sudoku::Render::Text->available_color_themes;
 my @character_sets = Sudoku::Render::Text->available_character_sets;
@@ -223,10 +223,37 @@ my $needs_utf8_output =
 binmode STDOUT, ':encoding(UTF-8)' if $needs_utf8_output && !defined $output_file;
 
 require Solver;
+require Grid;
 
 my $solver = Solver->new(
   renderer => $renderer,
 );
+
+if (defined($output_mode) && $output_mode eq 'puzzle') {
+  my $puzzle = $solver->puzzle_string_from_options(
+    puzzle_file   => $puzzle_file,
+    puzzle_index  => $puzzle_index,
+    puzzle_string => $puzzle_string,
+  );
+
+  my $grid = Grid->new;
+  $grid->load_from_string($puzzle);
+
+  if ($binary_grid_output) {
+    binmode STDOUT, ':raw';
+  }
+  else {
+    binmode STDOUT, ':encoding(UTF-8)'
+      if $needs_utf8_output && !defined $output_file;
+  }
+
+  print $renderer->render_grid(
+    $grid,
+    format => $grid_format,
+  );
+  exit 0;
+}
+
 my $grid = $solver->run(
   puzzle_file   => $puzzle_file,
   puzzle_index  => $puzzle_index,
@@ -295,6 +322,7 @@ sudoku.pl - solve a Sudoku puzzle
   sudoku.pl --benchmark Puzzles/Puzzle_Dispatch_20191209.txt
   sudoku.pl --trace-grid-after-deduction --file Puzzles/Puzzle3.txt
   sudoku.pl --output explain --file Puzzles/Puzzle3.txt
+  sudoku.pl --output puzzle --grid-format worksheet --file Puzzles/Puzzle3.txt
   sudoku.pl --output quiet --grid-format compact --file Puzzles/Puzzle3.txt
   sudoku.pl --output quiet --grid-format pretty --character-set UNICODE_LIGHT --file Puzzles/Puzzle3.txt
   sudoku.pl --output quiet --grid-format worksheet --character-set UNICODE_LIGHT --file Puzzles/Puzzle3.txt
@@ -349,6 +377,7 @@ Select human output style.
 
   quiet  - machine-friendly, minimal output.
   normal - human-friendly summary (default).
+  puzzle - render the input puzzle as-is without solving.
   explain - show successful logical deductions.
   trace  - show solver decision flow, including unsuccessful strategy attempts.
   debug  - show internal implementation details.

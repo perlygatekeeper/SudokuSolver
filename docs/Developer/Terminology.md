@@ -709,6 +709,7 @@ content modes are:
 
 - `quiet` — machine-oriented minimal output;
 - `normal` — default user-facing output;
+- `puzzle` — render the input puzzle without solving;
 - `explain` — successful deductions and their explanations;
 - `trace` — decision flow, including unsuccessful strategy attempts where
   defined; and
