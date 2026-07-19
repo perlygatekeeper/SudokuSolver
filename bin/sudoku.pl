@@ -5,6 +5,10 @@ use strict;
 use warnings;
 use v5.34;
 
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+
+
 my $name = $0;
 $name =~ s'.*/''; # remove path--like basename
 

@@ -80,7 +80,7 @@ sub _run_analysis {
         $stderr,
         $^X,
         '-Ilib',
-        'bin/analyze-reveal-difficulty-drops.pl',
+        'tools/analyze-reveal-difficulty-drops.pl',
         @args,
     );
     close $stdin;

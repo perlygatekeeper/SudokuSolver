@@ -607,12 +607,12 @@ standard error, including the selected corpus record, starting corpus
 difficulty, generated difficulty after clue reveals, and accept/reject
 decision.
 
-`bin/analyze-generation-difficulty.pl` samples generated puzzles from a base
+`tools/analyze-generation-difficulty.pl` samples generated puzzles from a base
 corpus bucket and reports the final difficulty distribution after controlled
 clue reveals. It is intended for studying whether targets such as 30-clue
 Medium puzzles are common, rare, or impractical under blind reveal selection.
 
-`bin/analyze-reveal-difficulty-drops.pl` runs a longer diagnostic experiment:
+`tools/analyze-reveal-difficulty-drops.pl` runs a longer diagnostic experiment:
 it samples corpus puzzles across difficulty buckets, performs several random
 reveal orders for each puzzle, and records the first reveal count where each
 easier difficulty label is reached. The CSV output supports offline analysis of

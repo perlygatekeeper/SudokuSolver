@@ -389,9 +389,9 @@ analyze-generation-difficulty.pl - sample generated-puzzle difficulty retention
 
 =head1 SYNOPSIS
 
-  bin/analyze-generation-difficulty.pl --base-difficulty Medium --clues 30 --samples 1000
-  bin/analyze-generation-difficulty.pl --base-min-score 7 --clues 30 --samples 500 --seed 42
-  bin/analyze-generation-difficulty.pl --base-difficulty Hard --clues 26 --samples 1000 --progress 50
+  tools/analyze-generation-difficulty.pl --base-difficulty Medium --clues 30 --samples 1000
+  tools/analyze-generation-difficulty.pl --base-min-score 7 --clues 30 --samples 500 --seed 42
+  tools/analyze-generation-difficulty.pl --base-difficulty Hard --clues 26 --samples 1000 --progress 50
 
 =head1 DESCRIPTION
 

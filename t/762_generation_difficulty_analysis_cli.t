@@ -68,7 +68,7 @@ sub _run_analysis {
         $stderr,
         $^X,
         '-Ilib',
-        'bin/analyze-generation-difficulty.pl',
+        'tools/analyze-generation-difficulty.pl',
         @args,
     );
     close $stdin;

@@ -557,9 +557,9 @@ analyze-reveal-difficulty-drops.pl - measure clue reveals needed for difficulty 
 
 =head1 SYNOPSIS
 
-  bin/analyze-reveal-difficulty-drops.pl
-  bin/analyze-reveal-difficulty-drops.pl --samples 1000 --runs 10 --output drops.csv
-  bin/analyze-reveal-difficulty-drops.pl --samples 25 --runs 2 --max-reveals 20
+  tools/analyze-reveal-difficulty-drops.pl
+  tools/analyze-reveal-difficulty-drops.pl --samples 1000 --runs 10 --output drops.csv
+  tools/analyze-reveal-difficulty-drops.pl --samples 25 --runs 2 --max-reveals 20
 
 =head1 DESCRIPTION
 
